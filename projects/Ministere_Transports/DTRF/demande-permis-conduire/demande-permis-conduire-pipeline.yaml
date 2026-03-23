@@ -1,0 +1,173 @@
+pipeline:
+  - step: 1
+    name: "Soumission de la demande en ligne"
+    actor: "Citoyen"
+    system: "XPortal"
+    action: >
+      Le citoyen s'authentifie sur le portail e-Gov (e-ID pré-remplie),
+      sélectionne le type de demande (première inscription, duplicata),
+      la catégorie souhaitée (A, B, C, D, E), remplit le formulaire,
+      uploade les pièces justificatives (certificat médical, attestation auto-école,
+      photos d'identité, pièce d'identité, acte de naissance) et soumet.
+    inputs:
+      - "Données e-ID (nom, prénom, date naissance, téléphone, email)"
+      - "Type de demande (première inscription / duplicata)"
+      - "Catégorie de permis demandée (A / B / C / D / E)"
+      - "Certificat médical d'aptitude (PDF, < 3 mois)"
+      - "Attestation de formation auto-école agréée (PDF)"
+      - "Copie pièce d'identité nationale ou passeport (PDF/JPEG)"
+      - "Copie acte de naissance (PDF/JPEG)"
+      - "Photos d'identité 4x4 cm (JPEG, x4)"
+      - "Déclaration de perte/vol (PDF, si duplicata)"
+    output: "Dossier créé avec numéro de suivi + accusé de réception SMS/Email"
+
+  - step: 2
+    name: "Paiement des frais en ligne"
+    actor: "Citoyen"
+    system: "XPortal"
+    action: >
+      Le système calcule automatiquement le montant selon le type de demande
+      (inscription examen : 5 000 FCFA / délivrance : 15 000 FCFA / duplicata : 15 000 FCFA).
+      Le citoyen procède au paiement via Flooz, TMoney ou Visa/Mastercard.
+    inputs:
+      - "Type de demande (détermine le montant)"
+      - "Moyen de paiement (Flooz / TMoney / Visa / Mastercard)"
+    output: "Reçu de paiement électronique + confirmation paiement transmise à XFlow"
+
+  - step: 3
+    name: "Réception et vérification de conformité du dossier"
+    actor: "Agent de réception DTRF"
+    system: "XFlow"
+    action: >
+      L'agent reçoit le dossier dans son tableau de bord XFlow,
+      vérifie la complétude et la conformité des pièces justificatives,
+      et prend une décision : Conforme / Correction nécessaire / Rejet.
+    inputs:
+      - "Dossier complet (formulaire + pièces jointes)"
+      - "Preuve de paiement"
+    output: "Décision de conformité (conforme / correction / rejet)"
+
+  - step: 3a
+    name: "Boucle de correction (si pièces non conformes)"
+    actor: "Citoyen"
+    system: "XPortal"
+    action: >
+      Si le dossier est jugé non conforme, le citoyen reçoit une notification
+      SMS/Email avec le motif de la demande de correction. Il accède à son
+      dossier existant sur XPortal et resoumets les pièces corrigées sans
+      recréer de nouveau dossier. Maximum 3 tentatives de correction.
+    inputs:
+      - "Motif de correction (transmis par l'agent)"
+      - "Pièces corrigées"
+    output: "Dossier resoumis pour nouvelle vérification"
+
+  - step: 4
+    name: "Relevé des données biométriques — PHYSIQUE"
+    actor: "Citoyen / Agent DTRF"
+    system: "XFlow"
+    action: >
+      Une fois le dossier validé conforme, le citoyen est convoqué par SMS/Email
+      à se rendre à la DTRF (ou au bureau régional de son choix) pour le relevé
+      de ses données biométriques (photo, empreintes digitales, signature).
+      L'agent DTRF effectue la capture biométrique et enregistre les données
+      dans le système. Cette étape est un pré-requis obligatoire avant
+      l'inscription aux sessions d'examen.
+    inputs:
+      - "Dossier validé conforme"
+      - "Présence physique du candidat"
+    output: "Données biométriques enregistrées dans le système + notification citoyen"
+
+  - step: 5
+    name: "Inscription à une session d'examen"
+    actor: "Agent DTRF"
+    system: "XFlow"
+    action: >
+      Après la capture biométrique, l'agent inscrit le candidat à la prochaine
+      session d'examen du code de la route disponible. Le calendrier des sessions
+      est géré dans le système. Le candidat est notifié par SMS/Email de sa date
+      et lieu d'examen.
+    inputs:
+      - "Dossier validé + biométrie enregistrée"
+      - "Calendrier des sessions d'examen"
+    output: "Convocation à l'examen du code (date, lieu, heure) + notification citoyen"
+
+  - step: 6
+    name: "Épreuve théorique (code de la route) — PHYSIQUE"
+    actor: "Inspecteur code DTRF"
+    system: "Hors système (physique)"
+    action: >
+      Le candidat se présente au centre d'examen. L'inspecteur organise et
+      surveille l'épreuve QCM (40 questions, seuil : 35/40). Les résultats
+      sont saisis dans le système par l'inspecteur le jour même.
+    inputs:
+      - "Candidat présent au centre d'examen"
+      - "QCM code de la route"
+    output: "Note du code saisie dans XFlow (succès ≥ 35/40 ou échec)"
+
+  - step: 6a
+    name: "Notification résultat code et suite"
+    actor: "Système"
+    system: "XFlow / XPortal"
+    action: >
+      Le système notifie le candidat de son résultat par SMS/Email.
+      En cas de succès : inscription automatique à la session pratique suivante.
+      En cas d'échec : possibilité de se réinscrire à la session suivante.
+    inputs:
+      - "Note du code"
+    output: "Notification résultat + convocation épreuve pratique (si succès)"
+
+  - step: 7
+    name: "Épreuve pratique (circuit + route) — PHYSIQUE"
+    actor: "Inspecteur conduite DTRF"
+    system: "Hors système (physique)"
+    action: >
+      Le candidat passe l'épreuve pratique en présence d'un inspecteur assermenté.
+      Évaluation selon la grille normalisée (sur 20, seuil : 10/20).
+      Le relevé de notes est signé par l'inspecteur et saisi dans le système.
+    inputs:
+      - "Candidat présent avec véhicule"
+      - "Grille d'évaluation normalisée"
+    output: "Note pratique saisie dans XFlow (succès ≥ 10/20 ou échec)"
+
+  - step: 7a
+    name: "Notification résultat épreuve pratique"
+    actor: "Système"
+    system: "XFlow / XPortal"
+    action: >
+      Le système notifie le candidat de son résultat par SMS/Email.
+      En cas de succès : passage à l'étape de production du permis.
+      En cas d'échec : possibilité de se réinscrire (après 3 échecs consécutifs,
+      formation obligatoire de 5h exigée avant nouvelle tentative).
+    inputs:
+      - "Note de l'épreuve pratique"
+    output: "Notification résultat + lancement production permis (si succès)"
+
+  - step: 8
+    name: "Validation finale et production du permis"
+    actor: "Chef de service DTRF"
+    system: "XFlow"
+    action: >
+      Le chef de service valide le dossier complet (résultats examens + pièces +
+      données biométriques). Il approuve la production du permis. Le système lance
+      la personnalisation du titre (carte plastifiée sécurisée avec photo biométrique,
+      données biographiques, catégories autorisées, date d'expiration, QR Code
+      anti-contrefaçon ATD).
+    inputs:
+      - "Dossier complet validé"
+      - "Relevés de notes certifiés"
+      - "Données biométriques du candidat"
+    output: "Permis de conduire produit + archivage numérique"
+
+  - step: 9
+    name: "Notification et retrait du permis — PHYSIQUE"
+    actor: "Système / Citoyen"
+    system: "XFlow / XPortal"
+    action: >
+      Le citoyen est notifié par SMS/Email que son permis est prêt.
+      Il se rend au guichet DTRF ou au bureau régional de son choix
+      (Lomé, Kara, Atakpamé, Sokodé, Dapaong) pour le retrait physique
+      du titre sécurisé. Signature manuscrite obligatoire au retrait.
+    inputs:
+      - "Permis produit"
+      - "Lieu de retrait choisi"
+    output: "Permis remis au citoyen + clôture du dossier"

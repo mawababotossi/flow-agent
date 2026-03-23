@@ -1,0 +1,106 @@
+Rubrique,Détail
+,,
+IDENTIFICATION DU SERVICE,,
+Nom du service,Demande et délivrance du permis de conduire (catégories A / B / C / D / E)
+Organisme,Ministère des Transports / Direction des Transports Routiers et Ferroviaires (DTRF)
+Direction,Direction des Transports Routiers et Ferroviaires (DTRF)
+Rôle de la direction,Réguler et superviser la circulation routière ; gérer les examens du code et du circuit ; délivrer les permis de conduire sur le territoire togolais.
+,,
+CONTEXTE ET BASE LÉGALE,,
+Description du service,"Le permis de conduire est le titre officiel autorisant son titulaire à conduire un véhicule à moteur sur la voie publique. Il est délivré après réussite aux épreuves théoriques (code) et pratiques (circuit et route), organisées par la DTRF en liaison avec les auto-écoles agréées."
+Texte réglementaire,Loi n°2004-003 du 24 janvier 2004 relative à la sécurité routière au Togo et ses décrets d'application
+Parties non digitalisables selon la loi,"L'épreuve pratique de conduite (circuit + route) doit obligatoirement se dérouler en présence physique d'un inspecteur assermenté. La signature du permis par le candidat est physiquement requise."
+Signature électronique reconnue,Non — le permis est un document sécurisé à signature manuscrite.
+Documentation officielle existante,Oui — guide de l'examinateur (DTRF) + arrêté fixant les barèmes de notation
+Date de création du service,Le permis de conduire togolais existe depuis 1975. Réforme majeure en 2004 avec l'introduction des catégories CE / DE.
+,,
+USAGERS,,
+Public cible,"Tout citoyen togolais ou résident légal âgé d'au moins 18 ans (catégorie B) souhaitant conduire un véhicule à moteur. Pour la catégorie A (moto) : 16 ans minimum. Pour les catégories C et D (poids lourds, bus) : 21 ans minimum avec permis B déjà acquis."
+Conditions d'éligibilité,"• Être âgé du minimum requis selon la catégorie demandée
+• Fournir un certificat médical d'aptitude à la conduite (vision, réflexes, santé générale)
+• Avoir suivi la formation théorique et pratique dans une auto-école agréée par la DTRF
+• Avoir réussi l'épreuve du code de la route (minimum 35/40)
+• Avoir réussi l'épreuve de conduite (circuit + route, notée sur 20, minimum 10/20)"
+Volume estimé,"Environ 8 000 permis délivrés par an sur l'ensemble du territoire, avec une forte concentration à Lomé (≈ 60 %)."
+,,
+PIÈCES JUSTIFICATIVES,,
+Pour la première inscription à l'examen,"• Formulaire de demande d'inscription (fourni par l'auto-école ou la DTRF)
+• Copie de la pièce d'identité nationale ou passeport en cours de validité
+• Copie de l'acte de naissance
+• Certificat médical d'aptitude à la conduite (délivré par un médecin agréé, daté de moins de 3 mois)
+• 4 photos d'identité format 4x4 cm
+• Attestation de formation délivrée par l'auto-école agréée
+• Reçu de paiement des frais d'inscription à l'examen"
+Pour la délivrance du permis après succès,"• Formulaire de demande de délivrance du permis
+• Copie de la pièce d'identité
+• Relevé de notes certifié par l'examinateur
+• 2 photos supplémentaires format 4x4 cm
+• Reçu de paiement des droits de délivrance du permis"
+Pour le duplicata (perte ou vol),"• Déclaration de perte ou de vol établie à la police ou gendarmerie (original)
+• Copie de la pièce d'identité
+• 2 photos format 4x4 cm
+• Reçu de paiement des frais de duplicata (15 000 FCFA)
+• Copie du permis perdu si disponible"
+Coût,"Inscription à l'examen : 5 000 FCFA (fixe)
+Droits de délivrance du permis : 15 000 FCFA (fixe)
+Duplicata : 15 000 FCFA (fixe)
+Paiement accepté : espèces en caisse DTRF, Flooz, TMoney"
+,,
+ÉTAPES DU PROCESSUS CÔTÉ CITOYEN,,
+Étape 1,S'inscrire dans une auto-école agréée par la DTRF et suivre la formation théorique (code) et pratique (conduite).
+Étape 2,"Se présenter à la DTRF ou au bureau régional concerné pour déposer le dossier d'inscription à l'examen (pièces listées ci-dessus). Le dépôt est physique, en guichet."
+Étape 3,"Passer l'épreuve théorique (code de la route) : QCM sur 40 questions, organisée par la DTRF dans ses centres d'examen. Résultats communiqués le jour même."
+Étape 4,"En cas de succès au code, passer l'épreuve pratique (circuit fermé + route ouverte) avec un inspecteur de la DTRF. L'épreuve est organisée par sessions, une à deux fois par mois."
+Étape 5,"En cas de succès aux deux épreuves, déposer le dossier de délivrance (pièces supplémentaires + paiement). La DTRF produit le permis sous 15 à 30 jours ouvrables."
+Étape 6,"Retrait du permis physique au guichet de la DTRF ou dans l'un des bureaux régionaux (Kara, Atakpamé, Sokodé, Dapaong) selon le choix exprimé lors de l'inscription."
+En cas d'échec à une épreuve,"Le candidat peut se représenter à la session suivante sans repasser l'intégralité du processus. Après 3 échecs consécutifs à l'épreuve pratique, une nouvelle formation obligatoire de 5 heures est exigée."
+,,
+ACTIONS INTERNES DES AGENTS,,
+Agent de réception,"Vérification de la complétude du dossier physique, attribution d'un numéro de dossier, enregistrement dans le registre papier et dans Excel."
+Inspecteur code,"Organisation et surveillance de l'épreuve QCM, correction et notation, transmission des résultats au registre central."
+Inspecteur conduite,"Évaluation de la maîtrise du véhicule selon la grille normalisée, rédaction du relevé de notes, signature et transmission au chef de service."
+Agent de production,"Saisie des données du candidat dans le système de personnalisation du permis, impression et laminage du titre, signature du directeur."
+Chef de service,Validation finale et signature du permis. Archivage du dossier et mise à jour du registre national.
+,,
+GOULOTS D'ÉTRANGLEMENT IDENTIFIÉS,,
+Goulot 1,"Dépôt physique obligatoire : le citoyen doit se déplacer plusieurs fois (inscription, résultats, délivrance), souvent depuis les régions."
+Goulot 2,"Délai de production du permis physique : 15 à 30 jours, lié à la personnalisation centralisée à Lomé pour les régions."
+Goulot 3,"Gestion manuelle des inscriptions aux sessions d'examen (cahiers papier + Excel) : risques d'erreurs, doublons, pertes de données."
+Goulot 4,"Absence de notification automatique : le citoyen ne sait pas quand son permis est prêt, il doit téléphoner ou se déplacer."
+Goulot 5,"Paiement uniquement en espèces ou en caisse physique : file d'attente, risques de détournement, traçabilité limitée."
+,,
+OUTILS ACTUELS,,
+Système de gestion,Excel (tableur local) pour le registre des inscrits et des résultats
+Personnalisation du titre,"Logiciel dédié (licence DTRF) sur un seul poste à Lomé, non connecté aux bureaux régionaux"
+Stockage des dossiers,"Classeurs physiques archivés dans les locaux DTRF (Lomé). Bureaux régionaux : papier exclusivement."
+Base de données centralisée,Non — chaque bureau régional tient son propre registre sans synchronisation
+,,
+STATISTIQUES,,
+Demandes par jour,Environ 30 (Lomé) / 5 en moyenne (bureaux régionaux)
+Demandes par mois,Environ 1 000
+Demandes par an,Environ 8 000 permis délivrés (toutes catégories confondues)
+Taux de dossiers incomplets ou rejetés au dépôt,Environ 20 % (pièces manquantes ou non conformes)
+Taux d'échec à l'épreuve du code,Environ 35 %
+Taux d'échec à l'épreuve pratique,Environ 25 %
+Nombre d'agents impliqués,12 agents à Lomé + 3 à 5 par bureau régional
+Périodes de forte activité,"Juillet–août (vacances scolaires) et janvier–février (rentrée universitaire)"
+,,
+DOCUMENT DÉLIVRÉ,,
+Nature du document,"Permis de conduire sécurisé (carte plastifiée format ID-1, avec photo, données biographiques, catégories autorisées et date d'expiration)"
+Durée de validité,"10 ans pour les catégories A et B ; 5 ans pour les catégories C, D, E (poids lourds et transports en commun)"
+,,
+DIFFICULTÉS ET AXES D'AMÉLIORATION,,
+Principales difficultés,"• Absence d'un système d'information centralisé et en réseau
+• Délais de délivrance jugés longs par les usagers
+• Manque de transparence sur le statut du dossier
+• Personnel insuffisant dans les bureaux régionaux
+• Falsification de permis (absence de dispositif anti-contrefaçon moderne)"
+Ce qui pourrait être digitalisé,"• Dépôt du dossier d'inscription en ligne (portail citoyen)
+• Paiement des frais en ligne (Flooz, TMoney, Visa)
+• Inscription aux sessions d'examen en ligne avec calendrier visible
+• Notification automatique par SMS/email à chaque étape
+• Consultation du statut du dossier en temps réel
+• Production et envoi numérique du relevé de notes"
+Ce qui reste physique obligatoirement,"• L'épreuve pratique de conduite (présence inspecteur obligatoire)
+• Le retrait du permis physique (titre sécurisé)"
+Vision future selon les agents,"Le citoyen devrait pouvoir soumettre son dossier, payer, suivre son dossier et recevoir ses résultats depuis un portail web ou mobile. Seules les épreuves et le retrait du titre resteraient physiques."

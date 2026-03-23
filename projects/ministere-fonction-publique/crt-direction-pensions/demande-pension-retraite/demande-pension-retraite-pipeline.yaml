@@ -1,0 +1,51 @@
+pipeline:
+  - step: 1
+    name: "Soumission de la demande"
+    actor: "Citoyen"
+    system: "XPortal"
+    action: "Remplissage du formulaire et upload des pièces"
+    inputs: ["Données e-ID", "Dernier bulletin de salaire", "RIB"]
+    output: "Dossier créé (ID_Dossier)"
+
+  - step: 2
+    name: "Vérification des données de carrière"
+    actor: "Système"
+    system: "XFlow / ANTILOPE"
+    action: "Récupération automatique des états de servies et calcul"
+    inputs: ["ID_Dossier", "Matricule"]
+    output: "Fiche de calcul générée"
+
+  - step: 3
+    name: "Instruction et Validation Liquidateur"
+    actor: "Liquidateur CRT"
+    system: "XFlow"
+    action: "Vérification de la conformité du dossier et du calcul"
+    inputs: ["Fiche de calcul", "Pièces jointes"]
+    output: "Dossier validé ou Demande de correction"
+
+  - step: 3a
+    name: "Boucle de correction"
+    actor: "Citoyen"
+    system: "XPortal"
+    action: "Modification des données ou pièces erronées"
+    inputs: ["Motif de correction"]
+    output: "Dossier resoumis"
+    retry:
+      max: 3
+      timer: "P15D"
+
+  - step: 4
+    name: "Validation Finale et Signature"
+    actor: "DG CRT"
+    system: "XFlow"
+    action: "Approbation finale de la liquidation"
+    inputs: ["Dossier validé"]
+    output: "Titre de pension généré"
+
+  - step: 5
+    name: "Notification et Mise à disposition"
+    actor: "Système"
+    system: "XPortal / SMS"
+    action: "Envoi du titre de pension et notification"
+    inputs: ["Titre de pension PDF"]
+    output: "Citoyen notifié"

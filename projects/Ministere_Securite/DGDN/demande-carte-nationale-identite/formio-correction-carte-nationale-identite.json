@@ -1,0 +1,265 @@
+{
+  "title": "Correction — Demande de CNI",
+  "name": "correctionCNI",
+  "path": "correction-carte-nationale-identite",
+  "type": "form",
+  "display": "wizard",
+  "i18n": {
+    "en": {
+      "Correction du dossier": "File Correction",
+      "Récapitulatif et resoumission": "Summary and Resubmission",
+      "Motif de la correction demandée": "Reason for requested correction",
+      "Pièces corrigées": "Corrected documents",
+      "Commentaire (optionnel)": "Comment (optional)",
+      "Ce champ est obligatoire": "This field is required",
+      "Format de fichier non accepté. Formats autorisés : PDF, JPG, PNG": "File format not accepted. Allowed formats: PDF, JPG, PNG",
+      "La taille du fichier ne doit pas dépasser 2 Mo": "File size must not exceed 2 MB",
+      "Je certifie que les corrections apportées sont exactes": "I certify that the corrections made are accurate"
+    }
+  },
+  "config": {
+    "development": {
+      "apiBaseUrl": "https://api.dev.gouv.tg/api/v1/admin",
+      "appName": "Développement",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "sandbox": {
+      "apiBaseUrl": "https://api.sandbox.gouv.tg/api/v1/admin",
+      "appName": "Sandbox",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "preprod": {
+      "apiBaseUrl": "https://api.preprod.gouv.tg/api/v1/admin",
+      "appName": "Pré-production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "production": {
+      "apiBaseUrl": "https://api.gouv.tg/api/v1/admin",
+      "appName": "Production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    }
+  },
+  "components": [
+    {
+      "title": "Correction du dossier",
+      "label": "Page 1",
+      "type": "panel",
+      "key": "stepCorrection",
+      "buttonSettings": { "previous": false, "cancel": false, "next": true },
+      "components": [
+        {
+          "tag": "h3",
+          "content": "Correction de votre dossier CNI",
+          "key": "titreCorrection",
+          "type": "htmlelement",
+          "input": false
+        },
+        {
+          "tag": "div",
+          "key": "motifBlock",
+          "type": "htmlelement",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "validateOn": "change",
+          "calculateValue": "var motif=data.motifCorrection||'Motif non renseigné';value='<div style=\"background:#fff3cd;border:1px solid #ffc107;border-radius:10px;padding:20px;margin-bottom:20px;\"><div style=\"font-size:16px;font-weight:700;margin-bottom:8px;color:#856404;\">Motif de correction indiqué par l\\'agent :</div><div style=\"font-size:15px;color:#533f03;line-height:1.6;\">'+motif+'</div></div>'"
+        },
+        {
+          "label": "Motif de correction (reçu de l'agent)",
+          "key": "motifCorrection",
+          "type": "hidden",
+          "input": true,
+          "defaultValue": "",
+          "persistent": true
+        },
+        {
+          "tag": "div",
+          "content": "<p style=\"font-size:15px;color:#374151;margin-bottom:10px;\">Veuillez soumettre les pièces corrigées ou manquantes demandées par l'agent du Centre de Documentation. Les pièces déjà conformes n'ont pas besoin d'être re-soumises.</p>",
+          "key": "instructionsCorrection",
+          "type": "htmlelement",
+          "input": false
+        },
+        {
+          "label": "Copie de l'acte de naissance (corrigé/remplacé)",
+          "key": "acteDeNaissanceCorrige",
+          "type": "file",
+          "input": true,
+          "storage": "url",
+          "url": "",
+          "fileTypes": [{ "label": "PDF / JPG / PNG", "value": "application/pdf,image/jpeg,image/png" }],
+          "fileMaxSize": "2MB",
+          "multiple": false,
+          "validate": { "required": false },
+          "errors": {
+            "pattern": "Format de fichier non accepté. Formats autorisés : PDF, JPG, PNG",
+            "maxSize": "La taille du fichier ne doit pas dépasser 2 Mo"
+          },
+          "persistent": true,
+          "validateOn": "blur",
+          "tooltip": "Soumettez uniquement si l'agent a signalé un problème avec ce document"
+        },
+        {
+          "label": "Ancienne CNI (corrigée/remplacée)",
+          "key": "ancienneCniCorrigee",
+          "type": "file",
+          "input": true,
+          "storage": "url",
+          "url": "",
+          "fileTypes": [{ "label": "PDF / JPG / PNG", "value": "application/pdf,image/jpeg,image/png" }],
+          "fileMaxSize": "2MB",
+          "multiple": false,
+          "validate": { "required": false },
+          "errors": { "maxSize": "La taille du fichier ne doit pas dépasser 2 Mo" },
+          "persistent": true,
+          "validateOn": "blur",
+          "tooltip": "Soumettez uniquement si l'agent a signalé un problème avec ce document"
+        },
+        {
+          "label": "Déclaration de perte/vol (corrigée/remplacée)",
+          "key": "declarationPerteCorrigee",
+          "type": "file",
+          "input": true,
+          "storage": "url",
+          "url": "",
+          "fileTypes": [{ "label": "PDF / JPG / PNG", "value": "application/pdf,image/jpeg,image/png" }],
+          "fileMaxSize": "2MB",
+          "multiple": false,
+          "validate": { "required": false },
+          "errors": { "maxSize": "La taille du fichier ne doit pas dépasser 2 Mo" },
+          "persistent": true,
+          "validateOn": "blur",
+          "tooltip": "Soumettez uniquement si l'agent a signalé un problème avec ce document"
+        },
+        {
+          "label": "CNI du représentant légal (corrigée/remplacée)",
+          "key": "cniRepresentantLegalCorrigee",
+          "type": "file",
+          "input": true,
+          "storage": "url",
+          "url": "",
+          "fileTypes": [{ "label": "PDF / JPG / PNG", "value": "application/pdf,image/jpeg,image/png" }],
+          "fileMaxSize": "2MB",
+          "multiple": false,
+          "validate": { "required": false },
+          "errors": { "maxSize": "La taille du fichier ne doit pas dépasser 2 Mo" },
+          "persistent": true,
+          "validateOn": "blur"
+        },
+        {
+          "label": "Commentaire (optionnel)",
+          "key": "commentaireCorrection",
+          "type": "textarea",
+          "input": true,
+          "rows": 4,
+          "placeholder": "Expliquez ici les corrections apportées ou tout élément supplémentaire à signaler à l'agent...",
+          "defaultValue": null,
+          "persistent": true,
+          "validateOn": "blur"
+        }
+      ],
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    },
+    {
+      "title": "Récapitulatif et resoumission",
+      "label": "Page 2",
+      "type": "panel",
+      "key": "stepRecapCorrection",
+      "buttonSettings": { "previous": true, "cancel": false, "next": false },
+      "components": [
+        {
+          "tag": "h3",
+          "content": "Récapitulatif de la correction",
+          "key": "titreRecapCorr",
+          "type": "htmlelement",
+          "input": false
+        },
+        {
+          "tag": "div",
+          "key": "recapCorrection",
+          "type": "htmlelement",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "validateOn": "change",
+          "calculateValue": "var pieces=[];if(data.acteDeNaissanceCorrige&&data.acteDeNaissanceCorrige.length){pieces.push('Acte de naissance');}if(data.ancienneCniCorrigee&&data.ancienneCniCorrigee.length){pieces.push('Ancienne CNI');}if(data.declarationPerteCorrigee&&data.declarationPerteCorrigee.length){pieces.push('Déclaration de perte/vol');}if(data.cniRepresentantLegalCorrigee&&data.cniRepresentantLegalCorrigee.length){pieces.push('CNI représentant légal');}var piecesHtml=pieces.length?pieces.map(function(p){return '<li>'+p+'</li>';}).join(''):'<li style=\"color:#ef4444;\">Aucune pièce soumise — veuillez ajouter au moins un document corrigé</li>';value='<div style=\"background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:20px;\"><div style=\"font-weight:700;margin-bottom:10px;\">Documents soumis :</div><ul style=\"margin:0;padding-left:20px;line-height:1.8;\">'+piecesHtml+'</ul>'+(data.commentaireCorrection?'<div style=\"margin-top:12px;font-weight:700;\">Commentaire :</div><div style=\"font-size:14px;color:#374151;margin-top:4px;\">'+data.commentaireCorrection+'</div>':'')+'</div>'"
+        },
+        {
+          "tag": "div",
+          "content": "<div style=\"background:#e8f5e9;border:1px solid #4caf50;border-radius:8px;padding:15px;margin:15px 0;\"><strong>Attention :</strong> En soumettant cette correction, votre dossier sera renvoyé à l'agent du Centre de Documentation pour une nouvelle vérification. Vous disposez d'un maximum de 3 tentatives de correction.</div>",
+          "key": "infoAttempts",
+          "type": "htmlelement",
+          "input": false
+        },
+        {
+          "label": "Je certifie que les corrections apportées sont exactes et que les documents soumis sont authentiques",
+          "tableView": false,
+          "validate": { "required": true },
+          "errors": { "required": "Vous devez certifier les corrections pour continuer" },
+          "key": "declarationCorrection",
+          "type": "checkbox",
+          "input": true,
+          "defaultValue": false,
+          "persistent": true,
+          "validateOn": "change"
+        },
+        {
+          "label": "Soumettre la correction",
+          "action": "submit",
+          "theme": "warning",
+          "key": "submitCorrection",
+          "type": "button",
+          "input": true,
+          "disableOnInvalid": true,
+          "block": true
+        }
+      ],
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    }
+  ]
+}

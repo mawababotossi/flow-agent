@@ -1,0 +1,852 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1qnx3d3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.17.0">
+  <bpmn:message id="MSG_ACTE_START" name="MSG_ACTE_START" />
+  <bpmn:message id="MSG_ACTE_DECISION" name="MSG_ACTE_DECISION" />
+  <bpmn:message id="MSG_ACTE_CORRECTION" name="MSG_ACTE_CORRECTION" />
+  <bpmn:message id="MSG_ACTE_RESUB" name="MSG_ACTE_RESUB" />
+  <bpmn:collaboration id="Collaboration_1sa8syn">
+    <bpmn:participant id="Participant_0re4blc" name="portail" processRef="Process_16xfaqc" />
+    <bpmn:participant id="Participant_153zd9e" name="xflow" processRef="Process_0tbnwk1" />
+    <bpmn:messageFlow id="Flow_012v68a" sourceRef="Activity_1y074cl" targetRef="Event_11woeyh" />
+    <bpmn:messageFlow id="Flow_1xh5meo" sourceRef="Activity_0kyzdcs" targetRef="Activity_0n8jo5z" />
+    <bpmn:messageFlow id="Flow_14m46lo" sourceRef="Activity_0w2rzgg" targetRef="Activity_06d6du0" />
+    <bpmn:messageFlow id="Flow_1yjyyj5" sourceRef="Activity_1xk5qhh" targetRef="Activity_05li407" />
+    <bpmn:messageFlow id="MF_Start" sourceRef="Activity_1y074cl" targetRef="Event_11woeyh" />
+    <bpmn:messageFlow id="MF_Decision" sourceRef="Activity_0kyzdcs" targetRef="Activity_0n8jo5z" />
+    <bpmn:messageFlow id="MF_Correction" sourceRef="Activity_0w2rzgg" targetRef="Activity_06d6du0" />
+    <bpmn:messageFlow id="MF_Resub" sourceRef="Activity_1xk5qhh" targetRef="Activity_05li407" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_16xfaqc" isExecutable="true" camunda:versionTag="1">
+    <bpmn:startEvent id="Event_0eupa43" name="Début" camunda:modelerTemplate="tg.gouv.gnspd.startEvent" camunda:type="external" camunda:topic="flow-start">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdStepName">Début</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdDescription">Le citoyen soumet sa demande d'acte d'état civil depuis XPortal</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdPriority">10</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdExecution">PORTAIL</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdPaymentAmount">0</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCalculationOperator">ADDITION</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCalculationVar1" />
+          <camunda:inputParameter name="gnspdCalculationVar2" />
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+          <camunda:inputParameter name="development">{}</camunda:inputParameter>
+          <camunda:inputParameter name="sandbox">{}</camunda:inputParameter>
+          <camunda:inputParameter name="preproduction">{}</camunda:inputParameter>
+          <camunda:inputParameter name="production">{}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_16nyqpy</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_16nyqpy" sourceRef="Event_0eupa43" targetRef="Activity_1y074cl" />
+    <bpmn:sendTask id="Activity_1y074cl" name="Envoie de la soumission au back office" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTargetElementType">bpmn:StartEvent</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageDestination">peer-xflow-local-sp</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_ACTE_START</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessage">$this.data.Event_0eupa43.parameters</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_16nyqpy</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yr8js8</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_0yr8js8" sourceRef="Activity_1y074cl" targetRef="Activity_0n8jo5z" />
+    <bpmn:exclusiveGateway id="Gateway_0rcrg3g">
+      <bpmn:incoming>Flow_1yq6wcs</bpmn:incoming>
+      <bpmn:outgoing>Flow_08jvd0e</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1sgtxhx</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1yq6wcs" sourceRef="Activity_0n8jo5z" targetRef="Gateway_0rcrg3g" />
+    <bpmn:sequenceFlow id="Flow_08jvd0e" name="Correction" sourceRef="Gateway_0rcrg3g" targetRef="Activity_06d6du0">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_0n8jo5z.parameters.message.action == 'correction'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:receiveTask id="Activity_0n8jo5z" name="Recevoir la décision" camunda:modelerTemplate="tg.gouv.gnspd.receiveTask" messageRef="MSG_ACTE_DECISION" camunda:type="external" camunda:topic="flow-receive-task">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0yr8js8</bpmn:incoming>
+      <bpmn:incoming>Flow_12gyyth</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yq6wcs</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:sequenceFlow id="Flow_10uwjfe" sourceRef="Activity_06d6du0" targetRef="Activity_0b661h2" />
+    <bpmn:userTask id="Activity_0b661h2" name="Resoumission" camunda:modelerTemplate="tg.gouv.gnspd.userTask" camunda:type="external" camunda:topic="flow-user-task">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskDescription">Le citoyen corrige les informations demandées</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdHandlerType">publish_submission</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSubmissionFormkey">demande-acte-etat-civil</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdFormSetting">$this.data.Activity_06d6du0.parameters.message</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSubmissionData" />
+          <camunda:inputParameter name="gnspdAttachments" />
+          <camunda:inputParameter name="gnspdCandidateCompanies" />
+          <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel">Corrections demandées</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder">2</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_10uwjfe</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wyriyl</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0wyriyl" sourceRef="Activity_0b661h2" targetRef="Activity_1xk5qhh" />
+    <bpmn:sendTask id="Activity_1xk5qhh" name="Envoie de la resoumission" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTargetElementType">bpmn:ReceiveTask</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageDestination">peer-xflow-local-sp</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_ACTE_RESUB</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessage">$this.data.Activity_0b661h2.result</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0wyriyl</bpmn:incoming>
+      <bpmn:outgoing>Flow_12gyyth</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:receiveTask id="Activity_06d6du0" name="Recevoir le formulaire de resoumission" camunda:modelerTemplate="tg.gouv.gnspd.receiveTask" messageRef="MSG_ACTE_CORRECTION" camunda:type="external" camunda:topic="flow-receive-task">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_08jvd0e</bpmn:incoming>
+      <bpmn:outgoing>Flow_10uwjfe</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:endEvent id="Event_0qb8hal" name="fin process portail" camunda:modelerTemplate="tg.gouv.gnspd.endEvent" camunda:type="external" camunda:topic="flow-end-event">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1sgtxhx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1sgtxhx" name="Terminé" sourceRef="Gateway_0rcrg3g" targetRef="Event_0qb8hal">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_0n8jo5z.parameters.message.action != 'correction'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_12gyyth" sourceRef="Activity_1xk5qhh" targetRef="Activity_0n8jo5z" />
+  </bpmn:process>
+  <bpmn:process id="Process_0tbnwk1" isExecutable="true" camunda:versionTag="1.0" camunda:historyTimeToLive="180">
+    <bpmn:startEvent id="Event_11woeyh" name="Initialisation du processus" camunda:modelerTemplate="tg.gouv.gnspd.startEvent" camunda:type="external" camunda:topic="flow-start">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdStepName">Début</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdDescription">Réception de la demande d'acte d'état civil depuis XPortal</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdPriority">10</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdExecution">PORTAIL</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdPaymentAmount">0</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCalculationOperator">ADDITION</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCalculationVar1" />
+          <camunda:inputParameter name="gnspdCalculationVar2" />
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+          <camunda:inputParameter name="development">{
+  "API": {
+    "BASE_URL": "https://api.dev.gouv.tg",
+    "SECRET_API_KEY": "{dbkms:ACTE_API_KEY}"
+  }
+}</camunda:inputParameter>
+          <camunda:inputParameter name="sandbox">{
+  "API": {
+    "BASE_URL": "https://api.sandbox.gouv.tg",
+    "SECRET_API_KEY": "{dbkms:ACTE_API_KEY}"
+  }
+}</camunda:inputParameter>
+          <camunda:inputParameter name="preproduction">{
+  "API": {
+    "BASE_URL": "https://api.preprod.gouv.tg",
+    "SECRET_API_KEY": "{dbkms:ACTE_API_KEY}"
+  }
+}</camunda:inputParameter>
+          <camunda:inputParameter name="production">{
+  "API": {
+    "BASE_URL": "https://api.gouv.tg",
+    "SECRET_API_KEY": "{dbkms:ACTE_API_KEY}"
+  }
+}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0fg3f7b</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_0pcqc6r" name="Authentification" camunda:modelerTemplate="tg.gouv.gnspd.restBuilder" camunda:type="external" camunda:topic="flow-rest-builder">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdRestType">bearerToken</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestMethod">POST</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestAuthUrl">$this.data.Event_11woeyh.parameters.configuration.API.BASE_URL + '/api/auth'</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestUser">$this.data.Event_11woeyh.parameters.configuration.API.SECRET_API_KEY</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestPassword" />
+          <camunda:inputParameter name="gnspdRestDataUrl">$this.data.Event_11woeyh.parameters.configuration.API.BASE_URL + '/api/auth/token'</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestSendData">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSystemData">${"applicant": this.data.applicant, "recordUid": this.data.recordUid}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTimeOutValue">30000</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0fg3f7b</bpmn:incoming>
+      <bpmn:incoming>Flow_0wdqvl3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wte6pp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1qwyxoz" name="Récupération du token" camunda:modelerTemplate="tg.gouv.gnspd.restBuilder" camunda:type="external" camunda:topic="flow-rest-builder">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdRestType">bearerToken</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestMethod">GET</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestAuthUrl">$this.data.Event_11woeyh.parameters.configuration.API.BASE_URL + '/api/auth'</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestUser">$this.data.Event_11woeyh.parameters.configuration.API.SECRET_API_KEY</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestPassword" />
+          <camunda:inputParameter name="gnspdRestDataUrl">$this.data.Event_11woeyh.parameters.configuration.API.BASE_URL + '/api/auth/me'</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestSendData">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSystemData">${"applicant": this.data.applicant, "recordUid": this.data.recordUid}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTimeOutValue">30000</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0wte6pp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0o5161m</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0fg3f7b" sourceRef="Event_11woeyh" targetRef="Activity_0pcqc6r" />
+    <bpmn:sequenceFlow id="Flow_0wte6pp" sourceRef="Activity_0pcqc6r" targetRef="Activity_1qwyxoz" />
+    <bpmn:sequenceFlow id="Flow_0o5161m" sourceRef="Activity_1qwyxoz" targetRef="Activity_1595seq" />
+    <bpmn:sequenceFlow id="Flow_0yw2z6w" sourceRef="Activity_1595seq" targetRef="Activity_18rrwyk" />
+    <bpmn:serviceTask id="Activity_18rrwyk" name="Récupérer le genre" camunda:modelerTemplate="tg.gouv.gnspd.restBuilder" camunda:type="external" camunda:topic="flow-rest-builder">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdRestType">bearerToken</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestMethod">GET</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestAuthUrl">$this.data.Event_11woeyh.parameters.configuration.API.BASE_URL + '/api/auth'</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestUser">$this.data.Event_11woeyh.parameters.configuration.API.SECRET_API_KEY</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestPassword" />
+          <camunda:inputParameter name="gnspdRestDataUrl">$(this.data.Event_11woeyh.parameters.configuration.API.BASE_URL + '/api/genre/' + this.data.Event_11woeyh.parameters.submissionData.genre)</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestSendData">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSystemData">${"applicant": this.data.applicant, "recordUid": this.data.recordUid}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTimeOutValue">30000</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0yw2z6w</bpmn:incoming>
+      <bpmn:outgoing>Flow_1orhc0l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1595seq" name="Préparation des données" camunda:modelerTemplate="tg.gouv.gnspd.restBuilder" camunda:type="external" camunda:topic="flow-rest-builder">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdRestType">bearerToken</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestMethod">POST</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestAuthUrl">$this.data.Event_11woeyh.parameters.configuration.API.BASE_URL + '/api/auth'</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestUser">$this.data.Event_11woeyh.parameters.configuration.API.SECRET_API_KEY</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestPassword" />
+          <camunda:inputParameter name="gnspdRestDataUrl">$this.data.Event_11woeyh.parameters.configuration.API.BASE_URL + '/api/actes/prepare'</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestSendData">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdIsCustomData">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdDataFormat">JSON</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSingleVariableKey">$this.data.Event_11woeyh.parameters.submissionData</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSystemData">${"applicant": this.data.applicant, "recordUid": this.data.recordUid}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTimeOutValue">60000</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0o5161m</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yw2z6w</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1orhc0l" sourceRef="Activity_18rrwyk" targetRef="Activity_0lnvhqe" />
+    <bpmn:serviceTask id="Activity_0lnvhqe" name="Envoie des données et attente de retour" camunda:modelerTemplate="tg.gouv.gnspd.restBuilder" camunda:type="external" camunda:topic="flow-rest-builder">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdRestType">bearerToken</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestMethod">POST</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestAuthUrl">$this.data.Event_11woeyh.parameters.configuration.API.BASE_URL + '/api/auth'</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestUser">$this.data.Event_11woeyh.parameters.configuration.API.SECRET_API_KEY</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestPassword" />
+          <camunda:inputParameter name="gnspdRestDataUrl">$this.data.Event_11woeyh.parameters.configuration.API.BASE_URL + '/api/actes/soumettre'</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdRestSendData">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdIsCustomData">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdDataFormat">JSON</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSingleVariableKey">$this.data.Activity_1595seq.result</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSystemData">${"applicant": this.data.applicant, "recordUid": this.data.recordUid}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTimeOutValue">120000</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1orhc0l</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nqd03l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1nqd03l" sourceRef="Activity_0lnvhqe" targetRef="Activity_0axybqy" />
+    <bpmn:sequenceFlow id="Flow_0xwelgj" sourceRef="Activity_0axybqy" targetRef="Activity_0kyzdcs" />
+    <bpmn:sequenceFlow id="Flow_03ssbkt" name="succes" sourceRef="Gateway_0at2ui1" targetRef="Activity_19emw9g">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_0lnvhqe.result.title == "succes"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_15qmsbk" name="correction" sourceRef="Gateway_0at2ui1" targetRef="Activity_1t5oy86">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_0lnvhqe.result.title == 'correction'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0h6ghee" name="rejet" sourceRef="Gateway_0at2ui1" targetRef="Activity_0q61o8d">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_0lnvhqe.result.title == "rejet";</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_0axybqy" name="Notification utilisateur" camunda:modelerTemplate="tg.gouv.gnspd.sendNotification" camunda:type="external" camunda:topic="flow-notify">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdNotifySendEmail">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyEmail">$this.data.applicant.email</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyTemplateEmail">01KHBXDFGV1NTPHAR80ZSWEZXH</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyContentEmail">${"record_id": this.data.xref}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifySendSMS">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyPhone">$this.data.applicant.phone</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyTemplateSMS">01KHBXF5B8B8WH9QFDZP607F5M</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyContentSMS">${"record_id": this.data.xref}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyInApp">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyTemplateInApp">01KHBXFNJPJT5WZ3K0W9BBDF3N</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyContentInApp">${"record_id": this.data.xref}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyAttachment" />
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1nqd03l</bpmn:incoming>
+      <bpmn:outgoing>Flow_0xwelgj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0fxbtg6" sourceRef="Activity_0q61o8d" targetRef="Event_1f2mp6u" />
+    <bpmn:sequenceFlow id="Flow_1cbhapr" sourceRef="Activity_19emw9g" targetRef="Event_0pscqm7" />
+    <bpmn:sequenceFlow id="Flow_0m78mn5" sourceRef="Activity_1t5oy86" targetRef="Activity_0w2rzgg" />
+    <bpmn:sequenceFlow id="Flow_0zsfv8h" sourceRef="Activity_0w2rzgg" targetRef="Activity_05li407" />
+    <bpmn:sequenceFlow id="Flow_0wdqvl3" sourceRef="Activity_05li407" targetRef="Activity_0pcqc6r" />
+    <bpmn:exclusiveGateway id="Gateway_0at2ui1" name="Validation">
+      <bpmn:incoming>Flow_0iwicjc</bpmn:incoming>
+      <bpmn:outgoing>Flow_03ssbkt</bpmn:outgoing>
+      <bpmn:outgoing>Flow_15qmsbk</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0h6ghee</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="Activity_0w2rzgg" name="Envoie du formulaire de correction" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTargetElementType">bpmn:ReceiveTask</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageDestination">ch-portail-local-sp</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_ACTE_CORRECTION</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessage">${"action": "correction", "motif": this.data.Activity_0lnvhqe.result.motif ?? "", "reference": this.data.xref}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0m78mn5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zsfv8h</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:receiveTask id="Activity_05li407" name="Recevoir la resoumission" camunda:modelerTemplate="tg.gouv.gnspd.receiveTask" messageRef="MSG_ACTE_RESUB" camunda:type="external" camunda:topic="flow-receive-task">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0zsfv8h</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wdqvl3</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:sequenceFlow id="Flow_0iwicjc" sourceRef="Activity_0kyzdcs" targetRef="Gateway_0at2ui1" />
+    <bpmn:sendTask id="Activity_0kyzdcs" name="Envoie de la décision" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTargetElementType">bpmn:ReceiveTask</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageDestination">ch-portail-local-sp</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_ACTE_DECISION</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessage">$this.data.Activity_0lnvhqe.result</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0xwelgj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0iwicjc</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="Event_1f2mp6u" name="fin rejet" camunda:modelerTemplate="tg.gouv.gnspd.endEvent" camunda:type="external" camunda:topic="flow-end-event">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0fxbtg6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_0pscqm7" name="fin succès" camunda:modelerTemplate="tg.gouv.gnspd.endEvent" camunda:type="external" camunda:topic="flow-end-event">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1cbhapr</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_0q61o8d" name="Notification de rejet" camunda:modelerTemplate="tg.gouv.gnspd.sendNotification" camunda:type="external" camunda:topic="flow-notify">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdNotifySendEmail">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyEmail">$this.data.applicant.email</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyTemplateEmail">01KHBXDFGV1NTPHAR80ZSWEZXH</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyContentEmail">${"record_id": this.data.xref, "reason": this.data.Activity_0lnvhqe.result.motif ?? ""}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifySendSMS">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyPhone">$this.data.applicant.phone</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyTemplateSMS">01KHBXF5B8B8WH9QFDZP607F5M</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyContentSMS">${"record_id": this.data.xref}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyInApp">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyTemplateInApp">01KHBXFNJPJT5WZ3K0W9BBDF3N</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyContentInApp">${"record_id": this.data.xref}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyAttachment" />
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0h6ghee</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fxbtg6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_19emw9g" name="Notification de disponibilité" camunda:modelerTemplate="tg.gouv.gnspd.sendNotification" camunda:type="external" camunda:topic="flow-notify">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdNotifySendEmail">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyEmail">$this.data.applicant.email</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyTemplateEmail">01KHBXDFGV1NTPHAR80ZSWEZXH</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyContentEmail">${"record_id": this.data.xref}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifySendSMS">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyPhone">$this.data.applicant.phone</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyTemplateSMS">01KHBXF5B8B8WH9QFDZP607F5M</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyContentSMS">${"record_id": this.data.xref}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyInApp">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyTemplateInApp">01KHBXFNJPJT5WZ3K0W9BBDF3N</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyContentInApp">${"record_id": this.data.xref}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyAttachment" />
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_03ssbkt</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cbhapr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1t5oy86" name="Notification de correction" camunda:modelerTemplate="tg.gouv.gnspd.sendNotification" camunda:type="external" camunda:topic="flow-notify">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdNotifySendEmail">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyEmail">$this.data.applicant.email</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyTemplateEmail">01KHBXDFGV1NTPHAR80ZSWEZXH</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyContentEmail">${"record_id": this.data.xref, "reason": this.data.Activity_0lnvhqe.result.motif ?? ""}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifySendSMS">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyPhone">$this.data.applicant.phone</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyTemplateSMS">01KHBXF5B8B8WH9QFDZP607F5M</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyContentSMS">${"record_id": this.data.xref}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyInApp">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyTemplateInApp">01KHBX6AEWCBG136176D2GMZM3</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyContentInApp">${"record_id": this.data.xref, "reason": this.data.Activity_0lnvhqe.result.motif ?? ""}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyAttachment" />
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_15qmsbk</bpmn:incoming>
+      <bpmn:outgoing>Flow_0m78mn5</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1sa8syn">
+      <bpmndi:BPMNShape id="Participant_0re4blc_di" bpmnElement="Participant_0re4blc" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="1350" height="480" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0eupa43_di" bpmnElement="Event_0eupa43">
+        <dc:Bounds x="232" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="235" y="275" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10054rk_di" bpmnElement="Activity_1y074cl">
+        <dc:Bounds x="320" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0rcrg3g_di" bpmnElement="Gateway_0rcrg3g" isMarkerVisible="true">
+        <dc:Bounds x="645" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0swxbyw_di" bpmnElement="Activity_0n8jo5z">
+        <dc:Bounds x="480" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gsdw61_di" bpmnElement="Activity_0b661h2">
+        <dc:Bounds x="1070" y="320" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1v6tlb2_di" bpmnElement="Activity_1xk5qhh">
+        <dc:Bounds x="1310" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0fymmer_di" bpmnElement="Activity_06d6du0">
+        <dc:Bounds x="830" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0qb8hal_di" bpmnElement="Event_0qb8hal">
+        <dc:Bounds x="832" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="807" y="275" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_16nyqpy_di" bpmnElement="Flow_16nyqpy">
+        <di:waypoint x="268" y="250" />
+        <di:waypoint x="320" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yr8js8_di" bpmnElement="Flow_0yr8js8">
+        <di:waypoint x="420" y="250" />
+        <di:waypoint x="480" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yq6wcs_di" bpmnElement="Flow_1yq6wcs">
+        <di:waypoint x="580" y="250" />
+        <di:waypoint x="645" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08jvd0e_di" bpmnElement="Flow_08jvd0e">
+        <di:waypoint x="670" y="275" />
+        <di:waypoint x="670" y="360" />
+        <di:waypoint x="830" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10uwjfe_di" bpmnElement="Flow_10uwjfe">
+        <di:waypoint x="930" y="360" />
+        <di:waypoint x="1070" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wyriyl_di" bpmnElement="Flow_0wyriyl">
+        <di:waypoint x="1170" y="360" />
+        <di:waypoint x="1310" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sgtxhx_di" bpmnElement="Flow_1sgtxhx">
+        <di:waypoint x="695" y="250" />
+        <di:waypoint x="832" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12gyyth_di" bpmnElement="Flow_12gyyth">
+        <di:waypoint x="1410" y="360" />
+        <di:waypoint x="1470" y="360" />
+        <di:waypoint x="1470" y="500" />
+        <di:waypoint x="530" y="500" />
+        <di:waypoint x="530" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_153zd9e_di" bpmnElement="Participant_153zd9e" isHorizontal="true">
+        <dc:Bounds x="160" y="840" width="2400" height="860" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_11woeyh_di" bpmnElement="Event_11woeyh">
+        <dc:Bounds x="242" y="1152" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="224" y="1195" width="73" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0hr6u2r_di" bpmnElement="Activity_0pcqc6r">
+        <dc:Bounds x="330" y="1130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vbdkmu_di" bpmnElement="Activity_1qwyxoz">
+        <dc:Bounds x="490" y="1130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kczvtz_di" bpmnElement="Activity_18rrwyk">
+        <dc:Bounds x="810" y="1130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0sukpay_di" bpmnElement="Activity_1595seq">
+        <dc:Bounds x="650" y="1130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lpkw24_di" bpmnElement="Activity_0lnvhqe">
+        <dc:Bounds x="970" y="1130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01pwfu4_di" bpmnElement="Activity_0axybqy">
+        <dc:Bounds x="1130" y="1130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0at2ui1_di" bpmnElement="Gateway_0at2ui1" isMarkerVisible="true">
+        <dc:Bounds x="1525" y="1145" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1566" y="1193" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_045zqk3_di" bpmnElement="Activity_0w2rzgg">
+        <dc:Bounds x="1940" y="1300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jtn9ei_di" bpmnElement="Activity_05li407">
+        <dc:Bounds x="2150" y="1300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1rh6bmi_di" bpmnElement="Activity_0kyzdcs">
+        <dc:Bounds x="1340" y="1130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1f2mp6u_di" bpmnElement="Event_1f2mp6u">
+        <dc:Bounds x="2052" y="992" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2052" y="1035" width="37" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0pscqm7_di" bpmnElement="Event_0pscqm7">
+        <dc:Bounds x="2062" y="1152" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2056" y="1195" width="49" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0u1ztpv_di" bpmnElement="Activity_0q61o8d">
+        <dc:Bounds x="1810" y="970" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13bq7ti_di" bpmnElement="Activity_19emw9g">
+        <dc:Bounds x="1810" y="1130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zrak3l_di" bpmnElement="Activity_1t5oy86">
+        <dc:Bounds x="1730" y="1300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0fg3f7b_di" bpmnElement="Flow_0fg3f7b">
+        <di:waypoint x="278" y="1170" />
+        <di:waypoint x="330" y="1170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wte6pp_di" bpmnElement="Flow_0wte6pp">
+        <di:waypoint x="430" y="1170" />
+        <di:waypoint x="490" y="1170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o5161m_di" bpmnElement="Flow_0o5161m">
+        <di:waypoint x="590" y="1170" />
+        <di:waypoint x="650" y="1170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yw2z6w_di" bpmnElement="Flow_0yw2z6w">
+        <di:waypoint x="750" y="1170" />
+        <di:waypoint x="810" y="1170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1orhc0l_di" bpmnElement="Flow_1orhc0l">
+        <di:waypoint x="910" y="1170" />
+        <di:waypoint x="970" y="1170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nqd03l_di" bpmnElement="Flow_1nqd03l">
+        <di:waypoint x="1070" y="1170" />
+        <di:waypoint x="1130" y="1170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xwelgj_di" bpmnElement="Flow_0xwelgj">
+        <di:waypoint x="1230" y="1170" />
+        <di:waypoint x="1340" y="1170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03ssbkt_di" bpmnElement="Flow_03ssbkt">
+        <di:waypoint x="1575" y="1170" />
+        <di:waypoint x="1810" y="1170" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1675" y="1152" width="35" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15qmsbk_di" bpmnElement="Flow_15qmsbk">
+        <di:waypoint x="1550" y="1195" />
+        <di:waypoint x="1550" y="1340" />
+        <di:waypoint x="1730" y="1340" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1615" y="1313" width="49" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0h6ghee_di" bpmnElement="Flow_0h6ghee">
+        <di:waypoint x="1550" y="1145" />
+        <di:waypoint x="1550" y="1010" />
+        <di:waypoint x="1810" y="1010" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1524" y="1067" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fxbtg6_di" bpmnElement="Flow_0fxbtg6">
+        <di:waypoint x="1910" y="1010" />
+        <di:waypoint x="2052" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cbhapr_di" bpmnElement="Flow_1cbhapr">
+        <di:waypoint x="1910" y="1170" />
+        <di:waypoint x="2062" y="1170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m78mn5_di" bpmnElement="Flow_0m78mn5">
+        <di:waypoint x="1830" y="1340" />
+        <di:waypoint x="1940" y="1340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zsfv8h_di" bpmnElement="Flow_0zsfv8h">
+        <di:waypoint x="2040" y="1340" />
+        <di:waypoint x="2150" y="1340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wdqvl3_di" bpmnElement="Flow_0wdqvl3">
+        <di:waypoint x="2250" y="1340" />
+        <di:waypoint x="2300" y="1340" />
+        <di:waypoint x="2300" y="1460" />
+        <di:waypoint x="380" y="1460" />
+        <di:waypoint x="380" y="1210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0iwicjc_di" bpmnElement="Flow_0iwicjc">
+        <di:waypoint x="1440" y="1170" />
+        <di:waypoint x="1525" y="1170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_012v68a_di" bpmnElement="Flow_012v68a">
+        <di:waypoint x="370" y="290" />
+        <di:waypoint x="370" y="640" />
+        <di:waypoint x="260" y="640" />
+        <di:waypoint x="260" y="1152" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xh5meo_di" bpmnElement="Flow_1xh5meo">
+        <di:waypoint x="1390" y="1130" />
+        <di:waypoint x="1390" y="710" />
+        <di:waypoint x="510" y="710" />
+        <di:waypoint x="510" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14m46lo_di" bpmnElement="Flow_14m46lo">
+        <di:waypoint x="1990" y="1300" />
+        <di:waypoint x="1990" y="780" />
+        <di:waypoint x="880" y="780" />
+        <di:waypoint x="880" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yjyyj5_di" bpmnElement="Flow_1yjyyj5">
+        <di:waypoint x="1360" y="400" />
+        <di:waypoint x="1360" y="680" />
+        <di:waypoint x="2200" y="680" />
+        <di:waypoint x="2200" y="1300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_Start_di" bpmnElement="MF_Start">
+        <di:waypoint x="370" y="290" />
+        <di:waypoint x="370" y="640" />
+        <di:waypoint x="260" y="640" />
+        <di:waypoint x="260" y="1152" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_Decision_di" bpmnElement="MF_Decision">
+        <di:waypoint x="1390" y="1130" />
+        <di:waypoint x="1390" y="710" />
+        <di:waypoint x="530" y="710" />
+        <di:waypoint x="530" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_Correction_di" bpmnElement="MF_Correction">
+        <di:waypoint x="1990" y="1300" />
+        <di:waypoint x="1990" y="780" />
+        <di:waypoint x="880" y="780" />
+        <di:waypoint x="880" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_Resub_di" bpmnElement="MF_Resub">
+        <di:waypoint x="1360" y="400" />
+        <di:waypoint x="1360" y="680" />
+        <di:waypoint x="2200" y="680" />
+        <di:waypoint x="2200" y="1300" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

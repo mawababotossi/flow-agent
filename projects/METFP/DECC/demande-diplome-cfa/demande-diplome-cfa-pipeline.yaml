@@ -1,0 +1,88 @@
+pipeline:
+  - step: 1
+    name: "Soumission en ligne de la demande de diplôme CFA"
+    actor: "Citoyen (apprenti ou ancien apprenti)"
+    system: "XPortal"
+    type: humain
+    action: "Remplir le formulaire en ligne : type de demande (original ou duplicata), informations personnelles (pré-remplies via e-ID), informations de formation (centre, métier, année), upload des pièces justificatives"
+    inputs:
+      - "Type de demande (original / duplicata)"
+      - "Pièce d'identité"
+      - "Copie légalisée de l'acte de naissance"
+      - "Copie du relevé de notes CFA"
+      - "Deux photos format américain (5cm x 5cm)"
+      - "Enveloppe format A4"
+      - "Copie du diplôme (si duplicata)"
+      - "Déclaration de perte (si duplicata)"
+    output: "Dossier soumis — accusé de réception automatique (email + SMS + in-app)"
+
+  - step: 2
+    name: "Paiement des frais — conditionnel duplicata"
+    actor: "Citoyen"
+    system: "XPortal (redirection plateforme e-Gov externe)"
+    type: humain
+    action: "Payer les frais de duplicata via la plateforme de paiement e-Gov externe (Flooz, TMoney, Visa, Mastercard). La confirmation de paiement revient de manière asynchrone."
+    inputs:
+      - "Montant à payer (frais de duplicata)"
+    output: "Confirmation de paiement reçue — dossier transmis au back-office"
+    condition: "Uniquement si type de demande = duplicata"
+
+  - step: 3
+    name: "Instruction du dossier — Agent DECC"
+    actor: "Agent DECC (Direction des Examens, Concours et Certifications)"
+    system: "XFlow"
+    type: humain
+    sla: "72h"
+    action: "Vérification des informations fournies : identité, données de formation, relevé de notes, pièces justificatives. Consultation Odoo pour vérifier l'inscription et les résultats CFA."
+    inputs:
+      - "Données du formulaire soumis"
+      - "Pièces justificatives uploadées"
+      - "Résultat de la recherche Odoo (inscription CFA)"
+    output: "Décision : Conforme / Correction nécessaire / Rejet"
+
+  - step: 3a
+    name: "Boucle de correction"
+    actor: "Citoyen"
+    system: "XPortal"
+    type: humain
+    action: "Le citoyen reçoit une notification avec le motif de correction. Il corrige les informations ou pièces via son dossier existant et resoumets."
+    inputs:
+      - "Motif de correction (transmis par l'agent)"
+      - "Pièces corrigées"
+    output: "Dossier corrigé resoumis au back-office"
+    retry:
+      max: 3
+      timer: "P15D"
+    condition: "Si l'agent décide 'Correction nécessaire'"
+
+  - step: 4
+    name: "Génération du diplôme CFA"
+    actor: "Système"
+    system: "XFlow"
+    type: système
+    action: "Génération du diplôme PDF via template, apposition du QR code de vérification, signature électronique E-Cert, enregistrement Odoo du statut 'délivré'."
+    inputs:
+      - "Données validées du dossier"
+      - "Template du diplôme CFA"
+    output: "Diplôme PDF signé avec QR code de vérification"
+
+  - step: 5
+    name: "Notification finale et mise à disposition"
+    actor: "Système"
+    system: "XPortal + XFlow"
+    type: système
+    action: "Notification tricanale (email + SMS + in-app) informant le citoyen que son diplôme est disponible. Le document est téléchargeable depuis le portail citoyen."
+    inputs:
+      - "Diplôme PDF généré"
+    output: "Citoyen notifié — diplôme téléchargeable sur le portail"
+
+  - step: 5a
+    name: "Retrait physique du diplôme — PHYSIQUE"
+    actor: "Citoyen"
+    system: "Hors système"
+    type: physique
+    action: "Le citoyen retire son diplôme original au lieu choisi : DECC, Ccoms, CPM, CRM ou via la poste. Des frais postaux supplémentaires peuvent s'appliquer."
+    inputs:
+      - "Lieu de retrait choisi lors de la soumission"
+    output: "Diplôme physique remis au citoyen"
+    condition: "Optionnel — le diplôme numérique signé est disponible sur le portail"

@@ -1,0 +1,77 @@
+Rubrique,Détail
+,,
+IDENTIFICATION DU SERVICE,,
+Nom du service,Demande de casier judiciaire (bulletin n°3)
+Organisme,Ministère de la Justice / Direction des Affaires Civiles et du Sceau (DACS)
+Direction,Direction des Affaires Civiles et du Sceau (DACS)
+Rôle de la direction,"Gérer les actes judiciaires et administratifs liés à l'état des personnes ; tenir le casier judiciaire national ; délivrer les bulletins de casier judiciaire aux citoyens et aux administrations."
+,,
+CONTEXTE ET BASE LÉGALE,,
+Description du service,"Le casier judiciaire (bulletin n°3) est un document officiel attestant des condamnations pénales définitives inscrites au nom d'une personne. Il est fréquemment exigé lors d'une embauche dans la fonction publique, d'une inscription dans une école, d'une demande de visa ou de l'obtention d'une licence professionnelle."
+Texte réglementaire,Code de procédure pénale togolais — articles relatifs au casier judiciaire national
+Parties non digitalisables selon la loi,"La signature apposée sur le bulletin délivré doit émaner d'un agent habilité de la DACS. Le document original doit être retiré physiquement ou envoyé par courrier officiel."
+Signature électronique reconnue,Non — le bulletin est un document administratif à cachet humide et signature manuscrite.
+Documentation officielle existante,Oui — formulaire standardisé disponible au guichet de la DACS
+Date de création du service,Service existant depuis l'indépendance du Togo en 1960 ; formulaire actuel revu en 2010.
+,,
+USAGERS,,
+Public cible,"Tout citoyen togolais ou ressortissant étranger né au Togo, majeur ou mineur représenté par un tuteur légal, ayant besoin d'un extrait de casier judiciaire à des fins personnelles, professionnelles ou administratives."
+Conditions d'éligibilité,"• Être la personne concernée par le bulletin (ou son représentant légal pour les mineurs)
+• Fournir une pièce d'identité valide
+• S'acquitter des frais réglementaires"
+Volume estimé,"Environ 15 000 bulletins délivrés par an, majoritairement à Lomé (≈ 70 %)."
+,,
+PIÈCES JUSTIFICATIVES,,
+Documents requis,"• Formulaire de demande de casier judiciaire (disponible au guichet ou en téléchargement)
+• Copie de la pièce d'identité nationale ou du passeport en cours de validité
+• Copie de l'acte de naissance
+• Reçu de paiement des frais de délivrance"
+Coût,"Frais de délivrance : 2 000 FCFA (fixe)
+Paiement accepté : espèces en caisse DACS, Flooz, TMoney"
+,,
+ÉTAPES DU PROCESSUS CÔTÉ CITOYEN,,
+Étape 1 — Paiement des frais,"Le citoyen s'acquitte des frais de délivrance (2 000 FCFA) auprès de la caisse de la DACS (ou via Flooz / TMoney) et obtient un reçu de paiement numéroté."
+Étape 2 — Dépôt du dossier,"Le citoyen dépose au guichet de la DACS le formulaire rempli, la copie de sa pièce d'identité, la copie de son acte de naissance et le reçu de paiement. L'agent vérifie la complétude du dossier et remet un récépissé de dépôt avec la date de retrait prévue."
+Étape 3 — Retrait du bulletin,"Le citoyen se présente à la date indiquée sur le récépissé (délai standard : 3 jours ouvrables) pour retirer le bulletin signé et cacheté. Sur présentation du récépissé et de la pièce d'identité originale."
+,,
+ACTIONS INTERNES DES AGENTS,,
+Agent de caisse,Encaissement des frais et délivrance du reçu numéroté.
+Agent de réception,"Vérification de la complétude du dossier, enregistrement dans le registre, remise du récépissé de dépôt."
+Agent instructeur,"Consultation du fichier national des condamnations, rédaction du bulletin (néant ou mentions), signature et apposition du cachet."
+Chef de service,Contrôle et validation des bulletins avant mise à disposition au guichet de retrait.
+,,
+GOULOTS D'ÉTRANGLEMENT IDENTIFIÉS,,
+Goulot 1,"Déplacement physique obligatoire : le citoyen doit se déplacer deux fois (dépôt puis retrait), ce qui est contraignant pour les usagers en dehors de Lomé."
+Goulot 2,"Délai de traitement de 3 jours ouvrables lié à la consultation manuelle du fichier papier des condamnations."
+Goulot 3,"Paiement exclusivement en caisse physique : file d'attente et traçabilité limitée des recettes."
+,,
+OUTILS ACTUELS,,
+Système de gestion,Registre papier et fichier Excel pour le suivi des demandes
+Fichier des condamnations,Fichier papier classé par ordre alphabétique conservé dans les locaux de la DACS
+Base de données centralisée,Non — aucune connexion avec les juridictions des régions
+,,
+STATISTIQUES,,
+Demandes par jour,Environ 50 (Lomé) / 10 en moyenne (tribunaux régionaux)
+Demandes par mois,Environ 1 200
+Demandes par an,Environ 15 000 bulletins délivrés
+Taux de dossiers incomplets ou rejetés au dépôt,Environ 15 % (pièce d'identité expirée ou acte de naissance manquant)
+Délai moyen de délivrance,3 jours ouvrables
+Nombre d'agents impliqués,6 agents à Lomé + 2 par tribunal régional
+Périodes de forte activité,"Janvier–février (recrutements dans la fonction publique) et juillet–septembre (concours d'entrée dans les grandes écoles)"
+,,
+DOCUMENT DÉLIVRÉ,,
+Nature du document,"Bulletin de casier judiciaire n°3, document A4 à en-tête officielle, signé et cacheté par un agent habilité de la DACS"
+Durée de validité,3 mois à compter de la date de délivrance
+,,
+DIFFICULTÉS ET AXES D'AMÉLIORATION,,
+Principales difficultés,"• Nécessité de deux déplacements physiques pour un service de 3 jours
+• Fichier des condamnations non informatisé : risques d'erreurs et de délais
+• Absence de notification quand le bulletin est prêt
+• Recettes non traçables en temps réel (paiements en espèces majoritaires)"
+Ce qui pourrait être digitalisé,"• Téléchargement et soumission du formulaire en ligne
+• Paiement des frais en ligne (Flooz, TMoney, carte bancaire)
+• Notification par SMS/email quand le bulletin est prêt à être retiré
+• À terme : délivrance d'un bulletin électronique sécurisé (QR code vérifiable)"
+Ce qui reste physique obligatoirement,"• Le retrait du bulletin original (document officiel à signature et cachet humide)
+• La consultation du fichier des condamnations (tant qu'il n'est pas informatisé)"
+Vision future selon les agents,"Le citoyen devrait pouvoir payer en ligne, soumettre son dossier via un portail, recevoir une notification SMS à J+3 et retirer un seul document au guichet. La digitalisation du fichier des condamnations réduirait le délai à 24 heures."

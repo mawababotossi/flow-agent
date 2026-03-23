@@ -1,0 +1,196 @@
+{
+    "title": "Corrections — Demande de permis de conduire",
+    "name": "correctionPermisConduire",
+    "path": "correction-permis-conduire",
+    "type": "form",
+    "display": "wizard",
+    "i18n": {
+        "en": {
+            "Corrections requises": "Corrections Required",
+            "Motif de la demande de correction": "Reason for correction request",
+            "Pièce(s) corrigée(s)": "Corrected document(s)",
+            "Commentaire (optionnel)": "Comment (optional)",
+            "Récapitulatif et resoumission": "Summary & Resubmission",
+            "Je certifie sur l'honneur que les corrections apportées sont exactes.": "I certify on my honour that the corrections made are accurate.",
+            "Ce champ est obligatoire": "This field is required",
+            "Veuillez uploader au moins une pièce corrigée": "Please upload at least one corrected document"
+        }
+    },
+    "config": {
+        "development": {
+            "apiBaseUrl": "https://api.dev.gouv.tg/api/v1/admin",
+            "appName": "Développement",
+            "users": {
+                "firstName": "user.firstName",
+                "lastName": "user.lastName",
+                "fullName": "user.fullName",
+                "email": "user.email",
+                "username": "user.username",
+                "userId": "user.userId",
+                "accountType": "user.accountType",
+                "language": "user.language",
+                "phone": "user.phone"
+            }
+        },
+        "sandbox": {
+            "apiBaseUrl": "https://api.sandbox.gouv.tg/api/v1/admin",
+            "appName": "Sandbox",
+            "users": {
+                "firstName": "user.firstName",
+                "lastName": "user.lastName",
+                "fullName": "user.fullName",
+                "email": "user.email",
+                "username": "user.username",
+                "userId": "user.userId",
+                "accountType": "user.accountType",
+                "language": "user.language",
+                "phone": "user.phone"
+            }
+        },
+        "preprod": {
+            "apiBaseUrl": "https://api.preprod.gouv.tg/api/v1/admin",
+            "appName": "Pré-production",
+            "users": {
+                "firstName": "user.firstName",
+                "lastName": "user.lastName",
+                "fullName": "user.fullName",
+                "email": "user.email",
+                "username": "user.username",
+                "userId": "user.userId",
+                "accountType": "user.accountType",
+                "language": "user.language",
+                "phone": "user.phone"
+            }
+        },
+        "production": {
+            "apiBaseUrl": "https://api.gouv.tg/api/v1/admin",
+            "appName": "Production",
+            "users": {
+                "firstName": "user.firstName",
+                "lastName": "user.lastName",
+                "fullName": "user.fullName",
+                "email": "user.email",
+                "username": "user.username",
+                "userId": "user.userId",
+                "accountType": "user.accountType",
+                "language": "user.language",
+                "phone": "user.phone"
+            }
+        }
+    },
+    "components": [
+        {
+            "title": "Corrections requises",
+            "type": "panel",
+            "key": "stepCorrections",
+            "components": [
+                {
+                    "type": "htmlelement",
+                    "tag": "div",
+                    "key": "bandeauAlerte",
+                    "content": "<div style=\"background:#fef3c7;border:1px solid #f59e0b;border-radius:12px;padding:20px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;\"><div style=\"font-size:24px;flex-shrink:0;\">&#9888;</div><div><h3 style=\"font-size:18px;font-weight:700;color:#92400e;margin:0 0 8px;\">Corrections demandées par l'agent DTRF</h3><p style=\"font-size:15px;color:#78350f;margin:0;line-height:1.6;\">Votre dossier de demande de permis de conduire nécessite des corrections. Veuillez prendre connaissance du motif ci-dessous, corriger les pièces concernées et reuploader les documents corrigés.</p></div></div>"
+                },
+                {
+                    "type": "htmlelement",
+                    "tag": "div",
+                    "key": "motifCorrection",
+                    "content": "<div style=\"background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:20px;\"><h4 style=\"font-size:16px;font-weight:700;color:#334155;margin:0 0 10px;\">Motif de la demande de correction :</h4><div id=\"motifDisplay\" style=\"font-size:15px;color:#475569;line-height:1.7;\"></div></div>",
+                    "refreshOnChange": true,
+                    "calculateValue": "var el = document.getElementById('motifDisplay'); if(el){ var motif = data.motifAgent || 'Aucun motif spécifié.'; el.innerHTML = '<p>' + motif + '</p>'; }"
+                },
+                {
+                    "type": "hidden",
+                    "key": "motifAgent",
+                    "input": true
+                },
+                {
+                    "type": "hidden",
+                    "key": "numeroDossier",
+                    "input": true
+                },
+                {
+                    "type": "hidden",
+                    "key": "nbCorrections",
+                    "input": true
+                },
+                {
+                    "type": "htmlelement",
+                    "tag": "div",
+                    "key": "compteurCorrections",
+                    "content": "<div id=\"compteurDisplay\" style=\"margin-bottom:20px;\"></div>",
+                    "refreshOnChange": true,
+                    "calculateValue": "var el = document.getElementById('compteurDisplay'); if(el){ var nb = parseInt(data.nbCorrections) || 0; var restant = 3 - nb; var couleur = restant <= 1 ? '#dc2626' : '#059669'; el.innerHTML = '<p style=\"font-size:14px;color:' + couleur + ';font-weight:600;\">Tentatives de correction restantes : ' + restant + ' sur 3</p>'; }"
+                },
+                {
+                    "type": "file",
+                    "label": "Pièce(s) corrigée(s)",
+                    "key": "piecesCorrigees",
+                    "input": true,
+                    "storage": "base64",
+                    "multiple": true,
+                    "filePattern": ".pdf,.jpg,.jpeg,.png",
+                    "fileMaxSize": "2MB",
+                    "validate": { "required": true },
+                    "errors": { "required": "Veuillez uploader au moins une pièce corrigée" }
+                },
+                {
+                    "type": "textarea",
+                    "label": "Commentaire (optionnel)",
+                    "key": "commentaireCandidat",
+                    "input": true,
+                    "rows": 4,
+                    "validate": { "maxLength": 500 },
+                    "validateOn": "blur",
+                    "errors": { "maxLength": "Le commentaire ne peut pas dépasser 500 caractères" }
+                }
+            ]
+        },
+        {
+            "title": "Récapitulatif et resoumission",
+            "type": "panel",
+            "key": "stepRecapCorrection",
+            "components": [
+                {
+                    "label": "HTML",
+                    "tag": "div",
+                    "attrs": [{ "attr": "id", "value": "recapDisplay" }],
+                    "refreshOnChange": false,
+                    "key": "htmlRecapitulatifFinal",
+                    "logic": [
+                        {
+                            "name": "logiqueConstruction",
+                            "trigger": { "type": "javascript", "javascript": "result = true;" },
+                            "actions": [
+                                {
+                                    "name": "actionJS",
+                                    "type": "customAction",
+                                    "customAction": "const recapDiv = document.getElementById(\"recapDisplay\");\nlet list_of_datagrid = [];\nlet data_stock = [];\nconst exclude = [\"button\", \"file\", \"container\", \"panel\", \"datagrid\", \"hidden\"];\nconst excludeKeys = [\"luEtApprouve\", \"motifAgent\", \"numeroDossier\", \"nbCorrections\"];\nconst includesLabelForSelect = [\"libelle\", \"label\"];\n\nutils.eachComponent(form.components, (component, path) => {\n  let splitted_path = path.split(\".\");\n  let skip = false;\n  if (\n    !exclude.includes(component.type) &&\n    !excludeKeys.includes(component.key) &&\n    !component.hidden &&\n    ![null, undefined, \"\", [], {}].includes(data[component.key]) &&\n    !(typeof data[component.key] === \"string\" && [\"\", \"null\", \"undefined\"].includes(data[component.key]))\n  ) {\n    if (component.type === \"datagrid\") {\n      list_of_datagrid.push(component.key);\n    } else {\n      if (splitted_path.length >= 2 && list_of_datagrid.includes(splitted_path[splitted_path.length - 2])) {\n        skip = true;\n      }\n    }\n    if (!skip) {\n      data_stock.push({ key: component.key, label: component.label, value: data[component.key] || (component.type === \"datagrid\" ? [] : \"\"), type: component.type, components: component.components || \"\" });\n    }\n  }\n}, false);\n\nlet ourTable = `<style>.recap-container{width:100%;margin:0 auto;}.recap-table{width:100%;border-collapse:collapse;}.recap-table thead th{background-color:#F8F9FA;color:#212529;font-weight:700;padding:12px;border:1px solid #DEE2E6;text-align:left;font-family:-apple-system,system-ui,sans-serif;font-size:15px;}.recap-table th,.recap-table td{border:1px solid #DEE2E6;padding:12px;text-align:left;font-size:14px;font-family:-apple-system,system-ui,sans-serif;}.recap-table td:first-child{width:6%;text-align:center;color:#6C757D;}.recap-table td:nth-child(2){width:44%;font-weight:600;color:#212529;}.recap-table td:last-child{width:50%;color:#495057;}</style><div class=\"recap-container\"><table class=\"recap-table\"><thead><tr><th>N°</th><th>Donnée</th><th>Votre saisie</th></tr></thead><tbody>`;\n\nlet index = 1;\ndata_stock.forEach((elmt) => {\n  let finalVal = elmt.value;\n  if (elmt.type === \"datetime\") finalVal = new Date(elmt.value).toLocaleDateString('fr-TG');\n  ourTable += `<tr><td>${index++}</td><td>${elmt.label}</td><td><b>${finalVal}</b></td></tr>`;\n});\n\nourTable += `</tbody></table></div>`;\nrecapDiv.innerHTML = ourTable;"
+                                }
+                            ]
+                        }
+                    ],
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "type": "checkbox",
+                    "label": "Je certifie sur l'honneur que les corrections apportées sont exactes.",
+                    "key": "luEtApprouve",
+                    "input": true,
+                    "tableView": false,
+                    "validate": { "required": true },
+                    "errors": { "required": "Vous devez certifier l'exactitude des corrections avant de resoummettre." }
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "publishToRabbitMQ",
+            "type": "rabbitmq",
+            "topic": "submissions.topic",
+            "payload": "{{ submission.data }}"
+        }
+    ]
+}

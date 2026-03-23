@@ -1,0 +1,147 @@
+{
+  "title": "Paiement — [Nom du Service]",
+  "name": "paiement[NomServiceCamelCase]",
+  "path": "paiement-[nom-service-slug]",
+  "type": "form",
+  "display": "form",
+  "i18n": {
+    "en": {
+      "Montant à payer": "Amount to pay",
+      "Vous allez procéder au paiement des frais": "You will proceed with the payment of fees"
+    }
+  },
+  "config": {
+    "development": {
+      "apiBaseUrl": "https://api.dev.gouv.tg/api/v1/admin",
+      "appName": "Développement",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "sandbox": {
+      "apiBaseUrl": "https://api.sandbox.gouv.tg/api/v1/admin",
+      "appName": "Sandbox",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "preproduction": {
+      "apiBaseUrl": "https://api.preprod.gouv.tg/api/v1/admin",
+      "appName": "Pré-production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "production": {
+      "apiBaseUrl": "https://api.gouv.tg/api/v1/admin",
+      "appName": "Production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    }
+  },
+  "components": [
+    {
+      "label": "Titre du Service",
+      "tag": "h2",
+      "content": "Paiement de la demande de [NOM DU SERVICE]",
+      "key": "serviceTitle",
+      "type": "htmlelement",
+      "input": false
+    },
+    {
+      "label": "HTML",
+      "tag": "h4",
+      "content": "Vous allez procéder au paiement des frais pour la demande de [NOM DU SERVICE] qui s'élèvent à :",
+      "key": "html",
+      "type": "htmlelement",
+      "input": false
+    },
+    {
+      "label": "Montant à payer",
+      "disabled": true,
+      "tableView": true,
+      "key": "montantAPayer",
+      "type": "textfield",
+      "input": true
+    },
+    {
+      "label": "Dynamic Cost",
+      "hidden": true,
+      "tableView": true,
+      "clearOnHide": false,
+      "key": "dynamicCost",
+      "type": "textfield",
+      "input": true
+    },
+    {
+      "label": "Déjà payé",
+      "hidden": true,
+      "tableView": true,
+      "clearOnHide": false,
+      "validateOn": "blur",
+      "validate": {
+        "required": true
+      },
+      "key": "dejaPaye",
+      "type": "textfield",
+      "input": true,
+      "defaultValue": "OUI"
+    }
+  ],
+  "actions": {
+    "calculate-costs": {
+      "name": "calculate-costs",
+      "method": [
+        "create"
+      ],
+      "handler": [
+        {
+          "method": "before",
+          "name": "Calculate Costs"
+        }
+      ],
+      "settings": {
+        "serviceId": "[identifiant-du-service]",
+        "pricingMode": "fixed",
+        "defaultPrice": 0,
+        "quantityField": "",
+        "applyTax": false,
+        "fixedPrice": 15000
+      },
+      "enabled": true
+    }
+  }
+}

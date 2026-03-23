@@ -1,0 +1,249 @@
+{
+  "title": "Description",
+  "label": "Page 1",
+  "type": "panel",
+  "key": "page1",
+  "buttonSettings": {
+    "previous": true,
+    "cancel": true,
+    "next": true
+  },
+  "components": [
+    {
+      "label": "Styles CSS",
+      "tag": "style",
+      "content": "/* Carte principale - Sticky */\n.sfc-card {\n  position: sticky;\n  top: 20px;\n  background: #fff;\n  border: 1px solid #e5e7eb;\n  border-radius: 12px;\n  padding: 24px;\n  font-family: 'Segoe UI', Roboto, sans-serif;\n  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);\n}\n.sfc-card h3 {\n  font-size: 18px;\n  font-weight: 700;\n  color: #111827;\n  margin: 0 0 4px;\n}\n.sfc-card .sfc-subtitle {\n  font-size: 13.5px;\n  color: #4b5563;\n  margin: 0 0 18px;\n  line-height: 1.5;\n}\n.sfc-row {\n  display: flex;\n  align-items: flex-start;\n  gap: 10px;\n  margin-bottom: 12px;\n  font-size: 13.5px;\n  color: #374151;\n  line-height: 1.5;\n}\n.sfc-row .sfc-ico {\n  flex-shrink: 0;\n  width: 20px;\n  text-align: center;\n  font-size: 15px;\n  margin-top: 1px;\n  color: #4b5563;\n}\n.sfc-row a {\n  color: #3b82f6;\n  text-decoration: none;\n}\n.sfc-row a:hover {\n  text-decoration: underline;\n}\n.sfc-row strong {\n  color: #111827;\n  font-weight: 600;\n}\n.sfc-stitle {\n  font-size: 16px;\n  font-weight: 700;\n  color: #111827;\n  margin: 20px 0 12px;\n  padding-top: 16px;\n  border-top: 1px solid #e5e7eb;\n}\n.sfc-boxes {\n  display: flex;\n  gap: 10px;\n  margin-bottom: 14px;\n  width: 100%;\n}\n.sfc-box {\n  flex: 1;\n  background: #f9fafb;\n  border: 1px solid #e5e7eb;\n  border-radius: 8px;\n  padding: 12px;\n}\n.sfc-box .sfc-lbl {\n  font-size: 11.5px;\n  color: #6b7280;\n  font-weight: 500;\n  margin: 0 0 6px;\n  line-height: 1.3;\n}\n.sfc-box .sfc-val {\n  font-size: 14px;\n  font-weight: 700;\n  color: #111827;\n  margin: 0;\n}\n.sfc-box .sfc-sub {\n  font-size: 11px;\n  color: #9ca3af;\n  font-weight: 400;\n}\n.sfc-link {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  color: #16a34a;\n  font-size: 13px;\n  font-weight: 600;\n  text-decoration: none;\n  cursor: pointer;\n  margin-top: 5px;\n}\n.sfc-link:hover {\n  text-decoration: underline;\n}\n.sfc-link-ico {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 18px;\n  height: 18px;\n  background: #16a34a;\n  color: #fff;\n  border-radius: 50%;\n  font-size: 11px;\n  font-weight: 700;\n}",
+      "key": "stylesCssSidebar",
+      "type": "htmlelement",
+      "input": false,
+      "defaultValue": null,
+      "persistent": false,
+      "validateOn": "change",
+      "attrs": []
+    },
+    {
+      "label": "Text Field",
+      "tableView": true,
+      "validateOn": "change",
+      "key": "textField",
+      "type": "textfield",
+      "input": true,
+      "defaultValue": null
+    },
+    {
+      "label": "stickyInjector",
+      "tag": "div",
+      "key": "stickyInjector",
+      "type": "htmlelement",
+      "customClass": "d-none",
+      "input": false,
+      "calculateValue": "if(typeof window.__sfcStickyDone === 'undefined'){window.__sfcStickyDone=false;}function sfcApply(){var el=document.getElementById('sidebar-fournisseur');if(!el)return false;var col=el.closest('[class*=\"col-\"]');if(col){col.style.position='sticky';col.style.top='20px';col.style.alignSelf='flex-start';}var row=el.closest('.row');if(row){row.style.alignItems='flex-start';row.style.display='flex';}return true;}if(!window.__sfcStickyDone){if(sfcApply()){window.__sfcStickyDone=true;}else{setTimeout(function(){sfcApply();window.__sfcStickyDone=true;},500);setTimeout(function(){sfcApply();},1500);}}",
+      "defaultValue": null,
+      "persistent": false,
+      "validateOn": "change",
+      "attrs": [],
+      "content": ""
+    },
+    {
+      "type": "columns",
+      "key": "mainLayout",
+      "columns": [
+        {
+          "width": 8,
+          "components": [
+            {
+              "tag": "h2",
+              "content": "Demande de certificat d'empotage de produit forestier",
+              "type": "htmlelement",
+              "key": "titre",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "label": "HTML",
+              "validateOn": "change",
+              "attrs": []
+            },
+            {
+              "label": "HTML",
+              "tag": "div",
+              "className": "",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"display:flex;gap:20px;flex-wrap:wrap;margin-top:20px;\"><div style=\"flex:1;min-width:220px;background:#fff;border-radius:12px;padding:25px;box-shadow:0 2px 5px rgba(0,0,0,0.05);border:1px solid #f0f0f0;\"><div style=\"font-size:32px;margin-bottom:10px;\">⏱️</div><h3 style=\"font-size:16px;font-weight:600;margin:0 0 5px;\">Délai d'exécution</h3><p style=\"font-size:15px;color:#333;margin:0;\">24 heures ouvrées</p></div><div style=\"flex:1;min-width:220px;background:#f9fafb;border-radius:12px;padding:25px;box-shadow:0 2px 5px rgba(0,0,0,0.05);border:1px solid #f0f0f0;\"><div style=\"font-size:32px;margin-bottom:10px;\">💰</div><h3 style=\"font-size:16px;font-weight:600;margin:0 0 5px;\">Coût de la procédure</h3><p style=\"font-size:15px;color:#333;margin:0;\">Conteneur 20 pieds : 100 000 Fcfa Conteneur 40 pieds : 200 000 Fcfa </p></div><div style=\"flex:1;min-width:220px;background:#f9fafb;border-radius:12px;padding:25px;box-shadow:0 2px 5px rgba(0,0,0,0.05);border:1px solid #f0f0f0;\"><div style=\"font-size:32px;margin-bottom:10px;\">📅</div><h3 style=\"font-size:16px;font-weight:600;margin:0 0 5px;\">Durée de validité</h3><p style=\"font-size:15px;color:#333;margin:0;\">Pas de durée de validité</p></div></div>",
+              "key": "html2",
+              "type": "htmlelement",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "HTML",
+              "tag": "div",
+              "className": "",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"font-size:22px;font-weight:700;margin-bottom:10px;color:#000;margin-top:30px;\">Description</div><div style=\"font-size:16px;line-height:1.6;color:#333;margin-bottom:30px;\">\nLe certificat d'empotage est un document officiel qui atteste que le bois a été correctement conditionné et préparé pour l'exportation. Le but de ce certificat est d'assurer la conformité aux normes de sécurité et de qualité, de faciliter les contrôles douaniers, et de garantir que le bois respecte les réglementations en matière de durabilité et de traçabilité.  </div><div style=\"font-size:22px;font-weight:700;margin-bottom:10px;color:#000;\">Identification des personnes susceptibles / légitimes à faire la demande</div><div style=\"font-size:16px;line-height:1.6;color:#333;margin-bottom:30px;\">Tout opérateur économique.</div>",
+              "key": "description",
+              "type": "htmlelement",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "HTML",
+              "tag": "div",
+              "className": "",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"background:#F8F8F8;border:1px solid #E5E5E5;border-radius:12px;padding:25px;margin-bottom:25px;\"><div style=\"font-size:20px;font-weight:700;margin-bottom:15px;color:#000;\">Conditions</div><ul style=\"font-size:16px;color:#333;line-height:1.7;padding-left:20px;margin:0;\"><li>\nAvoir l'agrément d'exportateur .</ul></div>",
+              "key": "description1",
+              "type": "htmlelement",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "HTML",
+              "tag": "div",
+              "className": "",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"background:#F8F8F8;border:1px solid #E5E5E5;border-radius:12px;padding:25px;margin-bottom:25px;\"><div style=\"font-size:20px;font-weight:700;margin-bottom:15px;color:#000;\">Pièces à fournir</div><ul style=\"font-size:16px;color:#333;line-height:1.7;padding-left:20px;margin:0;\"><li>\n      Une demande adressée au directeur régional de l'environnement et des ressources forestières du lieu d'empotage .\n  </li><li>Une copie de l'agrément d'exportateur .\n  </li><li>Une copie de l'autorisation de transport .\n  </li><li>Une copie de l'autorisation d'importation en cas de réexportation .\n  </li><li>L'original du permis de circulation ayant servi pour le transport des produits.</li></ul></div>\n  \n  \n    \n    \n    \n    \n\n",
+              "key": "description2",
+              "type": "htmlelement",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "tag": "div",
+              "content": "<div style=\"font-size:22px;font-weight:700;margin-bottom:20px;color:#000;\">Étapes</div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">1</div><div style=\"font-size:16px;line-height:1.6;color:#333;\">Remplir en ligne sur la présente plateforme le formulaire de la demande en cliquant sur le bouton « Suivant ».</div></div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">2</div><div style=\"font-size:16px;line-height:1.6;color:#333;\">Cliquer sur « Télécharger ma demande en PDF » pour obtenir le formulaire et la lettre de demande, à imprimer puis joindre aux pièces à fournir.</div></div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">3</div><div style=\"font-size:16px;line-height:1.6;color:#333;\">Faire un dépôt physique au Ministère de l'Environnement et des Ressources Forestières.</div></div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">4</div><div style=\"font-size:16px;line-height:1.6;color:#333;\">Traitement de la demande : Les autorités vont étudier votre dossier et prendre une décision.<div style=\"margin-top:8px;margin-left:10px;\">• En cas d'erreur ou de non-conformité, vous serez notifié pour des corrections éventuelles ou du rejet de votre demande.</div><div style=\"margin-top:5px;margin-left:10px;\">• En cas de conformité des informations fournies, votre demande sera traitée.</div></div></div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">5</div><div style=\"font-size:16px;line-height:1.6;color:#333;\">Vous serez notifié de la disponibilité de votre agrément afin de procéder au retrait.</div></div>",
+              "type": "htmlelement",
+              "key": "description6",
+              "input": false,
+              "label": "HTML",
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change",
+              "attrs": [],
+              "keyModified": true
+            }
+          ]
+        },
+        {
+          "width": 4,
+          "components": [
+            {
+              "label": "HTML",
+              "tag": "div",
+              "attrs": [
+                {
+                  "attr": "id",
+                  "value": "sidebar-fournisseur"
+                }
+              ],
+              "content": "<div class=\"sfc-card\" id=\"sidebar-fournisseur\">\n  <h3>Fournisseur de service</h3>\n  <p class=\"sfc-subtitle\">Ministère de l'Environnement et des Ressources Forestières</p>\n  \n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">📞</span>\n    <span><strong>Téléphone :</strong> (+228) 22 21 40 29</span>\n  </div>\n  \n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">✉️</span>\n    <span><strong>Email :</strong> contact@environnement.gouv.tg</span>\n  </div>\n  \n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">📍</span>\n    <span><strong>Adresse :</strong> 590 Avenue Sarakawa, B.P. 4825,Lomé, Togo 22 21 06 00</span>\n  </div>\n  \n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">🌐</span>\n    <span><strong>Site web :</strong> <a href=\"https://environnement.gouv.tg/\" target=\"_blank\">environnement.gouv.tg</a></span>\n  </div>\n  \n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">🕐</span>\n    <span><strong>Ouverture :</strong> Lundi – Vendredi, 07h30 – 17h30</span>\n  </div>\n  \n  <h3 class=\"sfc-stitle\">Statistiques</h3>\n  \n  <div class=\"sfc-boxes\">\n    <div class=\"sfc-box\">\n      <p class=\"sfc-lbl\">Délai moyen réel de traitement</p>\n      <p class=\"sfc-val\">45 <span style=\"font-size:12px;font-weight:normal;\">Jours</span></p>\n      <p class=\"sfc-sub\">Base: 6 derniers mois</p>\n    </div>\n    \n    <div class=\"sfc-box\">\n      <p class=\"sfc-lbl\">Demandes de la journée</p>\n      <p class=\"sfc-val\">128</p>\n    </div>\n  </div>\n  \n  <a href=\"/statistiques\" class=\"sfc-link\" id=\"stats-link\">\n    <span class=\"sfc-link-ico\">➜</span> \n    Voir les statistiques détaillées\n  </a>\n</div>",
+              "key": "sidebarFournisseurStats",
+              "type": "htmlelement",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            }
+          ]
+        }
+      ],
+      "input": false,
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "label": "Columns",
+      "validateOn": "change",
+      "autoAdjust": false
+    }
+  ],
+  "id": "ecjit4r",
+  "input": false,
+  "placeholder": "",
+  "prefix": "",
+  "customClass": "",
+  "suffix": "",
+  "multiple": false,
+  "defaultValue": null,
+  "protected": false,
+  "unique": false,
+  "persistent": false,
+  "hidden": false,
+  "clearOnHide": false,
+  "refreshOn": "",
+  "redrawOn": "",
+  "tableView": false,
+  "modalEdit": false,
+  "dataGridLabel": false,
+  "labelPosition": "top",
+  "description": "",
+  "errorLabel": "",
+  "tooltip": "",
+  "hideLabel": false,
+  "tabindex": "",
+  "disabled": false,
+  "autofocus": false,
+  "dbIndex": false,
+  "customDefaultValue": "",
+  "calculateValue": "",
+  "calculateServer": false,
+  "widget": null,
+  "attributes": {},
+  "validateOn": "change",
+  "validate": {
+    "required": false,
+    "custom": "",
+    "customPrivate": false,
+    "strictDateValidation": false,
+    "multiple": false,
+    "unique": false
+  },
+  "conditional": {
+    "show": null,
+    "when": null,
+    "eq": ""
+  },
+  "overlay": {
+    "style": "",
+    "left": "",
+    "top": "",
+    "width": "",
+    "height": ""
+  },
+  "allowCalculateOverride": false,
+  "encrypted": false,
+  "showCharCount": false,
+  "showWordCount": false,
+  "properties": {},
+  "allowMultipleMasks": false,
+  "addons": [],
+  "tree": false,
+  "lazyLoad": false,
+  "theme": "default",
+  "breadcrumb": "default"
+}

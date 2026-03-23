@@ -1,0 +1,6322 @@
+{
+  "components": [
+    {
+      "title": "A PROPOS DE VOUS",
+      "theme": "success",
+      "breadcrumb": "default",
+      "breadcrumbClickable": true,
+      "buttonSettings": {
+        "previous": true,
+        "cancel": true,
+        "next": true
+      },
+      "key": "page1",
+      "type": "panel",
+      "label": "Page 1",
+      "components": [
+        {
+          "label": "Nom",
+          "tableView": true,
+          "validateOn": "change",
+          "validate": {
+            "required": true
+          },
+          "key": "nom",
+          "type": "textfield",
+          "input": true,
+          "defaultValue": ""
+        },
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Il s'agit d'une demande parentale",
+                  "key": "DemandeParentale",
+                  "type": "checkbox",
+                  "input": true,
+                  "defaultValue": false,
+                  "dataGridLabel": true,
+                  "labelPosition": "right",
+                  "validateOn": "change",
+                  "inputType": "checkbox",
+                  "value": "",
+                  "name": ""
+                }
+              ],
+              "width": 4
+            },
+            {
+              "components": [
+                {
+                  "label": "Veuillez indiquer de quel parent l'enfant hérite le nom de famille",
+                  "optionsLabelPosition": "right",
+                  "description": "Le nom du parent sera utilisé pour la demande\r\n",
+                  "tooltip": "Le nom du parent sera utilisé pour la demande\r\n",
+                  "inline": true,
+                  "values": [
+                    {
+                      "label": "Le père",
+                      "value": "lePere"
+                    },
+                    {
+                      "label": "La mère",
+                      "value": "laMere"
+                    }
+                  ],
+                  "key": "veuillezIndiquerDeQuelParentLenfantHeriteLeNomDeFamille",
+                  "conditional": {
+                    "show": true,
+                    "when": "DemandeParentale",
+                    "eq": "true"
+                  },
+                  "type": "radio",
+                  "input": true,
+                  "defaultValue": null,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": false,
+                    "onlyAvailableItems": false
+                  },
+                  "dataSrc": "values",
+                  "authenticate": false,
+                  "ignoreCache": false,
+                  "template": "<span>{{ item.label }}</span>",
+                  "inputType": "radio",
+                  "data": {
+                    "url": ""
+                  },
+                  "fieldSet": false
+                }
+              ],
+              "width": 8
+            }
+          ],
+          "autoAdjust": false,
+          "key": "columns10",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change"
+        },
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Prénom",
+                  "tableView": true,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true
+                  },
+                  "key": "prenom",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": ""
+                }
+              ],
+              "width": 6
+            },
+            {
+              "components": [
+                {
+                  "label": "Sexe",
+                  "optionsLabelPosition": "right",
+                  "inline": true,
+                  "dataSrc": "values",
+                  "values": [
+                    {
+                      "label": "MASCULIN",
+                      "value": "masculin"
+                    },
+                    {
+                      "label": "FÉMININ",
+                      "value": "feminin"
+                    }
+                  ],
+                  "dataType": "",
+                  "valueProperty": "",
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": false
+                  },
+                  "key": "sexe",
+                  "type": "radio",
+                  "data": {
+                    "url": ""
+                  },
+                  "template": "<span>{{ item.label }}</span>",
+                  "ignoreCache": false,
+                  "input": true,
+                  "validateOn": "change",
+                  "authenticate": false,
+                  "inputType": "radio",
+                  "fieldSet": false,
+                  "defaultValue": ""
+                }
+              ],
+              "width": 6
+            }
+          ],
+          "autoAdjust": false,
+          "key": "columns",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change"
+        },
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Nationalité ",
+                  "widget": "choicesjs",
+                  "uniqueOptions": false,
+                  "tableView": true,
+                  "dataSrc": "json",
+                  "defaultValue": "TG",
+                  "data": {
+                    "values": [
+                      {
+                        "label": "",
+                        "value": ""
+                      }
+                    ],
+                    "resource": "",
+                    "url": "",
+                    "json": [
+                      {
+                        "name": "Afghanistan",
+                        "value": "AF"
+                      },
+                      {
+                        "name": "Afrique du Sud",
+                        "value": "ZA"
+                      },
+                      {
+                        "name": "Albanie",
+                        "value": "AL"
+                      },
+                      {
+                        "name": "Algérie",
+                        "value": "DZ"
+                      },
+                      {
+                        "name": "Allemagne",
+                        "value": "DE"
+                      },
+                      {
+                        "name": "Andorre",
+                        "value": "AD"
+                      },
+                      {
+                        "name": "Angola",
+                        "value": "AO"
+                      },
+                      {
+                        "name": "Antigua-et-Barbuda",
+                        "value": "AG"
+                      },
+                      {
+                        "name": "Arabie saoudite",
+                        "value": "SA"
+                      },
+                      {
+                        "name": "Argentine",
+                        "value": "AR"
+                      },
+                      {
+                        "name": "Arménie",
+                        "value": "AM"
+                      },
+                      {
+                        "name": "Australie",
+                        "value": "AU"
+                      },
+                      {
+                        "name": "Autriche",
+                        "value": "AT"
+                      },
+                      {
+                        "name": "Azerbaïdjan",
+                        "value": "AZ"
+                      },
+                      {
+                        "name": "Bahamas",
+                        "value": "BS"
+                      },
+                      {
+                        "name": "Bahreïn",
+                        "value": "BH"
+                      },
+                      {
+                        "name": "Bangladesh",
+                        "value": "BD"
+                      },
+                      {
+                        "name": "Barbade",
+                        "value": "BB"
+                      },
+                      {
+                        "name": "Biélorussie",
+                        "value": "BY"
+                      },
+                      {
+                        "name": "Belgique",
+                        "value": "BE"
+                      },
+                      {
+                        "name": "Belize",
+                        "value": "BZ"
+                      },
+                      {
+                        "name": "Bénin",
+                        "value": "BJ"
+                      },
+                      {
+                        "name": "Bhoutan",
+                        "value": "BT"
+                      },
+                      {
+                        "name": "Bolivie",
+                        "value": "BO"
+                      },
+                      {
+                        "name": "Bosnie-Herzégovine",
+                        "value": "BA"
+                      },
+                      {
+                        "name": "Botswana",
+                        "value": "BW"
+                      },
+                      {
+                        "name": "Brésil",
+                        "value": "BR"
+                      },
+                      {
+                        "name": "Brunei",
+                        "value": "BN"
+                      },
+                      {
+                        "name": "Bulgarie",
+                        "value": "BG"
+                      },
+                      {
+                        "name": "Burkina Faso",
+                        "value": "BF"
+                      },
+                      {
+                        "name": "Burundi",
+                        "value": "BI"
+                      },
+                      {
+                        "name": "Cambodge",
+                        "value": "KH"
+                      },
+                      {
+                        "name": "Cameroun",
+                        "value": "CM"
+                      },
+                      {
+                        "name": "Canada",
+                        "value": "CA"
+                      },
+                      {
+                        "name": "Cap-Vert",
+                        "value": "CV"
+                      },
+                      {
+                        "name": "République centrafricaine",
+                        "value": "CF"
+                      },
+                      {
+                        "name": "Chili",
+                        "value": "CL"
+                      },
+                      {
+                        "name": "Chine",
+                        "value": "CN"
+                      },
+                      {
+                        "name": "Chypre (pays)",
+                        "value": "CY"
+                      },
+                      {
+                        "name": "Colombie",
+                        "value": "CO"
+                      },
+                      {
+                        "name": "Comores",
+                        "value": "KM"
+                      },
+                      {
+                        "name": "République du Congo",
+                        "value": "CG"
+                      },
+                      {
+                        "name": "République démocratique du Congo",
+                        "value": "CD"
+                      },
+                      {
+                        "name": "Corée du Sud",
+                        "value": "KR"
+                      },
+                      {
+                        "name": "Corée du Nord",
+                        "value": "KP"
+                      },
+                      {
+                        "name": "Costa Rica",
+                        "value": "CR"
+                      },
+                      {
+                        "name": "Côte d'Ivoire",
+                        "value": "CI"
+                      },
+                      {
+                        "name": "Croatie",
+                        "value": "HR"
+                      },
+                      {
+                        "name": "Cuba",
+                        "value": "CU"
+                      },
+                      {
+                        "name": "Danemark",
+                        "value": "DK"
+                      },
+                      {
+                        "name": "Djibouti",
+                        "value": "DJ"
+                      },
+                      {
+                        "name": "République dominicaine",
+                        "value": "DO"
+                      },
+                      {
+                        "name": "Dominique",
+                        "value": "DM"
+                      },
+                      {
+                        "name": "Égypte",
+                        "value": "EG"
+                      },
+                      {
+                        "name": "Salvador",
+                        "value": "SV"
+                      },
+                      {
+                        "name": "Émirats arabes unis",
+                        "value": "AE"
+                      },
+                      {
+                        "name": "Équateur",
+                        "value": "EC"
+                      },
+                      {
+                        "name": "Érythrée",
+                        "value": "ER"
+                      },
+                      {
+                        "name": "Espagne",
+                        "value": "ES"
+                      },
+                      {
+                        "name": "Estonie",
+                        "value": "EE"
+                      },
+                      {
+                        "name": "États-Unis",
+                        "value": "US"
+                      },
+                      {
+                        "name": "Éthiopie",
+                        "value": "ET"
+                      },
+                      {
+                        "name": "Fidji",
+                        "value": "FJ"
+                      },
+                      {
+                        "name": "Finlande",
+                        "value": "FI"
+                      },
+                      {
+                        "name": "France",
+                        "value": "FR"
+                      },
+                      {
+                        "name": "Gabon",
+                        "value": "GA"
+                      },
+                      {
+                        "name": "Gambie",
+                        "value": "GM"
+                      },
+                      {
+                        "name": "Géorgie",
+                        "value": "GE"
+                      },
+                      {
+                        "name": "Ghana",
+                        "value": "GH"
+                      },
+                      {
+                        "name": "Grèce",
+                        "value": "GR"
+                      },
+                      {
+                        "name": "Grenade",
+                        "value": "GD"
+                      },
+                      {
+                        "name": "Guatemala",
+                        "value": "GT"
+                      },
+                      {
+                        "name": "Guinée",
+                        "value": "GN"
+                      },
+                      {
+                        "name": "Guinée-Bissau",
+                        "value": "GW"
+                      },
+                      {
+                        "name": "Guinée équatoriale",
+                        "value": "GQ"
+                      },
+                      {
+                        "name": "Guyana",
+                        "value": "GY"
+                      },
+                      {
+                        "name": "Haïti",
+                        "value": "HT"
+                      },
+                      {
+                        "name": "Honduras",
+                        "value": "HN"
+                      },
+                      {
+                        "name": "Hongrie",
+                        "value": "HU"
+                      },
+                      {
+                        "name": "Inde",
+                        "value": "IN"
+                      },
+                      {
+                        "name": "Indonésie",
+                        "value": "ID"
+                      },
+                      {
+                        "name": "Iran",
+                        "value": "IR"
+                      },
+                      {
+                        "name": "Irak",
+                        "value": "IQ"
+                      },
+                      {
+                        "name": "Irlande",
+                        "value": "IE"
+                      },
+                      {
+                        "name": "Islande",
+                        "value": "IS"
+                      },
+                      {
+                        "name": "Israël",
+                        "value": "IL"
+                      },
+                      {
+                        "name": "Italie",
+                        "value": "IT"
+                      },
+                      {
+                        "name": "Jamaïque",
+                        "value": "JM"
+                      },
+                      {
+                        "name": "Japon",
+                        "value": "JP"
+                      },
+                      {
+                        "name": "Jordanie",
+                        "value": "JO"
+                      },
+                      {
+                        "name": "Kazakhstan",
+                        "value": "KZ"
+                      },
+                      {
+                        "name": "Kenya",
+                        "value": "KE"
+                      },
+                      {
+                        "name": "Kirghizistan",
+                        "value": "KG"
+                      },
+                      {
+                        "name": "Kiribati",
+                        "value": "KI"
+                      },
+                      {
+                        "name": "Koweït",
+                        "value": "KW"
+                      },
+                      {
+                        "name": "Laos",
+                        "value": "LA"
+                      },
+                      {
+                        "name": "Lesotho",
+                        "value": "LS"
+                      },
+                      {
+                        "name": "Lettonie",
+                        "value": "LV"
+                      },
+                      {
+                        "name": "Liban",
+                        "value": "LB"
+                      },
+                      {
+                        "name": "Liberia",
+                        "value": "LR"
+                      },
+                      {
+                        "name": "Libye",
+                        "value": "LY"
+                      },
+                      {
+                        "name": "Liechtenstein",
+                        "value": "LI"
+                      },
+                      {
+                        "name": "Lituanie",
+                        "value": "LT"
+                      },
+                      {
+                        "name": "Luxembourg",
+                        "value": "LU"
+                      },
+                      {
+                        "name": "Macédoine du Nord",
+                        "value": "MK"
+                      },
+                      {
+                        "name": "Madagascar",
+                        "value": "MG"
+                      },
+                      {
+                        "name": "Malaisie",
+                        "value": "MY"
+                      },
+                      {
+                        "name": "Malawi",
+                        "value": "MW"
+                      },
+                      {
+                        "name": "Maldives",
+                        "value": "MV"
+                      },
+                      {
+                        "name": "Mali",
+                        "value": "ML"
+                      },
+                      {
+                        "name": "Malte",
+                        "value": "MT"
+                      },
+                      {
+                        "name": "Maroc",
+                        "value": "MA"
+                      },
+                      {
+                        "name": "Îles Marshall",
+                        "value": "MH"
+                      },
+                      {
+                        "name": "Maurice",
+                        "value": "MU"
+                      },
+                      {
+                        "name": "Mauritanie",
+                        "value": "MR"
+                      },
+                      {
+                        "name": "Mexique",
+                        "value": "MX"
+                      },
+                      {
+                        "name": "États fédérés de Micronésie",
+                        "value": "FM"
+                      },
+                      {
+                        "name": "Moldavie",
+                        "value": "MD"
+                      },
+                      {
+                        "name": "Monaco",
+                        "value": "MC"
+                      },
+                      {
+                        "name": "Mongolie",
+                        "value": "MN"
+                      },
+                      {
+                        "name": "Monténégro",
+                        "value": "ME"
+                      },
+                      {
+                        "name": "Mozambique",
+                        "value": "MZ"
+                      },
+                      {
+                        "name": "Birmanie",
+                        "value": "MM"
+                      },
+                      {
+                        "name": "Namibie",
+                        "value": "NA"
+                      },
+                      {
+                        "name": "Nauru",
+                        "value": "NR"
+                      },
+                      {
+                        "name": "Népal",
+                        "value": "NP"
+                      },
+                      {
+                        "name": "Nicaragua",
+                        "value": "NI"
+                      },
+                      {
+                        "name": "Niger",
+                        "value": "NE"
+                      },
+                      {
+                        "name": "Nigeria",
+                        "value": "NG"
+                      },
+                      {
+                        "name": "Norvège",
+                        "value": "NO"
+                      },
+                      {
+                        "name": "Nouvelle-Zélande",
+                        "value": "NZ"
+                      },
+                      {
+                        "name": "Oman",
+                        "value": "OM"
+                      },
+                      {
+                        "name": "Ouganda",
+                        "value": "UG"
+                      },
+                      {
+                        "name": "Ouzbékistan",
+                        "value": "UZ"
+                      },
+                      {
+                        "name": "Pakistan",
+                        "value": "PK"
+                      },
+                      {
+                        "name": "Palaos",
+                        "value": "PW"
+                      },
+                      {
+                        "name": "Panama",
+                        "value": "PA"
+                      },
+                      {
+                        "name": "Papouasie-Nouvelle-Guinée",
+                        "value": "PG"
+                      },
+                      {
+                        "name": "Paraguay",
+                        "value": "PY"
+                      },
+                      {
+                        "name": "Pays-Bas",
+                        "value": "NL"
+                      },
+                      {
+                        "name": "Pérou",
+                        "value": "PE"
+                      },
+                      {
+                        "name": "Philippines",
+                        "value": "PH"
+                      },
+                      {
+                        "name": "Pologne",
+                        "value": "PL"
+                      },
+                      {
+                        "name": "Portugal",
+                        "value": "PT"
+                      },
+                      {
+                        "name": "Qatar",
+                        "value": "QA"
+                      },
+                      {
+                        "name": "Roumanie",
+                        "value": "RO"
+                      },
+                      {
+                        "name": "Royaume-Uni",
+                        "value": "GB"
+                      },
+                      {
+                        "name": "Russie",
+                        "value": "RU"
+                      },
+                      {
+                        "name": "Rwanda",
+                        "value": "RW"
+                      },
+                      {
+                        "name": "Saint-Christophe-et-Niévès",
+                        "value": "KN"
+                      },
+                      {
+                        "name": "Saint-Marin",
+                        "value": "SM"
+                      },
+                      {
+                        "name": "Saint-Vincent-et-les-Grenadines",
+                        "value": "VC"
+                      },
+                      {
+                        "name": "Sainte-Lucie",
+                        "value": "LC"
+                      },
+                      {
+                        "name": "Îles Salomon",
+                        "value": "SB"
+                      },
+                      {
+                        "name": "Samoa",
+                        "value": "WS"
+                      },
+                      {
+                        "name": "Sao Tomé-et-Principe",
+                        "value": "ST"
+                      },
+                      {
+                        "name": "Sénégal",
+                        "value": "SN"
+                      },
+                      {
+                        "name": "Serbie",
+                        "value": "RS"
+                      },
+                      {
+                        "name": "Seychelles",
+                        "value": "SC"
+                      },
+                      {
+                        "name": "Sierra Leone",
+                        "value": "SL"
+                      },
+                      {
+                        "name": "Singapour",
+                        "value": "SG"
+                      },
+                      {
+                        "name": "Slovaquie",
+                        "value": "SK"
+                      },
+                      {
+                        "name": "Slovénie",
+                        "value": "SI"
+                      },
+                      {
+                        "name": "Somalie",
+                        "value": "SO"
+                      },
+                      {
+                        "name": "Soudan",
+                        "value": "SD"
+                      },
+                      {
+                        "name": "Soudan du Sud",
+                        "value": "SS"
+                      },
+                      {
+                        "name": "Sri Lanka",
+                        "value": "LK"
+                      },
+                      {
+                        "name": "Suède",
+                        "value": "SE"
+                      },
+                      {
+                        "name": "Suisse",
+                        "value": "CH"
+                      },
+                      {
+                        "name": "Suriname",
+                        "value": "SR"
+                      },
+                      {
+                        "name": "Eswatini",
+                        "value": "SZ"
+                      },
+                      {
+                        "name": "Syrie",
+                        "value": "SY"
+                      },
+                      {
+                        "name": "Tadjikistan",
+                        "value": "TJ"
+                      },
+                      {
+                        "name": "Tanzanie",
+                        "value": "TZ"
+                      },
+                      {
+                        "name": "Tchad",
+                        "value": "TD"
+                      },
+                      {
+                        "name": "Tchéquie",
+                        "value": "CZ"
+                      },
+                      {
+                        "name": "Thaïlande",
+                        "value": "TH"
+                      },
+                      {
+                        "name": "Timor oriental",
+                        "value": "TL"
+                      },
+                      {
+                        "name": "Togo",
+                        "value": "TG"
+                      },
+                      {
+                        "name": "Tonga",
+                        "value": "TO"
+                      },
+                      {
+                        "name": "Trinité-et-Tobago",
+                        "value": "TT"
+                      },
+                      {
+                        "name": "Tunisie",
+                        "value": "TN"
+                      },
+                      {
+                        "name": "Turkménistan",
+                        "value": "TM"
+                      },
+                      {
+                        "name": "Turquie",
+                        "value": "TR"
+                      },
+                      {
+                        "name": "Tuvalu",
+                        "value": "TV"
+                      },
+                      {
+                        "name": "Ukraine",
+                        "value": "UA"
+                      },
+                      {
+                        "name": "Uruguay",
+                        "value": "UY"
+                      },
+                      {
+                        "name": "Vanuatu",
+                        "value": "VU"
+                      },
+                      {
+                        "name": "Venezuela",
+                        "value": "VE"
+                      },
+                      {
+                        "name": "Viêt Nam",
+                        "value": "VN"
+                      },
+                      {
+                        "name": "Yémen",
+                        "value": "YE"
+                      },
+                      {
+                        "name": "Zambie",
+                        "value": "ZM"
+                      },
+                      {
+                        "name": "Zimbabwe",
+                        "value": "ZW"
+                      }
+                    ],
+                    "custom": ""
+                  },
+                  "dataType": "",
+                  "idPath": "id",
+                  "valueProperty": "value",
+                  "template": "<span>{{ item.name }}</span>",
+                  "refreshOnBlur": "",
+                  "clearOnRefresh": false,
+                  "searchEnabled": true,
+                  "selectThreshold": 0.3,
+                  "readOnlyValue": false,
+                  "customOptions": {},
+                  "useExactSearch": false,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": false
+                  },
+                  "key": "nationalite",
+                  "type": "select",
+                  "indexeddb": {
+                    "filter": {}
+                  },
+                  "lazyLoad": true,
+                  "selectFields": "",
+                  "searchField": "",
+                  "searchDebounce": 0.3,
+                  "minSearch": 0,
+                  "filter": "",
+                  "limit": 100,
+                  "ignoreCache": false,
+                  "input": true,
+                  "authenticate": false,
+                  "fuseOptions": {
+                    "include": "score",
+                    "threshold": 0.3
+                  }
+                }
+              ],
+              "width": 4
+            },
+            {
+              "components": [],
+              "width": 3
+            },
+            {
+              "components": [
+                {
+                  "label": "Columns",
+                  "columns": [
+                    {
+                      "components": [
+                        {
+                          "label": "Etat Civil",
+                          "widget": "choicesjs",
+                          "tableView": true,
+                          "data": {
+                            "values": [
+                              {
+                                "label": "Marié(e)",
+                                "value": "mariee"
+                              },
+                              {
+                                "label": "Célibataire",
+                                "value": "celibataire"
+                              },
+                              {
+                                "label": "Divorcé(e)",
+                                "value": "divorcee"
+                              },
+                              {
+                                "label": "Veuf(ve)",
+                                "value": "veufve"
+                              }
+                            ],
+                            "json": "",
+                            "url": "",
+                            "resource": "",
+                            "custom": ""
+                          },
+                          "validate": {
+                            "required": true,
+                            "onlyAvailableItems": false
+                          },
+                          "key": "etatCivil",
+                          "type": "select",
+                          "input": true,
+                          "defaultValue": null,
+                          "validateOn": "change",
+                          "dataSrc": "values",
+                          "authenticate": false,
+                          "ignoreCache": false,
+                          "template": "<span>{{ item.label }}</span>",
+                          "idPath": "id",
+                          "clearOnRefresh": false,
+                          "limit": 100,
+                          "valueProperty": "",
+                          "lazyLoad": true,
+                          "filter": "",
+                          "searchEnabled": true,
+                          "searchDebounce": 0.3,
+                          "searchField": "",
+                          "minSearch": 0,
+                          "readOnlyValue": false,
+                          "selectFields": "",
+                          "selectThreshold": 0.3,
+                          "uniqueOptions": false,
+                          "fuseOptions": {
+                            "include": "score",
+                            "threshold": 0.3
+                          },
+                          "indexeddb": {
+                            "filter": {}
+                          },
+                          "customOptions": {},
+                          "useExactSearch": false
+                        }
+                      ],
+                      "width": 6
+                    },
+                    {
+                      "components": [
+                        {
+                          "label": "Nom de l'époux",
+                          "tableView": true,
+                          "validate": {
+                            "required": true
+                          },
+                          "key": "nomDeLepoux",
+                          "conditional": {
+                            "show": true,
+                            "when": "etatCivil",
+                            "eq": "mariee"
+                          },
+                          "type": "textfield",
+                          "input": true,
+                          "defaultValue": null,
+                          "validateOn": "change"
+                        }
+                      ],
+                      "width": 6
+                    }
+                  ],
+                  "key": "columns15",
+                  "type": "columns",
+                  "input": false,
+                  "defaultValue": null,
+                  "persistent": false,
+                  "clearOnHide": false,
+                  "validateOn": "change",
+                  "autoAdjust": false
+                }
+              ],
+              "width": 5
+            }
+          ],
+          "autoAdjust": false,
+          "key": "columns1",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change"
+        },
+        {
+          "label": "HTML",
+          "tag": "label",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Date de naissance",
+          "key": "html2",
+          "type": "htmlelement",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "validateOn": "change"
+        },
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Date de naissance",
+                  "widget": "choicesjs",
+                  "placeholder": "Jour",
+                  "hideLabel": true,
+                  "uniqueOptions": false,
+                  "tableView": true,
+                  "dataSrc": "json",
+                  "data": {
+                    "values": [
+                      {
+                        "label": "",
+                        "value": ""
+                      }
+                    ],
+                    "resource": "",
+                    "url": "",
+                    "json": [
+                      {
+                        "name": "Jour",
+                        "value": ""
+                      },
+                      {
+                        "name": "1",
+                        "value": 1
+                      },
+                      {
+                        "name": "2",
+                        "value": 2
+                      },
+                      {
+                        "name": "3",
+                        "value": 3
+                      },
+                      {
+                        "name": "4",
+                        "value": 4
+                      },
+                      {
+                        "name": "5",
+                        "value": 5
+                      },
+                      {
+                        "name": "6",
+                        "value": 6
+                      },
+                      {
+                        "name": "7",
+                        "value": 7
+                      },
+                      {
+                        "name": "8",
+                        "value": 8
+                      },
+                      {
+                        "name": "9",
+                        "value": 9
+                      },
+                      {
+                        "name": "10",
+                        "value": 10
+                      },
+                      {
+                        "name": "11",
+                        "value": 11
+                      },
+                      {
+                        "name": "12",
+                        "value": 12
+                      },
+                      {
+                        "name": "13",
+                        "value": 13
+                      },
+                      {
+                        "name": "14",
+                        "value": 14
+                      },
+                      {
+                        "name": "15",
+                        "value": 15
+                      },
+                      {
+                        "name": "16",
+                        "value": 16
+                      },
+                      {
+                        "name": "17",
+                        "value": 17
+                      },
+                      {
+                        "name": "18",
+                        "value": 18
+                      },
+                      {
+                        "name": "19",
+                        "value": 19
+                      },
+                      {
+                        "name": "20",
+                        "value": 20
+                      },
+                      {
+                        "name": "21",
+                        "value": 21
+                      },
+                      {
+                        "name": "22",
+                        "value": 22
+                      },
+                      {
+                        "name": "23",
+                        "value": 23
+                      },
+                      {
+                        "name": "24",
+                        "value": 24
+                      },
+                      {
+                        "name": "25",
+                        "value": 25
+                      },
+                      {
+                        "name": "26",
+                        "value": 26
+                      },
+                      {
+                        "name": "27",
+                        "value": 27
+                      },
+                      {
+                        "name": "28",
+                        "value": 28
+                      },
+                      {
+                        "name": "29",
+                        "value": 29
+                      },
+                      {
+                        "name": "30",
+                        "value": 30
+                      },
+                      {
+                        "name": "31",
+                        "value": 31
+                      }
+                    ],
+                    "custom": ""
+                  },
+                  "dataType": "",
+                  "idPath": "id",
+                  "valueProperty": "value",
+                  "template": "<span>{{ item.name }}</span>",
+                  "refreshOnBlur": "",
+                  "clearOnRefresh": false,
+                  "searchEnabled": true,
+                  "selectThreshold": 0.3,
+                  "readOnlyValue": false,
+                  "customOptions": {},
+                  "useExactSearch": false,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": false
+                  },
+                  "key": "dateDeNaissance",
+                  "type": "select",
+                  "indexeddb": {
+                    "filter": {}
+                  },
+                  "lazyLoad": true,
+                  "selectFields": "",
+                  "searchField": "",
+                  "searchDebounce": 0.3,
+                  "minSearch": 0,
+                  "filter": "",
+                  "limit": 100,
+                  "ignoreCache": false,
+                  "input": true,
+                  "authenticate": false,
+                  "fuseOptions": {
+                    "include": "score",
+                    "threshold": 0.3
+                  },
+                  "defaultValue": {}
+                }
+              ],
+              "width": 4
+            },
+            {
+              "components": [
+                {
+                  "label": "Mois",
+                  "widget": "choicesjs",
+                  "placeholder": "Mois",
+                  "hideLabel": true,
+                  "uniqueOptions": false,
+                  "tableView": true,
+                  "dataSrc": "json",
+                  "data": {
+                    "values": [
+                      {
+                        "label": "",
+                        "value": ""
+                      }
+                    ],
+                    "resource": "",
+                    "url": "",
+                    "json": [
+                      {
+                        "name": "Janvier",
+                        "value": 1
+                      },
+                      {
+                        "name": "Février",
+                        "value": 2
+                      },
+                      {
+                        "name": "Mars",
+                        "value": 3
+                      },
+                      {
+                        "name": "Avril",
+                        "value": 4
+                      },
+                      {
+                        "name": "Mai",
+                        "value": 5
+                      },
+                      {
+                        "name": "Juin",
+                        "value": 6
+                      },
+                      {
+                        "name": "Juillet",
+                        "value": 7
+                      },
+                      {
+                        "name": "Août",
+                        "value": 8
+                      },
+                      {
+                        "name": "Septembre",
+                        "value": 9
+                      },
+                      {
+                        "name": "Octobre",
+                        "value": 10
+                      },
+                      {
+                        "name": "Novembre",
+                        "value": 11
+                      },
+                      {
+                        "name": "Décembre",
+                        "value": 12
+                      }
+                    ],
+                    "custom": ""
+                  },
+                  "dataType": "",
+                  "idPath": "id",
+                  "valueProperty": "value",
+                  "template": "<span>{{ item.name }}</span>",
+                  "refreshOnBlur": "",
+                  "clearOnRefresh": false,
+                  "searchEnabled": true,
+                  "selectThreshold": 0.3,
+                  "readOnlyValue": false,
+                  "customOptions": {},
+                  "useExactSearch": false,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": false
+                  },
+                  "key": "mois",
+                  "type": "select",
+                  "indexeddb": {
+                    "filter": {}
+                  },
+                  "lazyLoad": true,
+                  "selectFields": "",
+                  "searchField": "",
+                  "searchDebounce": 0.3,
+                  "minSearch": 0,
+                  "filter": "",
+                  "limit": 100,
+                  "ignoreCache": false,
+                  "input": true,
+                  "authenticate": false,
+                  "fuseOptions": {
+                    "include": "score",
+                    "threshold": 0.3
+                  },
+                  "defaultValue": {}
+                }
+              ],
+              "width": 4
+            },
+            {
+              "components": [
+                {
+                  "label": "Année",
+                  "widget": "choicesjs",
+                  "placeholder": "Année",
+                  "hideLabel": true,
+                  "uniqueOptions": false,
+                  "tableView": true,
+                  "dataSrc": "json",
+                  "data": {
+                    "values": [
+                      {
+                        "label": "",
+                        "value": ""
+                      }
+                    ],
+                    "resource": "",
+                    "url": "",
+                    "json": [
+                      {
+                        "name": "1900",
+                        "value": 1900
+                      },
+                      {
+                        "name": "1901",
+                        "value": 1901
+                      },
+                      {
+                        "name": "1902",
+                        "value": 1902
+                      },
+                      {
+                        "name": "1903",
+                        "value": 1903
+                      },
+                      {
+                        "name": "1904",
+                        "value": 1904
+                      },
+                      {
+                        "name": "1905",
+                        "value": 1905
+                      },
+                      {
+                        "name": "1906",
+                        "value": 1906
+                      },
+                      {
+                        "name": "1907",
+                        "value": 1907
+                      },
+                      {
+                        "name": "1908",
+                        "value": 1908
+                      },
+                      {
+                        "name": "1909",
+                        "value": 1909
+                      },
+                      {
+                        "name": "1910",
+                        "value": 1910
+                      },
+                      {
+                        "name": "1911",
+                        "value": 1911
+                      },
+                      {
+                        "name": "1912",
+                        "value": 1912
+                      },
+                      {
+                        "name": "1913",
+                        "value": 1913
+                      },
+                      {
+                        "name": "1914",
+                        "value": 1914
+                      },
+                      {
+                        "name": "1915",
+                        "value": 1915
+                      },
+                      {
+                        "name": "1916",
+                        "value": 1916
+                      },
+                      {
+                        "name": "1917",
+                        "value": 1917
+                      },
+                      {
+                        "name": "1918",
+                        "value": 1918
+                      },
+                      {
+                        "name": "1919",
+                        "value": 1919
+                      },
+                      {
+                        "name": "1920",
+                        "value": 1920
+                      },
+                      {
+                        "name": "1921",
+                        "value": 1921
+                      },
+                      {
+                        "name": "1922",
+                        "value": 1922
+                      },
+                      {
+                        "name": "1923",
+                        "value": 1923
+                      },
+                      {
+                        "name": "1924",
+                        "value": 1924
+                      },
+                      {
+                        "name": "1925",
+                        "value": 1925
+                      },
+                      {
+                        "name": "1926",
+                        "value": 1926
+                      },
+                      {
+                        "name": "1927",
+                        "value": 1927
+                      },
+                      {
+                        "name": "1928",
+                        "value": 1928
+                      },
+                      {
+                        "name": "1929",
+                        "value": 1929
+                      },
+                      {
+                        "name": "1930",
+                        "value": 1930
+                      },
+                      {
+                        "name": "1931",
+                        "value": 1931
+                      },
+                      {
+                        "name": "1932",
+                        "value": 1932
+                      },
+                      {
+                        "name": "1933",
+                        "value": 1933
+                      },
+                      {
+                        "name": "1934",
+                        "value": 1934
+                      },
+                      {
+                        "name": "1935",
+                        "value": 1935
+                      },
+                      {
+                        "name": "1936",
+                        "value": 1936
+                      },
+                      {
+                        "name": "1937",
+                        "value": 1937
+                      },
+                      {
+                        "name": "1938",
+                        "value": 1938
+                      },
+                      {
+                        "name": "1939",
+                        "value": 1939
+                      },
+                      {
+                        "name": "1940",
+                        "value": 1940
+                      },
+                      {
+                        "name": "1941",
+                        "value": 1941
+                      },
+                      {
+                        "name": "1942",
+                        "value": 1942
+                      },
+                      {
+                        "name": "1943",
+                        "value": 1943
+                      },
+                      {
+                        "name": "1944",
+                        "value": 1944
+                      },
+                      {
+                        "name": "1945",
+                        "value": 1945
+                      },
+                      {
+                        "name": "1946",
+                        "value": 1946
+                      },
+                      {
+                        "name": "1947",
+                        "value": 1947
+                      },
+                      {
+                        "name": "1948",
+                        "value": 1948
+                      },
+                      {
+                        "name": "1949",
+                        "value": 1949
+                      },
+                      {
+                        "name": "1950",
+                        "value": 1950
+                      },
+                      {
+                        "name": "1951",
+                        "value": 1951
+                      },
+                      {
+                        "name": "1952",
+                        "value": 1952
+                      },
+                      {
+                        "name": "1953",
+                        "value": 1953
+                      },
+                      {
+                        "name": "1954",
+                        "value": 1954
+                      },
+                      {
+                        "name": "1955",
+                        "value": 1955
+                      },
+                      {
+                        "name": "1956",
+                        "value": 1956
+                      },
+                      {
+                        "name": "1957",
+                        "value": 1957
+                      },
+                      {
+                        "name": "1958",
+                        "value": 1958
+                      },
+                      {
+                        "name": "1959",
+                        "value": 1959
+                      },
+                      {
+                        "name": "1960",
+                        "value": 1960
+                      },
+                      {
+                        "name": "1961",
+                        "value": 1961
+                      },
+                      {
+                        "name": "1962",
+                        "value": 1962
+                      },
+                      {
+                        "name": "1963",
+                        "value": 1963
+                      },
+                      {
+                        "name": "1964",
+                        "value": 1964
+                      },
+                      {
+                        "name": "1965",
+                        "value": 1965
+                      },
+                      {
+                        "name": "1966",
+                        "value": 1966
+                      },
+                      {
+                        "name": "1967",
+                        "value": 1967
+                      },
+                      {
+                        "name": "1968",
+                        "value": 1968
+                      },
+                      {
+                        "name": "1969",
+                        "value": 1969
+                      },
+                      {
+                        "name": "1970",
+                        "value": 1970
+                      },
+                      {
+                        "name": "1971",
+                        "value": 1971
+                      },
+                      {
+                        "name": "1972",
+                        "value": 1972
+                      },
+                      {
+                        "name": "1973",
+                        "value": 1973
+                      },
+                      {
+                        "name": "1974",
+                        "value": 1974
+                      },
+                      {
+                        "name": "1975",
+                        "value": 1975
+                      },
+                      {
+                        "name": "1976",
+                        "value": 1976
+                      },
+                      {
+                        "name": "1977",
+                        "value": 1977
+                      },
+                      {
+                        "name": "1978",
+                        "value": 1978
+                      },
+                      {
+                        "name": "1979",
+                        "value": 1979
+                      },
+                      {
+                        "name": "1980",
+                        "value": 1980
+                      },
+                      {
+                        "name": "1981",
+                        "value": 1981
+                      },
+                      {
+                        "name": "1982",
+                        "value": 1982
+                      },
+                      {
+                        "name": "1983",
+                        "value": 1983
+                      },
+                      {
+                        "name": "1984",
+                        "value": 1984
+                      },
+                      {
+                        "name": "1985",
+                        "value": 1985
+                      },
+                      {
+                        "name": "1986",
+                        "value": 1986
+                      },
+                      {
+                        "name": "1987",
+                        "value": 1987
+                      },
+                      {
+                        "name": "1988",
+                        "value": 1988
+                      },
+                      {
+                        "name": "1989",
+                        "value": 1989
+                      },
+                      {
+                        "name": "1990",
+                        "value": 1990
+                      },
+                      {
+                        "name": "1991",
+                        "value": 1991
+                      },
+                      {
+                        "name": "1992",
+                        "value": 1992
+                      },
+                      {
+                        "name": "1993",
+                        "value": 1993
+                      },
+                      {
+                        "name": "1994",
+                        "value": 1994
+                      },
+                      {
+                        "name": "1995",
+                        "value": 1995
+                      },
+                      {
+                        "name": "1996",
+                        "value": 1996
+                      },
+                      {
+                        "name": "1997",
+                        "value": 1997
+                      },
+                      {
+                        "name": "1998",
+                        "value": 1998
+                      },
+                      {
+                        "name": "1999",
+                        "value": 1999
+                      },
+                      {
+                        "name": "2000",
+                        "value": 2000
+                      },
+                      {
+                        "name": "2001",
+                        "value": 2001
+                      },
+                      {
+                        "name": "2002",
+                        "value": 2002
+                      },
+                      {
+                        "name": "2003",
+                        "value": 2003
+                      },
+                      {
+                        "name": "2004",
+                        "value": 2004
+                      },
+                      {
+                        "name": "2005",
+                        "value": 2005
+                      },
+                      {
+                        "name": "2006",
+                        "value": 2006
+                      },
+                      {
+                        "name": "2007",
+                        "value": 2007
+                      },
+                      {
+                        "name": "2008",
+                        "value": 2008
+                      },
+                      {
+                        "name": "2009",
+                        "value": 2009
+                      },
+                      {
+                        "name": "2010",
+                        "value": 2010
+                      },
+                      {
+                        "name": "2011",
+                        "value": 2011
+                      },
+                      {
+                        "name": "2012",
+                        "value": 2012
+                      },
+                      {
+                        "name": "2013",
+                        "value": 2013
+                      },
+                      {
+                        "name": "2014",
+                        "value": 2014
+                      },
+                      {
+                        "name": "2015",
+                        "value": 2015
+                      },
+                      {
+                        "name": "2016",
+                        "value": 2016
+                      },
+                      {
+                        "name": "2017",
+                        "value": 2017
+                      },
+                      {
+                        "name": "2018",
+                        "value": 2018
+                      },
+                      {
+                        "name": "2019",
+                        "value": 2019
+                      },
+                      {
+                        "name": "2020",
+                        "value": 2020
+                      },
+                      {
+                        "name": "2021",
+                        "value": 2021
+                      },
+                      {
+                        "name": "2022",
+                        "value": 2022
+                      },
+                      {
+                        "name": "2023",
+                        "value": 2023
+                      },
+                      {
+                        "name": "2024",
+                        "value": 2024
+                      },
+                      {
+                        "name": "2025",
+                        "value": 2025
+                      },
+                      {
+                        "name": "2026",
+                        "value": 2026
+                      },
+                      {
+                        "name": "2027",
+                        "value": 2027
+                      },
+                      {
+                        "name": "2028",
+                        "value": 2028
+                      },
+                      {
+                        "name": "2029",
+                        "value": 2029
+                      },
+                      {
+                        "name": "2030",
+                        "value": 2030
+                      }
+                    ],
+                    "custom": ""
+                  },
+                  "dataType": "",
+                  "idPath": "id",
+                  "valueProperty": "",
+                  "template": "<span>{{ item.name }}</span>",
+                  "refreshOnBlur": "",
+                  "clearOnRefresh": false,
+                  "searchEnabled": true,
+                  "selectThreshold": 0.3,
+                  "readOnlyValue": false,
+                  "customOptions": {},
+                  "useExactSearch": false,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": false
+                  },
+                  "key": "annee",
+                  "type": "select",
+                  "indexeddb": {
+                    "filter": {}
+                  },
+                  "lazyLoad": true,
+                  "selectFields": "",
+                  "searchField": "",
+                  "searchDebounce": 0.3,
+                  "minSearch": 0,
+                  "filter": "",
+                  "limit": 100,
+                  "ignoreCache": false,
+                  "input": true,
+                  "authenticate": false,
+                  "fuseOptions": {
+                    "include": "score",
+                    "threshold": 0.3
+                  },
+                  "defaultValue": {}
+                }
+              ],
+              "width": 4
+            }
+          ],
+          "autoAdjust": false,
+          "key": "columns2",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change"
+        },
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Pays de naissance",
+                  "widget": "choicesjs",
+                  "placeholder": "Jour",
+                  "uniqueOptions": false,
+                  "tableView": true,
+                  "dataSrc": "json",
+                  "defaultValue": "TG",
+                  "data": {
+                    "values": [
+                      {
+                        "label": "",
+                        "value": ""
+                      }
+                    ],
+                    "resource": "",
+                    "url": "",
+                    "json": [
+                      {
+                        "name": "Afghanistan",
+                        "value": "AF"
+                      },
+                      {
+                        "name": "Afrique du Sud",
+                        "value": "ZA"
+                      },
+                      {
+                        "name": "Albanie",
+                        "value": "AL"
+                      },
+                      {
+                        "name": "Algérie",
+                        "value": "DZ"
+                      },
+                      {
+                        "name": "Allemagne",
+                        "value": "DE"
+                      },
+                      {
+                        "name": "Andorre",
+                        "value": "AD"
+                      },
+                      {
+                        "name": "Angola",
+                        "value": "AO"
+                      },
+                      {
+                        "name": "Antigua-et-Barbuda",
+                        "value": "AG"
+                      },
+                      {
+                        "name": "Arabie saoudite",
+                        "value": "SA"
+                      },
+                      {
+                        "name": "Argentine",
+                        "value": "AR"
+                      },
+                      {
+                        "name": "Arménie",
+                        "value": "AM"
+                      },
+                      {
+                        "name": "Australie",
+                        "value": "AU"
+                      },
+                      {
+                        "name": "Autriche",
+                        "value": "AT"
+                      },
+                      {
+                        "name": "Azerbaïdjan",
+                        "value": "AZ"
+                      },
+                      {
+                        "name": "Bahamas",
+                        "value": "BS"
+                      },
+                      {
+                        "name": "Bahreïn",
+                        "value": "BH"
+                      },
+                      {
+                        "name": "Bangladesh",
+                        "value": "BD"
+                      },
+                      {
+                        "name": "Barbade",
+                        "value": "BB"
+                      },
+                      {
+                        "name": "Biélorussie",
+                        "value": "BY"
+                      },
+                      {
+                        "name": "Belgique",
+                        "value": "BE"
+                      },
+                      {
+                        "name": "Belize",
+                        "value": "BZ"
+                      },
+                      {
+                        "name": "Bénin",
+                        "value": "BJ"
+                      },
+                      {
+                        "name": "Bhoutan",
+                        "value": "BT"
+                      },
+                      {
+                        "name": "Bolivie",
+                        "value": "BO"
+                      },
+                      {
+                        "name": "Bosnie-Herzégovine",
+                        "value": "BA"
+                      },
+                      {
+                        "name": "Botswana",
+                        "value": "BW"
+                      },
+                      {
+                        "name": "Brésil",
+                        "value": "BR"
+                      },
+                      {
+                        "name": "Brunei",
+                        "value": "BN"
+                      },
+                      {
+                        "name": "Bulgarie",
+                        "value": "BG"
+                      },
+                      {
+                        "name": "Burkina Faso",
+                        "value": "BF"
+                      },
+                      {
+                        "name": "Burundi",
+                        "value": "BI"
+                      },
+                      {
+                        "name": "Cambodge",
+                        "value": "KH"
+                      },
+                      {
+                        "name": "Cameroun",
+                        "value": "CM"
+                      },
+                      {
+                        "name": "Canada",
+                        "value": "CA"
+                      },
+                      {
+                        "name": "Cap-Vert",
+                        "value": "CV"
+                      },
+                      {
+                        "name": "République centrafricaine",
+                        "value": "CF"
+                      },
+                      {
+                        "name": "Chili",
+                        "value": "CL"
+                      },
+                      {
+                        "name": "Chine",
+                        "value": "CN"
+                      },
+                      {
+                        "name": "Chypre (pays)",
+                        "value": "CY"
+                      },
+                      {
+                        "name": "Colombie",
+                        "value": "CO"
+                      },
+                      {
+                        "name": "Comores",
+                        "value": "KM"
+                      },
+                      {
+                        "name": "République du Congo",
+                        "value": "CG"
+                      },
+                      {
+                        "name": "République démocratique du Congo",
+                        "value": "CD"
+                      },
+                      {
+                        "name": "Corée du Sud",
+                        "value": "KR"
+                      },
+                      {
+                        "name": "Corée du Nord",
+                        "value": "KP"
+                      },
+                      {
+                        "name": "Costa Rica",
+                        "value": "CR"
+                      },
+                      {
+                        "name": "Côte d'Ivoire",
+                        "value": "CI"
+                      },
+                      {
+                        "name": "Croatie",
+                        "value": "HR"
+                      },
+                      {
+                        "name": "Cuba",
+                        "value": "CU"
+                      },
+                      {
+                        "name": "Danemark",
+                        "value": "DK"
+                      },
+                      {
+                        "name": "Djibouti",
+                        "value": "DJ"
+                      },
+                      {
+                        "name": "République dominicaine",
+                        "value": "DO"
+                      },
+                      {
+                        "name": "Dominique",
+                        "value": "DM"
+                      },
+                      {
+                        "name": "Égypte",
+                        "value": "EG"
+                      },
+                      {
+                        "name": "Salvador",
+                        "value": "SV"
+                      },
+                      {
+                        "name": "Émirats arabes unis",
+                        "value": "AE"
+                      },
+                      {
+                        "name": "Équateur",
+                        "value": "EC"
+                      },
+                      {
+                        "name": "Érythrée",
+                        "value": "ER"
+                      },
+                      {
+                        "name": "Espagne",
+                        "value": "ES"
+                      },
+                      {
+                        "name": "Estonie",
+                        "value": "EE"
+                      },
+                      {
+                        "name": "États-Unis",
+                        "value": "US"
+                      },
+                      {
+                        "name": "Éthiopie",
+                        "value": "ET"
+                      },
+                      {
+                        "name": "Fidji",
+                        "value": "FJ"
+                      },
+                      {
+                        "name": "Finlande",
+                        "value": "FI"
+                      },
+                      {
+                        "name": "France",
+                        "value": "FR"
+                      },
+                      {
+                        "name": "Gabon",
+                        "value": "GA"
+                      },
+                      {
+                        "name": "Gambie",
+                        "value": "GM"
+                      },
+                      {
+                        "name": "Géorgie",
+                        "value": "GE"
+                      },
+                      {
+                        "name": "Ghana",
+                        "value": "GH"
+                      },
+                      {
+                        "name": "Grèce",
+                        "value": "GR"
+                      },
+                      {
+                        "name": "Grenade",
+                        "value": "GD"
+                      },
+                      {
+                        "name": "Guatemala",
+                        "value": "GT"
+                      },
+                      {
+                        "name": "Guinée",
+                        "value": "GN"
+                      },
+                      {
+                        "name": "Guinée-Bissau",
+                        "value": "GW"
+                      },
+                      {
+                        "name": "Guinée équatoriale",
+                        "value": "GQ"
+                      },
+                      {
+                        "name": "Guyana",
+                        "value": "GY"
+                      },
+                      {
+                        "name": "Haïti",
+                        "value": "HT"
+                      },
+                      {
+                        "name": "Honduras",
+                        "value": "HN"
+                      },
+                      {
+                        "name": "Hongrie",
+                        "value": "HU"
+                      },
+                      {
+                        "name": "Inde",
+                        "value": "IN"
+                      },
+                      {
+                        "name": "Indonésie",
+                        "value": "ID"
+                      },
+                      {
+                        "name": "Iran",
+                        "value": "IR"
+                      },
+                      {
+                        "name": "Irak",
+                        "value": "IQ"
+                      },
+                      {
+                        "name": "Irlande",
+                        "value": "IE"
+                      },
+                      {
+                        "name": "Islande",
+                        "value": "IS"
+                      },
+                      {
+                        "name": "Israël",
+                        "value": "IL"
+                      },
+                      {
+                        "name": "Italie",
+                        "value": "IT"
+                      },
+                      {
+                        "name": "Jamaïque",
+                        "value": "JM"
+                      },
+                      {
+                        "name": "Japon",
+                        "value": "JP"
+                      },
+                      {
+                        "name": "Jordanie",
+                        "value": "JO"
+                      },
+                      {
+                        "name": "Kazakhstan",
+                        "value": "KZ"
+                      },
+                      {
+                        "name": "Kenya",
+                        "value": "KE"
+                      },
+                      {
+                        "name": "Kirghizistan",
+                        "value": "KG"
+                      },
+                      {
+                        "name": "Kiribati",
+                        "value": "KI"
+                      },
+                      {
+                        "name": "Koweït",
+                        "value": "KW"
+                      },
+                      {
+                        "name": "Laos",
+                        "value": "LA"
+                      },
+                      {
+                        "name": "Lesotho",
+                        "value": "LS"
+                      },
+                      {
+                        "name": "Lettonie",
+                        "value": "LV"
+                      },
+                      {
+                        "name": "Liban",
+                        "value": "LB"
+                      },
+                      {
+                        "name": "Liberia",
+                        "value": "LR"
+                      },
+                      {
+                        "name": "Libye",
+                        "value": "LY"
+                      },
+                      {
+                        "name": "Liechtenstein",
+                        "value": "LI"
+                      },
+                      {
+                        "name": "Lituanie",
+                        "value": "LT"
+                      },
+                      {
+                        "name": "Luxembourg",
+                        "value": "LU"
+                      },
+                      {
+                        "name": "Macédoine du Nord",
+                        "value": "MK"
+                      },
+                      {
+                        "name": "Madagascar",
+                        "value": "MG"
+                      },
+                      {
+                        "name": "Malaisie",
+                        "value": "MY"
+                      },
+                      {
+                        "name": "Malawi",
+                        "value": "MW"
+                      },
+                      {
+                        "name": "Maldives",
+                        "value": "MV"
+                      },
+                      {
+                        "name": "Mali",
+                        "value": "ML"
+                      },
+                      {
+                        "name": "Malte",
+                        "value": "MT"
+                      },
+                      {
+                        "name": "Maroc",
+                        "value": "MA"
+                      },
+                      {
+                        "name": "Îles Marshall",
+                        "value": "MH"
+                      },
+                      {
+                        "name": "Maurice",
+                        "value": "MU"
+                      },
+                      {
+                        "name": "Mauritanie",
+                        "value": "MR"
+                      },
+                      {
+                        "name": "Mexique",
+                        "value": "MX"
+                      },
+                      {
+                        "name": "États fédérés de Micronésie",
+                        "value": "FM"
+                      },
+                      {
+                        "name": "Moldavie",
+                        "value": "MD"
+                      },
+                      {
+                        "name": "Monaco",
+                        "value": "MC"
+                      },
+                      {
+                        "name": "Mongolie",
+                        "value": "MN"
+                      },
+                      {
+                        "name": "Monténégro",
+                        "value": "ME"
+                      },
+                      {
+                        "name": "Mozambique",
+                        "value": "MZ"
+                      },
+                      {
+                        "name": "Birmanie",
+                        "value": "MM"
+                      },
+                      {
+                        "name": "Namibie",
+                        "value": "NA"
+                      },
+                      {
+                        "name": "Nauru",
+                        "value": "NR"
+                      },
+                      {
+                        "name": "Népal",
+                        "value": "NP"
+                      },
+                      {
+                        "name": "Nicaragua",
+                        "value": "NI"
+                      },
+                      {
+                        "name": "Niger",
+                        "value": "NE"
+                      },
+                      {
+                        "name": "Nigeria",
+                        "value": "NG"
+                      },
+                      {
+                        "name": "Norvège",
+                        "value": "NO"
+                      },
+                      {
+                        "name": "Nouvelle-Zélande",
+                        "value": "NZ"
+                      },
+                      {
+                        "name": "Oman",
+                        "value": "OM"
+                      },
+                      {
+                        "name": "Ouganda",
+                        "value": "UG"
+                      },
+                      {
+                        "name": "Ouzbékistan",
+                        "value": "UZ"
+                      },
+                      {
+                        "name": "Pakistan",
+                        "value": "PK"
+                      },
+                      {
+                        "name": "Palaos",
+                        "value": "PW"
+                      },
+                      {
+                        "name": "Panama",
+                        "value": "PA"
+                      },
+                      {
+                        "name": "Papouasie-Nouvelle-Guinée",
+                        "value": "PG"
+                      },
+                      {
+                        "name": "Paraguay",
+                        "value": "PY"
+                      },
+                      {
+                        "name": "Pays-Bas",
+                        "value": "NL"
+                      },
+                      {
+                        "name": "Pérou",
+                        "value": "PE"
+                      },
+                      {
+                        "name": "Philippines",
+                        "value": "PH"
+                      },
+                      {
+                        "name": "Pologne",
+                        "value": "PL"
+                      },
+                      {
+                        "name": "Portugal",
+                        "value": "PT"
+                      },
+                      {
+                        "name": "Qatar",
+                        "value": "QA"
+                      },
+                      {
+                        "name": "Roumanie",
+                        "value": "RO"
+                      },
+                      {
+                        "name": "Royaume-Uni",
+                        "value": "GB"
+                      },
+                      {
+                        "name": "Russie",
+                        "value": "RU"
+                      },
+                      {
+                        "name": "Rwanda",
+                        "value": "RW"
+                      },
+                      {
+                        "name": "Saint-Christophe-et-Niévès",
+                        "value": "KN"
+                      },
+                      {
+                        "name": "Saint-Marin",
+                        "value": "SM"
+                      },
+                      {
+                        "name": "Saint-Vincent-et-les-Grenadines",
+                        "value": "VC"
+                      },
+                      {
+                        "name": "Sainte-Lucie",
+                        "value": "LC"
+                      },
+                      {
+                        "name": "Îles Salomon",
+                        "value": "SB"
+                      },
+                      {
+                        "name": "Samoa",
+                        "value": "WS"
+                      },
+                      {
+                        "name": "Sao Tomé-et-Principe",
+                        "value": "ST"
+                      },
+                      {
+                        "name": "Sénégal",
+                        "value": "SN"
+                      },
+                      {
+                        "name": "Serbie",
+                        "value": "RS"
+                      },
+                      {
+                        "name": "Seychelles",
+                        "value": "SC"
+                      },
+                      {
+                        "name": "Sierra Leone",
+                        "value": "SL"
+                      },
+                      {
+                        "name": "Singapour",
+                        "value": "SG"
+                      },
+                      {
+                        "name": "Slovaquie",
+                        "value": "SK"
+                      },
+                      {
+                        "name": "Slovénie",
+                        "value": "SI"
+                      },
+                      {
+                        "name": "Somalie",
+                        "value": "SO"
+                      },
+                      {
+                        "name": "Soudan",
+                        "value": "SD"
+                      },
+                      {
+                        "name": "Soudan du Sud",
+                        "value": "SS"
+                      },
+                      {
+                        "name": "Sri Lanka",
+                        "value": "LK"
+                      },
+                      {
+                        "name": "Suède",
+                        "value": "SE"
+                      },
+                      {
+                        "name": "Suisse",
+                        "value": "CH"
+                      },
+                      {
+                        "name": "Suriname",
+                        "value": "SR"
+                      },
+                      {
+                        "name": "Eswatini",
+                        "value": "SZ"
+                      },
+                      {
+                        "name": "Syrie",
+                        "value": "SY"
+                      },
+                      {
+                        "name": "Tadjikistan",
+                        "value": "TJ"
+                      },
+                      {
+                        "name": "Tanzanie",
+                        "value": "TZ"
+                      },
+                      {
+                        "name": "Tchad",
+                        "value": "TD"
+                      },
+                      {
+                        "name": "Tchéquie",
+                        "value": "CZ"
+                      },
+                      {
+                        "name": "Thaïlande",
+                        "value": "TH"
+                      },
+                      {
+                        "name": "Timor oriental",
+                        "value": "TL"
+                      },
+                      {
+                        "name": "Togo",
+                        "value": "TG"
+                      },
+                      {
+                        "name": "Tonga",
+                        "value": "TO"
+                      },
+                      {
+                        "name": "Trinité-et-Tobago",
+                        "value": "TT"
+                      },
+                      {
+                        "name": "Tunisie",
+                        "value": "TN"
+                      },
+                      {
+                        "name": "Turkménistan",
+                        "value": "TM"
+                      },
+                      {
+                        "name": "Turquie",
+                        "value": "TR"
+                      },
+                      {
+                        "name": "Tuvalu",
+                        "value": "TV"
+                      },
+                      {
+                        "name": "Ukraine",
+                        "value": "UA"
+                      },
+                      {
+                        "name": "Uruguay",
+                        "value": "UY"
+                      },
+                      {
+                        "name": "Vanuatu",
+                        "value": "VU"
+                      },
+                      {
+                        "name": "Venezuela",
+                        "value": "VE"
+                      },
+                      {
+                        "name": "Viêt Nam",
+                        "value": "VN"
+                      },
+                      {
+                        "name": "Yémen",
+                        "value": "YE"
+                      },
+                      {
+                        "name": "Zambie",
+                        "value": "ZM"
+                      },
+                      {
+                        "name": "Zimbabwe",
+                        "value": "ZW"
+                      }
+                    ],
+                    "custom": ""
+                  },
+                  "dataType": "",
+                  "idPath": "id",
+                  "valueProperty": "value",
+                  "template": "<span>{{ item.name }}</span>",
+                  "refreshOnBlur": "",
+                  "clearOnRefresh": false,
+                  "searchEnabled": true,
+                  "selectThreshold": 0.3,
+                  "readOnlyValue": false,
+                  "customOptions": {},
+                  "useExactSearch": false,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": false
+                  },
+                  "key": "paysNaissance",
+                  "type": "select",
+                  "indexeddb": {
+                    "filter": {}
+                  },
+                  "lazyLoad": true,
+                  "selectFields": "",
+                  "searchField": "",
+                  "searchDebounce": 0.3,
+                  "minSearch": 0,
+                  "filter": "",
+                  "limit": 100,
+                  "ignoreCache": false,
+                  "input": true,
+                  "authenticate": false,
+                  "fuseOptions": {
+                    "include": "score",
+                    "threshold": 0.3
+                  }
+                }
+              ],
+              "width": 4
+            },
+            {
+              "components": [
+                {
+                  "label": "Lieu de naissance",
+                  "tableView": true,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true
+                  },
+                  "key": "lieuDeNaissance",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": ""
+                }
+              ],
+              "width": 4
+            },
+            {
+              "components": [
+                {
+                  "label": "Préfecture",
+                  "widget": "choicesjs",
+                  "placeholder": "Préfecture du lieu de naissance",
+                  "uniqueOptions": false,
+                  "tableView": true,
+                  "dataSrc": "json",
+                  "data": {
+                    "values": [
+                      {
+                        "label": "",
+                        "value": ""
+                      }
+                    ],
+                    "resource": "",
+                    "url": "",
+                    "json": [
+                      {
+                        "name": "Golfe",
+                        "region": "Maritime"
+                      },
+                      {
+                        "name": "Avé",
+                        "region": "Maritime"
+                      },
+                      {
+                        "name": "Bas-Mono",
+                        "region": "Maritime"
+                      },
+                      {
+                        "name": "Lacs",
+                        "region": "Maritime"
+                      },
+                      {
+                        "name": "Vo",
+                        "region": "Maritime"
+                      },
+                      {
+                        "name": "Yoto",
+                        "region": "Maritime"
+                      },
+                      {
+                        "name": "Zio",
+                        "region": "Maritime"
+                      },
+                      {
+                        "name": "Agou",
+                        "region": "Plateaux"
+                      },
+                      {
+                        "name": "Akébou",
+                        "region": "Plateaux"
+                      },
+                      {
+                        "name": "Amou",
+                        "region": "Plateaux"
+                      },
+                      {
+                        "name": "Anié",
+                        "region": "Plateaux"
+                      },
+                      {
+                        "name": "Danyi",
+                        "region": "Plateaux"
+                      },
+                      {
+                        "name": "Est-Mono",
+                        "region": "Plateaux"
+                      },
+                      {
+                        "name": "Haho",
+                        "region": "Plateaux"
+                      },
+                      {
+                        "name": "Kloto",
+                        "region": "Plateaux"
+                      },
+                      {
+                        "name": "Kpélé",
+                        "region": "Plateaux"
+                      },
+                      {
+                        "name": "Moyen-Mono",
+                        "region": "Plateaux"
+                      },
+                      {
+                        "name": "Ogou",
+                        "region": "Plateaux"
+                      },
+                      {
+                        "name": "Wawa",
+                        "region": "Plateaux"
+                      },
+                      {
+                        "name": "Blitta",
+                        "region": "Centrale"
+                      },
+                      {
+                        "name": "Sotouboua",
+                        "region": "Centrale"
+                      },
+                      {
+                        "name": "Tchamba",
+                        "region": "Centrale"
+                      },
+                      {
+                        "name": "Tchaoudjo",
+                        "region": "Centrale"
+                      },
+                      {
+                        "name": "Bassari",
+                        "region": "Kara"
+                      },
+                      {
+                        "name": "Binah",
+                        "region": "Kara"
+                      },
+                      {
+                        "name": "Dankpen",
+                        "region": "Kara"
+                      },
+                      {
+                        "name": "Doufelgou",
+                        "region": "Kara"
+                      },
+                      {
+                        "name": "Kéran",
+                        "region": "Kara"
+                      },
+                      {
+                        "name": "Kozah",
+                        "region": "Kara"
+                      },
+                      {
+                        "name": "Cinkassé",
+                        "region": "Savanes"
+                      },
+                      {
+                        "name": "Kpendjal",
+                        "region": "Savanes"
+                      },
+                      {
+                        "name": "Kpendjal-Ouest",
+                        "region": "Savanes"
+                      },
+                      {
+                        "name": "Oti",
+                        "region": "Savanes"
+                      },
+                      {
+                        "name": "Oti-Sud",
+                        "region": "Savanes"
+                      },
+                      {
+                        "name": "Tandjouaré",
+                        "region": "Savanes"
+                      }
+                    ],
+                    "custom": ""
+                  },
+                  "dataType": "",
+                  "idPath": "id",
+                  "valueProperty": "",
+                  "template": "<span>{{ item.name }}</span>",
+                  "refreshOnBlur": "",
+                  "clearOnRefresh": false,
+                  "searchEnabled": true,
+                  "selectThreshold": 0.3,
+                  "readOnlyValue": false,
+                  "customOptions": {},
+                  "useExactSearch": false,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": false
+                  },
+                  "key": "annee1",
+                  "type": "select",
+                  "indexeddb": {
+                    "filter": {}
+                  },
+                  "lazyLoad": true,
+                  "selectFields": "",
+                  "searchField": "",
+                  "searchDebounce": 0.3,
+                  "minSearch": 0,
+                  "filter": "",
+                  "limit": 100,
+                  "ignoreCache": false,
+                  "input": true,
+                  "authenticate": false,
+                  "fuseOptions": {
+                    "include": "score",
+                    "threshold": 0.3
+                  },
+                  "defaultValue": {}
+                }
+              ],
+              "width": 4
+            }
+          ],
+          "key": "columns8",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change",
+          "autoAdjust": false
+        },
+        {
+          "label": "Date / Time",
+          "displayInTimezone": "viewer",
+          "useLocaleSettings": false,
+          "allowInput": true,
+          "format": "yyyy-MM-dd hh:mm a",
+          "shortcutButtons": [],
+          "enableDate": true,
+          "datePicker": {
+            "disable": "",
+            "disableFunction": "",
+            "disableWeekends": false,
+            "disableWeekdays": false,
+            "minDate": null,
+            "maxDate": null,
+            "showWeeks": true,
+            "startingDay": 0,
+            "initDate": "",
+            "minMode": "day",
+            "maxMode": "year",
+            "yearRows": 4,
+            "yearColumns": 5
+          },
+          "enableTime": true,
+          "timePicker": {
+            "showMeridian": true,
+            "hourStep": 1,
+            "minuteStep": 1,
+            "readonlyInput": false,
+            "mousewheel": true,
+            "arrowkeys": true
+          },
+          "defaultValue": "",
+          "defaultDate": "",
+          "customOptions": {},
+          "validateOn": "change",
+          "enableMinDateInput": false,
+          "enableMaxDateInput": false,
+          "key": "dateTime",
+          "type": "datetime",
+          "timezone": "",
+          "input": true,
+          "widget": {
+            "type": "calendar",
+            "displayInTimezone": "viewer",
+            "locale": "en-US",
+            "useLocaleSettings": false,
+            "allowInput": true,
+            "mode": "single",
+            "enableTime": true,
+            "noCalendar": false,
+            "format": "yyyy-MM-dd hh:mm a",
+            "hourIncrement": 1,
+            "minuteIncrement": 1,
+            "time_24hr": false,
+            "minDate": null,
+            "disabledDates": "",
+            "disableWeekends": false,
+            "disableWeekdays": false,
+            "disableFunction": "",
+            "maxDate": null
+          },
+          "datepickerMode": "day"
+        },
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Numéro de téléphone au Togo",
+                  "inputMask": "22899999999",
+                  "tableView": true,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true
+                  },
+                  "key": "numeroTelephoneTogo",
+                  "type": "phoneNumber",
+                  "input": true,
+                  "inputType": "tel",
+                  "inputMode": "decimal",
+                  "inputMaskPlaceholderChar": "",
+                  "defaultValue": ""
+                }
+              ],
+              "width": 6
+            },
+            {
+              "components": [
+                {
+                  "label": "Adresse courante (Ville, Quartier, Maison) ",
+                  "placeholder": "Ex Lomé, Adidogomé, Maison ABALO",
+                  "tableView": true,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true
+                  },
+                  "key": "adresseCourante",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": ""
+                }
+              ],
+              "width": 6
+            }
+          ],
+          "autoAdjust": false,
+          "key": "columns9",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change"
+        },
+        {
+          "label": "Profession ",
+          "widget": "choicesjs",
+          "uniqueOptions": false,
+          "tableView": true,
+          "dataSrc": "json",
+          "data": {
+            "values": [
+              {
+                "label": "",
+                "value": ""
+              }
+            ],
+            "resource": "",
+            "url": "",
+            "json": [
+              {
+                "name": "Ingénieur",
+                "value": "ingenieur"
+              },
+              {
+                "name": "Médecin",
+                "value": "medecin"
+              },
+              {
+                "name": "Infirmier",
+                "value": "infirmier"
+              },
+              {
+                "name": "Pharmacien",
+                "value": "pharmacien"
+              },
+              {
+                "name": "Avocat",
+                "value": "avocat"
+              },
+              {
+                "name": "Juriste",
+                "value": "juriste"
+              },
+              {
+                "name": "Comptable",
+                "value": "comptable"
+              },
+              {
+                "name": "Auditeur",
+                "value": "auditeur"
+              },
+              {
+                "name": "Banquier",
+                "value": "banquier"
+              },
+              {
+                "name": "Entrepreneur",
+                "value": "entrepreneur"
+              },
+              {
+                "name": "Chef d’entreprise",
+                "value": "chef_entreprise"
+              },
+              {
+                "name": "Développeur",
+                "value": "developpeur"
+              },
+              {
+                "name": "Développeur web",
+                "value": "developpeur_web"
+              },
+              {
+                "name": "Data analyst",
+                "value": "data_analyst"
+              },
+              {
+                "name": "Data scientist",
+                "value": "data_scientist"
+              },
+              {
+                "name": "Administrateur système",
+                "value": "administrateur_systeme"
+              },
+              {
+                "name": "Technicien informatique",
+                "value": "technicien_informatique"
+              },
+              {
+                "name": "Architecte",
+                "value": "architecte"
+              },
+              {
+                "name": "Géomètre",
+                "value": "geometre"
+              },
+              {
+                "name": "Électricien",
+                "value": "electricien"
+              },
+              {
+                "name": "Plombier",
+                "value": "plombier"
+              },
+              {
+                "name": "Mécanicien",
+                "value": "mecanicien"
+              },
+              {
+                "name": "Soudeur",
+                "value": "soudeur"
+              },
+              {
+                "name": "Chauffeur",
+                "value": "chauffeur"
+              },
+              {
+                "name": "Pilote",
+                "value": "pilote"
+              },
+              {
+                "name": "Agriculteur",
+                "value": "agriculteur"
+              },
+              {
+                "name": "Éleveur",
+                "value": "eleveur"
+              },
+              {
+                "name": "Commerçant",
+                "value": "commercant"
+              },
+              {
+                "name": "Vendeur",
+                "value": "vendeur"
+              },
+              {
+                "name": "Enseignant",
+                "value": "enseignant"
+              },
+              {
+                "name": "Professeur",
+                "value": "professeur"
+              },
+              {
+                "name": "Étudiant",
+                "value": "etudiant"
+              },
+              {
+                "name": "Chercheur",
+                "value": "chercheur"
+              },
+              {
+                "name": "Journaliste",
+                "value": "journaliste"
+              },
+              {
+                "name": "Photographe",
+                "value": "photographe"
+              },
+              {
+                "name": "Designer",
+                "value": "designer"
+              },
+              {
+                "name": "Graphiste",
+                "value": "graphiste"
+              },
+              {
+                "name": "Marketeur",
+                "value": "marketeur"
+              },
+              {
+                "name": "Responsable RH",
+                "value": "responsable_rh"
+              },
+              {
+                "name": "Assistant administratif",
+                "value": "assistant_administratif"
+              },
+              {
+                "name": "Secrétaire",
+                "value": "secretaire"
+              },
+              {
+                "name": "Policier",
+                "value": "policier"
+              },
+              {
+                "name": "Militaire",
+                "value": "militaire"
+              },
+              {
+                "name": "Pompier",
+                "value": "pompier"
+              },
+              {
+                "name": "Agent de sécurité",
+                "value": "agent_securite"
+              },
+              {
+                "name": "Couturier",
+                "value": "couturier"
+              },
+              {
+                "name": "Coiffeur",
+                "value": "coiffeur"
+              },
+              {
+                "name": "Maçon",
+                "value": "macon"
+              },
+              {
+                "name": "Carreleur",
+                "value": "carreleur"
+              },
+              {
+                "name": "Peintre",
+                "value": "peintre"
+              }
+            ],
+            "custom": ""
+          },
+          "dataType": "",
+          "idPath": "id",
+          "valueProperty": "value",
+          "template": "<span>{{ item.name }}</span>",
+          "refreshOnBlur": "",
+          "clearOnRefresh": false,
+          "searchEnabled": true,
+          "selectThreshold": 0.3,
+          "readOnlyValue": false,
+          "customOptions": {},
+          "useExactSearch": false,
+          "validateOn": "change",
+          "validate": {
+            "required": true,
+            "onlyAvailableItems": false
+          },
+          "key": "profession",
+          "type": "select",
+          "indexeddb": {
+            "filter": {}
+          },
+          "lazyLoad": true,
+          "selectFields": "",
+          "searchField": "",
+          "searchDebounce": 0.3,
+          "minSearch": 0,
+          "filter": "",
+          "limit": 100,
+          "ignoreCache": false,
+          "input": true,
+          "authenticate": false,
+          "fuseOptions": {
+            "include": "score",
+            "threshold": 0.3
+          },
+          "defaultValue": {}
+        },
+        {
+          "label": "Email",
+          "tableView": true,
+          "validateOn": "change",
+          "validate": {
+            "required": true
+          },
+          "key": "email",
+          "type": "email",
+          "input": true,
+          "inputType": "email",
+          "kickbox": {
+            "enabled": false
+          },
+          "defaultValue": ""
+        }
+      ],
+      "input": false,
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    },
+    {
+      "title": "FILIATION",
+      "theme": "success",
+      "breadcrumb": "default",
+      "breadcrumbClickable": true,
+      "buttonSettings": {
+        "previous": true,
+        "cancel": true,
+        "next": true
+      },
+      "key": "page2",
+      "type": "panel",
+      "label": "Page 2",
+      "components": [
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Nom du père ",
+                  "tableView": true,
+                  "validate": {
+                    "required": true
+                  },
+                  "key": "nomDuPere1",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": null,
+                  "validateOn": "change"
+                }
+              ],
+              "width": 6
+            },
+            {
+              "components": [
+                {
+                  "label": "Prénoms du père",
+                  "tableView": true,
+                  "validate": {
+                    "required": true
+                  },
+                  "key": "prenomsDuPere1",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": null,
+                  "validateOn": "change"
+                }
+              ],
+              "width": 6
+            }
+          ],
+          "key": "columns4",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change",
+          "autoAdjust": false
+        },
+        {
+          "label": "Nationalité du père",
+          "widget": "choicesjs",
+          "uniqueOptions": false,
+          "tableView": true,
+          "dataSrc": "json",
+          "defaultValue": "TG",
+          "data": {
+            "values": [
+              {
+                "label": "",
+                "value": ""
+              }
+            ],
+            "resource": "",
+            "url": "",
+            "json": [
+              {
+                "name": "Afghanistan",
+                "value": "AF"
+              },
+              {
+                "name": "Afrique du Sud",
+                "value": "ZA"
+              },
+              {
+                "name": "Albanie",
+                "value": "AL"
+              },
+              {
+                "name": "Algérie",
+                "value": "DZ"
+              },
+              {
+                "name": "Allemagne",
+                "value": "DE"
+              },
+              {
+                "name": "Andorre",
+                "value": "AD"
+              },
+              {
+                "name": "Angola",
+                "value": "AO"
+              },
+              {
+                "name": "Antigua-et-Barbuda",
+                "value": "AG"
+              },
+              {
+                "name": "Arabie saoudite",
+                "value": "SA"
+              },
+              {
+                "name": "Argentine",
+                "value": "AR"
+              },
+              {
+                "name": "Arménie",
+                "value": "AM"
+              },
+              {
+                "name": "Australie",
+                "value": "AU"
+              },
+              {
+                "name": "Autriche",
+                "value": "AT"
+              },
+              {
+                "name": "Azerbaïdjan",
+                "value": "AZ"
+              },
+              {
+                "name": "Bahamas",
+                "value": "BS"
+              },
+              {
+                "name": "Bahreïn",
+                "value": "BH"
+              },
+              {
+                "name": "Bangladesh",
+                "value": "BD"
+              },
+              {
+                "name": "Barbade",
+                "value": "BB"
+              },
+              {
+                "name": "Biélorussie",
+                "value": "BY"
+              },
+              {
+                "name": "Belgique",
+                "value": "BE"
+              },
+              {
+                "name": "Belize",
+                "value": "BZ"
+              },
+              {
+                "name": "Bénin",
+                "value": "BJ"
+              },
+              {
+                "name": "Bhoutan",
+                "value": "BT"
+              },
+              {
+                "name": "Bolivie",
+                "value": "BO"
+              },
+              {
+                "name": "Bosnie-Herzégovine",
+                "value": "BA"
+              },
+              {
+                "name": "Botswana",
+                "value": "BW"
+              },
+              {
+                "name": "Brésil",
+                "value": "BR"
+              },
+              {
+                "name": "Brunei",
+                "value": "BN"
+              },
+              {
+                "name": "Bulgarie",
+                "value": "BG"
+              },
+              {
+                "name": "Burkina Faso",
+                "value": "BF"
+              },
+              {
+                "name": "Burundi",
+                "value": "BI"
+              },
+              {
+                "name": "Cambodge",
+                "value": "KH"
+              },
+              {
+                "name": "Cameroun",
+                "value": "CM"
+              },
+              {
+                "name": "Canada",
+                "value": "CA"
+              },
+              {
+                "name": "Cap-Vert",
+                "value": "CV"
+              },
+              {
+                "name": "République centrafricaine",
+                "value": "CF"
+              },
+              {
+                "name": "Chili",
+                "value": "CL"
+              },
+              {
+                "name": "Chine",
+                "value": "CN"
+              },
+              {
+                "name": "Chypre (pays)",
+                "value": "CY"
+              },
+              {
+                "name": "Colombie",
+                "value": "CO"
+              },
+              {
+                "name": "Comores",
+                "value": "KM"
+              },
+              {
+                "name": "République du Congo",
+                "value": "CG"
+              },
+              {
+                "name": "République démocratique du Congo",
+                "value": "CD"
+              },
+              {
+                "name": "Corée du Sud",
+                "value": "KR"
+              },
+              {
+                "name": "Corée du Nord",
+                "value": "KP"
+              },
+              {
+                "name": "Costa Rica",
+                "value": "CR"
+              },
+              {
+                "name": "Côte d'Ivoire",
+                "value": "CI"
+              },
+              {
+                "name": "Croatie",
+                "value": "HR"
+              },
+              {
+                "name": "Cuba",
+                "value": "CU"
+              },
+              {
+                "name": "Danemark",
+                "value": "DK"
+              },
+              {
+                "name": "Djibouti",
+                "value": "DJ"
+              },
+              {
+                "name": "République dominicaine",
+                "value": "DO"
+              },
+              {
+                "name": "Dominique",
+                "value": "DM"
+              },
+              {
+                "name": "Égypte",
+                "value": "EG"
+              },
+              {
+                "name": "Salvador",
+                "value": "SV"
+              },
+              {
+                "name": "Émirats arabes unis",
+                "value": "AE"
+              },
+              {
+                "name": "Équateur",
+                "value": "EC"
+              },
+              {
+                "name": "Érythrée",
+                "value": "ER"
+              },
+              {
+                "name": "Espagne",
+                "value": "ES"
+              },
+              {
+                "name": "Estonie",
+                "value": "EE"
+              },
+              {
+                "name": "États-Unis",
+                "value": "US"
+              },
+              {
+                "name": "Éthiopie",
+                "value": "ET"
+              },
+              {
+                "name": "Fidji",
+                "value": "FJ"
+              },
+              {
+                "name": "Finlande",
+                "value": "FI"
+              },
+              {
+                "name": "France",
+                "value": "FR"
+              },
+              {
+                "name": "Gabon",
+                "value": "GA"
+              },
+              {
+                "name": "Gambie",
+                "value": "GM"
+              },
+              {
+                "name": "Géorgie",
+                "value": "GE"
+              },
+              {
+                "name": "Ghana",
+                "value": "GH"
+              },
+              {
+                "name": "Grèce",
+                "value": "GR"
+              },
+              {
+                "name": "Grenade",
+                "value": "GD"
+              },
+              {
+                "name": "Guatemala",
+                "value": "GT"
+              },
+              {
+                "name": "Guinée",
+                "value": "GN"
+              },
+              {
+                "name": "Guinée-Bissau",
+                "value": "GW"
+              },
+              {
+                "name": "Guinée équatoriale",
+                "value": "GQ"
+              },
+              {
+                "name": "Guyana",
+                "value": "GY"
+              },
+              {
+                "name": "Haïti",
+                "value": "HT"
+              },
+              {
+                "name": "Honduras",
+                "value": "HN"
+              },
+              {
+                "name": "Hongrie",
+                "value": "HU"
+              },
+              {
+                "name": "Inde",
+                "value": "IN"
+              },
+              {
+                "name": "Indonésie",
+                "value": "ID"
+              },
+              {
+                "name": "Iran",
+                "value": "IR"
+              },
+              {
+                "name": "Irak",
+                "value": "IQ"
+              },
+              {
+                "name": "Irlande",
+                "value": "IE"
+              },
+              {
+                "name": "Islande",
+                "value": "IS"
+              },
+              {
+                "name": "Israël",
+                "value": "IL"
+              },
+              {
+                "name": "Italie",
+                "value": "IT"
+              },
+              {
+                "name": "Jamaïque",
+                "value": "JM"
+              },
+              {
+                "name": "Japon",
+                "value": "JP"
+              },
+              {
+                "name": "Jordanie",
+                "value": "JO"
+              },
+              {
+                "name": "Kazakhstan",
+                "value": "KZ"
+              },
+              {
+                "name": "Kenya",
+                "value": "KE"
+              },
+              {
+                "name": "Kirghizistan",
+                "value": "KG"
+              },
+              {
+                "name": "Kiribati",
+                "value": "KI"
+              },
+              {
+                "name": "Koweït",
+                "value": "KW"
+              },
+              {
+                "name": "Laos",
+                "value": "LA"
+              },
+              {
+                "name": "Lesotho",
+                "value": "LS"
+              },
+              {
+                "name": "Lettonie",
+                "value": "LV"
+              },
+              {
+                "name": "Liban",
+                "value": "LB"
+              },
+              {
+                "name": "Liberia",
+                "value": "LR"
+              },
+              {
+                "name": "Libye",
+                "value": "LY"
+              },
+              {
+                "name": "Liechtenstein",
+                "value": "LI"
+              },
+              {
+                "name": "Lituanie",
+                "value": "LT"
+              },
+              {
+                "name": "Luxembourg",
+                "value": "LU"
+              },
+              {
+                "name": "Macédoine du Nord",
+                "value": "MK"
+              },
+              {
+                "name": "Madagascar",
+                "value": "MG"
+              },
+              {
+                "name": "Malaisie",
+                "value": "MY"
+              },
+              {
+                "name": "Malawi",
+                "value": "MW"
+              },
+              {
+                "name": "Maldives",
+                "value": "MV"
+              },
+              {
+                "name": "Mali",
+                "value": "ML"
+              },
+              {
+                "name": "Malte",
+                "value": "MT"
+              },
+              {
+                "name": "Maroc",
+                "value": "MA"
+              },
+              {
+                "name": "Îles Marshall",
+                "value": "MH"
+              },
+              {
+                "name": "Maurice",
+                "value": "MU"
+              },
+              {
+                "name": "Mauritanie",
+                "value": "MR"
+              },
+              {
+                "name": "Mexique",
+                "value": "MX"
+              },
+              {
+                "name": "États fédérés de Micronésie",
+                "value": "FM"
+              },
+              {
+                "name": "Moldavie",
+                "value": "MD"
+              },
+              {
+                "name": "Monaco",
+                "value": "MC"
+              },
+              {
+                "name": "Mongolie",
+                "value": "MN"
+              },
+              {
+                "name": "Monténégro",
+                "value": "ME"
+              },
+              {
+                "name": "Mozambique",
+                "value": "MZ"
+              },
+              {
+                "name": "Birmanie",
+                "value": "MM"
+              },
+              {
+                "name": "Namibie",
+                "value": "NA"
+              },
+              {
+                "name": "Nauru",
+                "value": "NR"
+              },
+              {
+                "name": "Népal",
+                "value": "NP"
+              },
+              {
+                "name": "Nicaragua",
+                "value": "NI"
+              },
+              {
+                "name": "Niger",
+                "value": "NE"
+              },
+              {
+                "name": "Nigeria",
+                "value": "NG"
+              },
+              {
+                "name": "Norvège",
+                "value": "NO"
+              },
+              {
+                "name": "Nouvelle-Zélande",
+                "value": "NZ"
+              },
+              {
+                "name": "Oman",
+                "value": "OM"
+              },
+              {
+                "name": "Ouganda",
+                "value": "UG"
+              },
+              {
+                "name": "Ouzbékistan",
+                "value": "UZ"
+              },
+              {
+                "name": "Pakistan",
+                "value": "PK"
+              },
+              {
+                "name": "Palaos",
+                "value": "PW"
+              },
+              {
+                "name": "Panama",
+                "value": "PA"
+              },
+              {
+                "name": "Papouasie-Nouvelle-Guinée",
+                "value": "PG"
+              },
+              {
+                "name": "Paraguay",
+                "value": "PY"
+              },
+              {
+                "name": "Pays-Bas",
+                "value": "NL"
+              },
+              {
+                "name": "Pérou",
+                "value": "PE"
+              },
+              {
+                "name": "Philippines",
+                "value": "PH"
+              },
+              {
+                "name": "Pologne",
+                "value": "PL"
+              },
+              {
+                "name": "Portugal",
+                "value": "PT"
+              },
+              {
+                "name": "Qatar",
+                "value": "QA"
+              },
+              {
+                "name": "Roumanie",
+                "value": "RO"
+              },
+              {
+                "name": "Royaume-Uni",
+                "value": "GB"
+              },
+              {
+                "name": "Russie",
+                "value": "RU"
+              },
+              {
+                "name": "Rwanda",
+                "value": "RW"
+              },
+              {
+                "name": "Saint-Christophe-et-Niévès",
+                "value": "KN"
+              },
+              {
+                "name": "Saint-Marin",
+                "value": "SM"
+              },
+              {
+                "name": "Saint-Vincent-et-les-Grenadines",
+                "value": "VC"
+              },
+              {
+                "name": "Sainte-Lucie",
+                "value": "LC"
+              },
+              {
+                "name": "Îles Salomon",
+                "value": "SB"
+              },
+              {
+                "name": "Samoa",
+                "value": "WS"
+              },
+              {
+                "name": "Sao Tomé-et-Principe",
+                "value": "ST"
+              },
+              {
+                "name": "Sénégal",
+                "value": "SN"
+              },
+              {
+                "name": "Serbie",
+                "value": "RS"
+              },
+              {
+                "name": "Seychelles",
+                "value": "SC"
+              },
+              {
+                "name": "Sierra Leone",
+                "value": "SL"
+              },
+              {
+                "name": "Singapour",
+                "value": "SG"
+              },
+              {
+                "name": "Slovaquie",
+                "value": "SK"
+              },
+              {
+                "name": "Slovénie",
+                "value": "SI"
+              },
+              {
+                "name": "Somalie",
+                "value": "SO"
+              },
+              {
+                "name": "Soudan",
+                "value": "SD"
+              },
+              {
+                "name": "Soudan du Sud",
+                "value": "SS"
+              },
+              {
+                "name": "Sri Lanka",
+                "value": "LK"
+              },
+              {
+                "name": "Suède",
+                "value": "SE"
+              },
+              {
+                "name": "Suisse",
+                "value": "CH"
+              },
+              {
+                "name": "Suriname",
+                "value": "SR"
+              },
+              {
+                "name": "Eswatini",
+                "value": "SZ"
+              },
+              {
+                "name": "Syrie",
+                "value": "SY"
+              },
+              {
+                "name": "Tadjikistan",
+                "value": "TJ"
+              },
+              {
+                "name": "Tanzanie",
+                "value": "TZ"
+              },
+              {
+                "name": "Tchad",
+                "value": "TD"
+              },
+              {
+                "name": "Tchéquie",
+                "value": "CZ"
+              },
+              {
+                "name": "Thaïlande",
+                "value": "TH"
+              },
+              {
+                "name": "Timor oriental",
+                "value": "TL"
+              },
+              {
+                "name": "Togo",
+                "value": "TG"
+              },
+              {
+                "name": "Tonga",
+                "value": "TO"
+              },
+              {
+                "name": "Trinité-et-Tobago",
+                "value": "TT"
+              },
+              {
+                "name": "Tunisie",
+                "value": "TN"
+              },
+              {
+                "name": "Turkménistan",
+                "value": "TM"
+              },
+              {
+                "name": "Turquie",
+                "value": "TR"
+              },
+              {
+                "name": "Tuvalu",
+                "value": "TV"
+              },
+              {
+                "name": "Ukraine",
+                "value": "UA"
+              },
+              {
+                "name": "Uruguay",
+                "value": "UY"
+              },
+              {
+                "name": "Vanuatu",
+                "value": "VU"
+              },
+              {
+                "name": "Venezuela",
+                "value": "VE"
+              },
+              {
+                "name": "Viêt Nam",
+                "value": "VN"
+              },
+              {
+                "name": "Yémen",
+                "value": "YE"
+              },
+              {
+                "name": "Zambie",
+                "value": "ZM"
+              },
+              {
+                "name": "Zimbabwe",
+                "value": "ZW"
+              }
+            ],
+            "custom": ""
+          },
+          "dataType": "",
+          "idPath": "id",
+          "valueProperty": "value",
+          "template": "<span>{{ item.name }}</span>",
+          "refreshOnBlur": "",
+          "clearOnRefresh": false,
+          "searchEnabled": true,
+          "selectThreshold": 0.3,
+          "readOnlyValue": false,
+          "customOptions": {},
+          "useExactSearch": false,
+          "validateOn": "change",
+          "validate": {
+            "required": true,
+            "onlyAvailableItems": false
+          },
+          "key": "nationaliteDuPere",
+          "type": "select",
+          "indexeddb": {
+            "filter": {}
+          },
+          "lazyLoad": true,
+          "selectFields": "",
+          "searchField": "",
+          "searchDebounce": 0.3,
+          "minSearch": 0,
+          "filter": "",
+          "limit": 100,
+          "ignoreCache": false,
+          "input": true,
+          "authenticate": false,
+          "fuseOptions": {
+            "include": "score",
+            "threshold": 0.3
+          }
+        },
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Nom de la mère ",
+                  "tableView": true,
+                  "validate": {
+                    "required": true
+                  },
+                  "key": "nomDeLaMere",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": null,
+                  "validateOn": "change"
+                }
+              ],
+              "width": 6
+            },
+            {
+              "components": [
+                {
+                  "label": "Prénoms de la mère ",
+                  "tableView": true,
+                  "validate": {
+                    "required": true
+                  },
+                  "key": "prenomsDeLaMere",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": null,
+                  "validateOn": "change"
+                }
+              ],
+              "width": 6
+            }
+          ],
+          "key": "columns3",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change",
+          "autoAdjust": false
+        },
+        {
+          "label": "Nationalité de la mère ",
+          "widget": "choicesjs",
+          "uniqueOptions": false,
+          "tableView": true,
+          "dataSrc": "json",
+          "defaultValue": {
+            "name": "Togo",
+            "value": "TG"
+          },
+          "data": {
+            "values": [
+              {
+                "label": "",
+                "value": ""
+              }
+            ],
+            "resource": "",
+            "url": "",
+            "json": [
+              {
+                "name": "Afghanistan",
+                "value": "AF"
+              },
+              {
+                "name": "Afrique du Sud",
+                "value": "ZA"
+              },
+              {
+                "name": "Albanie",
+                "value": "AL"
+              },
+              {
+                "name": "Algérie",
+                "value": "DZ"
+              },
+              {
+                "name": "Allemagne",
+                "value": "DE"
+              },
+              {
+                "name": "Andorre",
+                "value": "AD"
+              },
+              {
+                "name": "Angola",
+                "value": "AO"
+              },
+              {
+                "name": "Antigua-et-Barbuda",
+                "value": "AG"
+              },
+              {
+                "name": "Arabie saoudite",
+                "value": "SA"
+              },
+              {
+                "name": "Argentine",
+                "value": "AR"
+              },
+              {
+                "name": "Arménie",
+                "value": "AM"
+              },
+              {
+                "name": "Australie",
+                "value": "AU"
+              },
+              {
+                "name": "Autriche",
+                "value": "AT"
+              },
+              {
+                "name": "Azerbaïdjan",
+                "value": "AZ"
+              },
+              {
+                "name": "Bahamas",
+                "value": "BS"
+              },
+              {
+                "name": "Bahreïn",
+                "value": "BH"
+              },
+              {
+                "name": "Bangladesh",
+                "value": "BD"
+              },
+              {
+                "name": "Barbade",
+                "value": "BB"
+              },
+              {
+                "name": "Biélorussie",
+                "value": "BY"
+              },
+              {
+                "name": "Belgique",
+                "value": "BE"
+              },
+              {
+                "name": "Belize",
+                "value": "BZ"
+              },
+              {
+                "name": "Bénin",
+                "value": "BJ"
+              },
+              {
+                "name": "Bhoutan",
+                "value": "BT"
+              },
+              {
+                "name": "Bolivie",
+                "value": "BO"
+              },
+              {
+                "name": "Bosnie-Herzégovine",
+                "value": "BA"
+              },
+              {
+                "name": "Botswana",
+                "value": "BW"
+              },
+              {
+                "name": "Brésil",
+                "value": "BR"
+              },
+              {
+                "name": "Brunei",
+                "value": "BN"
+              },
+              {
+                "name": "Bulgarie",
+                "value": "BG"
+              },
+              {
+                "name": "Burkina Faso",
+                "value": "BF"
+              },
+              {
+                "name": "Burundi",
+                "value": "BI"
+              },
+              {
+                "name": "Cambodge",
+                "value": "KH"
+              },
+              {
+                "name": "Cameroun",
+                "value": "CM"
+              },
+              {
+                "name": "Canada",
+                "value": "CA"
+              },
+              {
+                "name": "Cap-Vert",
+                "value": "CV"
+              },
+              {
+                "name": "République centrafricaine",
+                "value": "CF"
+              },
+              {
+                "name": "Chili",
+                "value": "CL"
+              },
+              {
+                "name": "Chine",
+                "value": "CN"
+              },
+              {
+                "name": "Chypre (pays)",
+                "value": "CY"
+              },
+              {
+                "name": "Colombie",
+                "value": "CO"
+              },
+              {
+                "name": "Comores",
+                "value": "KM"
+              },
+              {
+                "name": "République du Congo",
+                "value": "CG"
+              },
+              {
+                "name": "République démocratique du Congo",
+                "value": "CD"
+              },
+              {
+                "name": "Corée du Sud",
+                "value": "KR"
+              },
+              {
+                "name": "Corée du Nord",
+                "value": "KP"
+              },
+              {
+                "name": "Costa Rica",
+                "value": "CR"
+              },
+              {
+                "name": "Côte d'Ivoire",
+                "value": "CI"
+              },
+              {
+                "name": "Croatie",
+                "value": "HR"
+              },
+              {
+                "name": "Cuba",
+                "value": "CU"
+              },
+              {
+                "name": "Danemark",
+                "value": "DK"
+              },
+              {
+                "name": "Djibouti",
+                "value": "DJ"
+              },
+              {
+                "name": "République dominicaine",
+                "value": "DO"
+              },
+              {
+                "name": "Dominique",
+                "value": "DM"
+              },
+              {
+                "name": "Égypte",
+                "value": "EG"
+              },
+              {
+                "name": "Salvador",
+                "value": "SV"
+              },
+              {
+                "name": "Émirats arabes unis",
+                "value": "AE"
+              },
+              {
+                "name": "Équateur",
+                "value": "EC"
+              },
+              {
+                "name": "Érythrée",
+                "value": "ER"
+              },
+              {
+                "name": "Espagne",
+                "value": "ES"
+              },
+              {
+                "name": "Estonie",
+                "value": "EE"
+              },
+              {
+                "name": "États-Unis",
+                "value": "US"
+              },
+              {
+                "name": "Éthiopie",
+                "value": "ET"
+              },
+              {
+                "name": "Fidji",
+                "value": "FJ"
+              },
+              {
+                "name": "Finlande",
+                "value": "FI"
+              },
+              {
+                "name": "France",
+                "value": "FR"
+              },
+              {
+                "name": "Gabon",
+                "value": "GA"
+              },
+              {
+                "name": "Gambie",
+                "value": "GM"
+              },
+              {
+                "name": "Géorgie",
+                "value": "GE"
+              },
+              {
+                "name": "Ghana",
+                "value": "GH"
+              },
+              {
+                "name": "Grèce",
+                "value": "GR"
+              },
+              {
+                "name": "Grenade",
+                "value": "GD"
+              },
+              {
+                "name": "Guatemala",
+                "value": "GT"
+              },
+              {
+                "name": "Guinée",
+                "value": "GN"
+              },
+              {
+                "name": "Guinée-Bissau",
+                "value": "GW"
+              },
+              {
+                "name": "Guinée équatoriale",
+                "value": "GQ"
+              },
+              {
+                "name": "Guyana",
+                "value": "GY"
+              },
+              {
+                "name": "Haïti",
+                "value": "HT"
+              },
+              {
+                "name": "Honduras",
+                "value": "HN"
+              },
+              {
+                "name": "Hongrie",
+                "value": "HU"
+              },
+              {
+                "name": "Inde",
+                "value": "IN"
+              },
+              {
+                "name": "Indonésie",
+                "value": "ID"
+              },
+              {
+                "name": "Iran",
+                "value": "IR"
+              },
+              {
+                "name": "Irak",
+                "value": "IQ"
+              },
+              {
+                "name": "Irlande",
+                "value": "IE"
+              },
+              {
+                "name": "Islande",
+                "value": "IS"
+              },
+              {
+                "name": "Israël",
+                "value": "IL"
+              },
+              {
+                "name": "Italie",
+                "value": "IT"
+              },
+              {
+                "name": "Jamaïque",
+                "value": "JM"
+              },
+              {
+                "name": "Japon",
+                "value": "JP"
+              },
+              {
+                "name": "Jordanie",
+                "value": "JO"
+              },
+              {
+                "name": "Kazakhstan",
+                "value": "KZ"
+              },
+              {
+                "name": "Kenya",
+                "value": "KE"
+              },
+              {
+                "name": "Kirghizistan",
+                "value": "KG"
+              },
+              {
+                "name": "Kiribati",
+                "value": "KI"
+              },
+              {
+                "name": "Koweït",
+                "value": "KW"
+              },
+              {
+                "name": "Laos",
+                "value": "LA"
+              },
+              {
+                "name": "Lesotho",
+                "value": "LS"
+              },
+              {
+                "name": "Lettonie",
+                "value": "LV"
+              },
+              {
+                "name": "Liban",
+                "value": "LB"
+              },
+              {
+                "name": "Liberia",
+                "value": "LR"
+              },
+              {
+                "name": "Libye",
+                "value": "LY"
+              },
+              {
+                "name": "Liechtenstein",
+                "value": "LI"
+              },
+              {
+                "name": "Lituanie",
+                "value": "LT"
+              },
+              {
+                "name": "Luxembourg",
+                "value": "LU"
+              },
+              {
+                "name": "Macédoine du Nord",
+                "value": "MK"
+              },
+              {
+                "name": "Madagascar",
+                "value": "MG"
+              },
+              {
+                "name": "Malaisie",
+                "value": "MY"
+              },
+              {
+                "name": "Malawi",
+                "value": "MW"
+              },
+              {
+                "name": "Maldives",
+                "value": "MV"
+              },
+              {
+                "name": "Mali",
+                "value": "ML"
+              },
+              {
+                "name": "Malte",
+                "value": "MT"
+              },
+              {
+                "name": "Maroc",
+                "value": "MA"
+              },
+              {
+                "name": "Îles Marshall",
+                "value": "MH"
+              },
+              {
+                "name": "Maurice",
+                "value": "MU"
+              },
+              {
+                "name": "Mauritanie",
+                "value": "MR"
+              },
+              {
+                "name": "Mexique",
+                "value": "MX"
+              },
+              {
+                "name": "États fédérés de Micronésie",
+                "value": "FM"
+              },
+              {
+                "name": "Moldavie",
+                "value": "MD"
+              },
+              {
+                "name": "Monaco",
+                "value": "MC"
+              },
+              {
+                "name": "Mongolie",
+                "value": "MN"
+              },
+              {
+                "name": "Monténégro",
+                "value": "ME"
+              },
+              {
+                "name": "Mozambique",
+                "value": "MZ"
+              },
+              {
+                "name": "Birmanie",
+                "value": "MM"
+              },
+              {
+                "name": "Namibie",
+                "value": "NA"
+              },
+              {
+                "name": "Nauru",
+                "value": "NR"
+              },
+              {
+                "name": "Népal",
+                "value": "NP"
+              },
+              {
+                "name": "Nicaragua",
+                "value": "NI"
+              },
+              {
+                "name": "Niger",
+                "value": "NE"
+              },
+              {
+                "name": "Nigeria",
+                "value": "NG"
+              },
+              {
+                "name": "Norvège",
+                "value": "NO"
+              },
+              {
+                "name": "Nouvelle-Zélande",
+                "value": "NZ"
+              },
+              {
+                "name": "Oman",
+                "value": "OM"
+              },
+              {
+                "name": "Ouganda",
+                "value": "UG"
+              },
+              {
+                "name": "Ouzbékistan",
+                "value": "UZ"
+              },
+              {
+                "name": "Pakistan",
+                "value": "PK"
+              },
+              {
+                "name": "Palaos",
+                "value": "PW"
+              },
+              {
+                "name": "Panama",
+                "value": "PA"
+              },
+              {
+                "name": "Papouasie-Nouvelle-Guinée",
+                "value": "PG"
+              },
+              {
+                "name": "Paraguay",
+                "value": "PY"
+              },
+              {
+                "name": "Pays-Bas",
+                "value": "NL"
+              },
+              {
+                "name": "Pérou",
+                "value": "PE"
+              },
+              {
+                "name": "Philippines",
+                "value": "PH"
+              },
+              {
+                "name": "Pologne",
+                "value": "PL"
+              },
+              {
+                "name": "Portugal",
+                "value": "PT"
+              },
+              {
+                "name": "Qatar",
+                "value": "QA"
+              },
+              {
+                "name": "Roumanie",
+                "value": "RO"
+              },
+              {
+                "name": "Royaume-Uni",
+                "value": "GB"
+              },
+              {
+                "name": "Russie",
+                "value": "RU"
+              },
+              {
+                "name": "Rwanda",
+                "value": "RW"
+              },
+              {
+                "name": "Saint-Christophe-et-Niévès",
+                "value": "KN"
+              },
+              {
+                "name": "Saint-Marin",
+                "value": "SM"
+              },
+              {
+                "name": "Saint-Vincent-et-les-Grenadines",
+                "value": "VC"
+              },
+              {
+                "name": "Sainte-Lucie",
+                "value": "LC"
+              },
+              {
+                "name": "Îles Salomon",
+                "value": "SB"
+              },
+              {
+                "name": "Samoa",
+                "value": "WS"
+              },
+              {
+                "name": "Sao Tomé-et-Principe",
+                "value": "ST"
+              },
+              {
+                "name": "Sénégal",
+                "value": "SN"
+              },
+              {
+                "name": "Serbie",
+                "value": "RS"
+              },
+              {
+                "name": "Seychelles",
+                "value": "SC"
+              },
+              {
+                "name": "Sierra Leone",
+                "value": "SL"
+              },
+              {
+                "name": "Singapour",
+                "value": "SG"
+              },
+              {
+                "name": "Slovaquie",
+                "value": "SK"
+              },
+              {
+                "name": "Slovénie",
+                "value": "SI"
+              },
+              {
+                "name": "Somalie",
+                "value": "SO"
+              },
+              {
+                "name": "Soudan",
+                "value": "SD"
+              },
+              {
+                "name": "Soudan du Sud",
+                "value": "SS"
+              },
+              {
+                "name": "Sri Lanka",
+                "value": "LK"
+              },
+              {
+                "name": "Suède",
+                "value": "SE"
+              },
+              {
+                "name": "Suisse",
+                "value": "CH"
+              },
+              {
+                "name": "Suriname",
+                "value": "SR"
+              },
+              {
+                "name": "Eswatini",
+                "value": "SZ"
+              },
+              {
+                "name": "Syrie",
+                "value": "SY"
+              },
+              {
+                "name": "Tadjikistan",
+                "value": "TJ"
+              },
+              {
+                "name": "Tanzanie",
+                "value": "TZ"
+              },
+              {
+                "name": "Tchad",
+                "value": "TD"
+              },
+              {
+                "name": "Tchéquie",
+                "value": "CZ"
+              },
+              {
+                "name": "Thaïlande",
+                "value": "TH"
+              },
+              {
+                "name": "Timor oriental",
+                "value": "TL"
+              },
+              {
+                "name": "Togo",
+                "value": "TG"
+              },
+              {
+                "name": "Tonga",
+                "value": "TO"
+              },
+              {
+                "name": "Trinité-et-Tobago",
+                "value": "TT"
+              },
+              {
+                "name": "Tunisie",
+                "value": "TN"
+              },
+              {
+                "name": "Turkménistan",
+                "value": "TM"
+              },
+              {
+                "name": "Turquie",
+                "value": "TR"
+              },
+              {
+                "name": "Tuvalu",
+                "value": "TV"
+              },
+              {
+                "name": "Ukraine",
+                "value": "UA"
+              },
+              {
+                "name": "Uruguay",
+                "value": "UY"
+              },
+              {
+                "name": "Vanuatu",
+                "value": "VU"
+              },
+              {
+                "name": "Venezuela",
+                "value": "VE"
+              },
+              {
+                "name": "Viêt Nam",
+                "value": "VN"
+              },
+              {
+                "name": "Yémen",
+                "value": "YE"
+              },
+              {
+                "name": "Zambie",
+                "value": "ZM"
+              },
+              {
+                "name": "Zimbabwe",
+                "value": "ZW"
+              }
+            ],
+            "custom": ""
+          },
+          "dataType": "",
+          "idPath": "id",
+          "valueProperty": "",
+          "template": "<span>{{ item.name }}</span>",
+          "refreshOnBlur": "",
+          "clearOnRefresh": false,
+          "searchEnabled": true,
+          "selectThreshold": 0.3,
+          "readOnlyValue": false,
+          "customOptions": {},
+          "useExactSearch": false,
+          "validateOn": "change",
+          "validate": {
+            "required": false,
+            "onlyAvailableItems": false
+          },
+          "key": "nationaliteDeLaMere",
+          "type": "select",
+          "indexeddb": {
+            "filter": {}
+          },
+          "lazyLoad": true,
+          "selectFields": "",
+          "searchField": "",
+          "searchDebounce": 0.3,
+          "minSearch": 0,
+          "filter": "",
+          "limit": 100,
+          "ignoreCache": false,
+          "input": true,
+          "authenticate": false,
+          "fuseOptions": {
+            "include": "score",
+            "threshold": 0.3
+          }
+        }
+      ],
+      "input": false,
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    },
+    {
+      "title": "INFORMATIONS DE DEPÔT",
+      "theme": "success",
+      "breadcrumb": "default",
+      "breadcrumbClickable": true,
+      "buttonSettings": {
+        "previous": true,
+        "cancel": true,
+        "next": true
+      },
+      "key": "page3",
+      "type": "panel",
+      "label": "Page 3",
+      "input": false,
+      "components": [
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Zone de formalité de dépôt ",
+                  "optionsLabelPosition": "right",
+                  "inline": true,
+                  "dataSrc": "values",
+                  "values": [
+                    {
+                      "label": "TOGO",
+                      "value": "togo"
+                    },
+                    {
+                      "label": "HORS DU TOGO",
+                      "value": "horsDuTogo"
+                    }
+                  ],
+                  "dataType": "",
+                  "valueProperty": "",
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": false
+                  },
+                  "key": "zoneFormaliteDepot",
+                  "type": "radio",
+                  "data": {
+                    "url": ""
+                  },
+                  "template": "<span>{{ item.label }}</span>",
+                  "ignoreCache": false,
+                  "input": true,
+                  "validateOn": "change",
+                  "authenticate": false,
+                  "inputType": "radio",
+                  "fieldSet": false,
+                  "defaultValue": ""
+                }
+              ],
+              "width": 6
+            },
+            {
+              "components": [
+                {
+                  "label": "Site de formalité de dépôt ",
+                  "widget": "choicesjs",
+                  "uniqueOptions": false,
+                  "tableView": true,
+                  "dataSrc": "json",
+                  "data": {
+                    "values": [
+                      {
+                        "label": "",
+                        "value": ""
+                      }
+                    ],
+                    "resource": "",
+                    "url": "",
+                    "json": [
+                      {
+                        "name": "BARCELONE",
+                        "value": "barcelone"
+                      },
+                      {
+                        "name": "BRUXELLE",
+                        "value": "bruxelle"
+                      },
+                      {
+                        "name": "HADJ",
+                        "value": "hadj"
+                      },
+                      {
+                        "name": "KARA",
+                        "value": "kara"
+                      },
+                      {
+                        "name": "LOME",
+                        "value": "lome"
+                      },
+                      {
+                        "name": "LONDRES",
+                        "value": "londres"
+                      },
+                      {
+                        "name": "MILAN",
+                        "value": "milan"
+                      }
+                    ],
+                    "custom": ""
+                  },
+                  "dataType": "",
+                  "idPath": "id",
+                  "valueProperty": "value",
+                  "template": "<span>{{ item.name }}</span>",
+                  "refreshOnBlur": "",
+                  "clearOnRefresh": false,
+                  "searchEnabled": true,
+                  "selectThreshold": 0.3,
+                  "readOnlyValue": false,
+                  "customOptions": {},
+                  "useExactSearch": false,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": false
+                  },
+                  "key": "siteDepot",
+                  "type": "select",
+                  "indexeddb": {
+                    "filter": {}
+                  },
+                  "lazyLoad": true,
+                  "selectFields": "",
+                  "searchField": "",
+                  "searchDebounce": 0.3,
+                  "minSearch": 0,
+                  "filter": "",
+                  "limit": 100,
+                  "ignoreCache": false,
+                  "input": true,
+                  "authenticate": false,
+                  "fuseOptions": {
+                    "include": "score",
+                    "threshold": 0.3
+                  },
+                  "defaultValue": ""
+                }
+              ],
+              "width": 6
+            }
+          ],
+          "autoAdjust": false,
+          "key": "columns5",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change"
+        },
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Type de demande",
+                  "widget": "choicesjs",
+                  "uniqueOptions": false,
+                  "tableView": true,
+                  "dataSrc": "values",
+                  "data": {
+                    "values": [
+                      {
+                        "label": "Première demande",
+                        "value": "premiereDemande"
+                      },
+                      {
+                        "label": "Renouvellement",
+                        "value": "renouvellement"
+                      }
+                    ],
+                    "resource": "",
+                    "url": "",
+                    "json": "",
+                    "custom": ""
+                  },
+                  "dataType": "",
+                  "idPath": "id",
+                  "valueProperty": "",
+                  "template": "<span>{{ item.label }}</span>",
+                  "refreshOnBlur": "",
+                  "clearOnRefresh": false,
+                  "searchEnabled": true,
+                  "selectThreshold": 0.3,
+                  "readOnlyValue": false,
+                  "customOptions": {},
+                  "useExactSearch": false,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": false
+                  },
+                  "key": "typeDeDemande",
+                  "type": "select",
+                  "indexeddb": {
+                    "filter": {}
+                  },
+                  "lazyLoad": true,
+                  "selectFields": "",
+                  "searchField": "",
+                  "searchDebounce": 0.3,
+                  "minSearch": 0,
+                  "filter": "",
+                  "limit": 100,
+                  "ignoreCache": false,
+                  "input": true,
+                  "authenticate": false,
+                  "fuseOptions": {
+                    "include": "score",
+                    "threshold": 0.3
+                  },
+                  "defaultValue": ""
+                }
+              ],
+              "width": 4
+            },
+            {
+              "components": [
+                {
+                  "label": "Raison de renouvellement",
+                  "widget": "choicesjs",
+                  "uniqueOptions": false,
+                  "tableView": true,
+                  "dataSrc": "values",
+                  "data": {
+                    "values": [
+                      {
+                        "label": "Expiré",
+                        "value": "expire"
+                      },
+                      {
+                        "label": "Page epuisée",
+                        "value": "pageEpuisee"
+                      },
+                      {
+                        "label": "Suite à une perte ",
+                        "value": "suiteAUnePerte"
+                      },
+                      {
+                        "label": "Suite à un vol",
+                        "value": "suiteAUnVol"
+                      },
+                      {
+                        "label": "Changement de données personnelles",
+                        "value": "changementDeDonneesPersonnelles"
+                      }
+                    ],
+                    "resource": "",
+                    "url": "",
+                    "json": "",
+                    "custom": ""
+                  },
+                  "dataType": "",
+                  "idPath": "id",
+                  "valueProperty": "",
+                  "template": "<span>{{ item.label }}</span>",
+                  "refreshOnBlur": "",
+                  "clearOnRefresh": false,
+                  "searchEnabled": true,
+                  "selectThreshold": 0.3,
+                  "readOnlyValue": false,
+                  "customOptions": {},
+                  "useExactSearch": false,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": false
+                  },
+                  "key": "raisonDeRenouvellement",
+                  "conditional": {
+                    "show": true,
+                    "when": "typeDeDemande",
+                    "eq": "renouvellement",
+                    "json": ""
+                  },
+                  "type": "select",
+                  "indexeddb": {
+                    "filter": {}
+                  },
+                  "lazyLoad": true,
+                  "selectFields": "",
+                  "searchField": "",
+                  "searchDebounce": 0.3,
+                  "minSearch": 0,
+                  "filter": "",
+                  "limit": 100,
+                  "ignoreCache": false,
+                  "input": true,
+                  "authenticate": false,
+                  "fuseOptions": {
+                    "include": "score",
+                    "threshold": 0.3
+                  },
+                  "defaultValue": ""
+                }
+              ],
+              "width": 4
+            },
+            {
+              "components": [
+                {
+                  "label": "N° du dernier Passeport ",
+                  "tableView": true,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true
+                  },
+                  "key": "nDuDernierPasseport",
+                  "conditional": {
+                    "show": true,
+                    "when": "typeDeDemande",
+                    "eq": "renouvellement",
+                    "json": ""
+                  },
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": ""
+                }
+              ],
+              "width": 4
+            }
+          ],
+          "autoAdjust": false,
+          "key": "columns6",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change"
+        },
+        {
+          "label": "Type de passeport ",
+          "optionsLabelPosition": "right",
+          "inline": true,
+          "dataSrc": "values",
+          "values": [
+            {
+              "label": "ORDINAIRE",
+              "value": "ordinaire"
+            },
+            {
+              "label": "SERVICE",
+              "value": "service"
+            },
+            {
+              "label": "DIPLOMATIQUE",
+              "value": "diplomatique"
+            }
+          ],
+          "dataType": "",
+          "valueProperty": "",
+          "validate": {
+            "required": false,
+            "onlyAvailableItems": false
+          },
+          "key": "typeDePasseport",
+          "type": "radio",
+          "data": {
+            "url": ""
+          },
+          "template": "<span>{{ item.label }}</span>",
+          "ignoreCache": false,
+          "input": true,
+          "validateOn": "change",
+          "authenticate": false,
+          "inputType": "radio",
+          "fieldSet": false,
+          "defaultValue": ""
+        },
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "HTML",
+                  "tag": "div",
+                  "className": "",
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
+                  "content": "<div>\r\n  <strong>ORDINAIRE   </strong>  30.000 FCFA\r\n  <br/><br/> <p>\r\n    Il est délivré pour une durée de 5ans, pour tout togolais qui en fait la demande\r\n  </p>\r\n</div>",
+                  "key": "html",
+                  "type": "htmlelement",
+                  "input": false,
+                  "defaultValue": null,
+                  "persistent": false,
+                  "validateOn": "change"
+                }
+              ],
+              "width": 4
+            },
+            {
+              "components": [
+                {
+                  "label": "HTML",
+                  "tag": "div",
+                  "className": "",
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
+                  "content": "<strong>SERVICE</strong>   30.000 FCFA\r\n<br/><br/>\r\n<p>Il est délivré pour tout togolais en mission officielle. Il a une durée de validité de 5 ans. Aux conditions ordinaires de délivrance s’ajoute une autorisation du Ministre de la Sécurité et de la Protection Civile</p>\r\n\r\n",
+                  "key": "html1",
+                  "type": "htmlelement",
+                  "input": false,
+                  "defaultValue": null,
+                  "persistent": false,
+                  "validateOn": "change"
+                }
+              ],
+              "width": 4
+            },
+            {
+              "components": [
+                {
+                  "label": "div",
+                  "tag": "div",
+                  "className": "",
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
+                  "content": "<strong>DIPLOMATIQUE</strong>   30.000 FCFA\r\n<br/><br/>\r\n<p>Délivré aux Hautes Personnalités Administratives et Diplomatiques, à leurs conjoints et enfants mineurs sur autorisation du Ministre des Affaires Etrangères, sa durée de validité est de 5 ans</p>\r\n\r\n",
+                  "key": "div",
+                  "type": "htmlelement",
+                  "input": false,
+                  "defaultValue": null,
+                  "persistent": false,
+                  "validateOn": "change"
+                }
+              ],
+              "width": 4
+            }
+          ],
+          "autoAdjust": false,
+          "key": "columns7",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change"
+        }
+      ],
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    },
+    {
+      "title": "DOCUMENTS",
+      "theme": "success",
+      "breadcrumb": "default",
+      "breadcrumbClickable": true,
+      "buttonSettings": {
+        "previous": true,
+        "cancel": true,
+        "next": true
+      },
+      "key": "page4",
+      "type": "panel",
+      "label": "Page 4",
+      "input": false,
+      "components": [
+        {
+          "label": "HTML",
+          "tag": "legend",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "<legend>Certificat de naissance:</legend>\r\n",
+          "key": "html4",
+          "type": "htmlelement",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "validateOn": "change"
+        },
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Numéro",
+                  "tableView": true,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true,
+                    "customMessage": "Il faut saisir minimum 1 caractère et maximum 50 caractères.",
+                    "minLength": 1,
+                    "maxLength": 50
+                  },
+                  "errorLabel": "Il faut saisir minimum 1 caractère et maximum 50 caractères.",
+                  "key": "numeroCertificatNaissance",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": ""
+                }
+              ],
+              "width": 6
+            },
+            {
+              "components": [
+                {
+                  "label": "Fait le ",
+                  "displayInTimezone": "viewer",
+                  "useLocaleSettings": false,
+                  "allowInput": true,
+                  "format": "yyyy-MM-dd",
+                  "shortcutButtons": [],
+                  "enableDate": true,
+                  "datePicker": {
+                    "disable": "",
+                    "disableFunction": "",
+                    "disableWeekends": false,
+                    "disableWeekdays": false,
+                    "minDate": null,
+                    "maxDate": null,
+                    "showWeeks": true,
+                    "startingDay": 0,
+                    "initDate": "",
+                    "minMode": "day",
+                    "maxMode": "year",
+                    "yearRows": 4,
+                    "yearColumns": 5
+                  },
+                  "enableTime": false,
+                  "timePicker": {
+                    "showMeridian": false,
+                    "hourStep": 1,
+                    "minuteStep": 1,
+                    "readonlyInput": false,
+                    "mousewheel": true,
+                    "arrowkeys": true
+                  },
+                  "defaultValue": "",
+                  "defaultDate": "",
+                  "customOptions": {},
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true
+                  },
+                  "enableMinDateInput": false,
+                  "enableMaxDateInput": false,
+                  "key": "faitLeCertificatNaissance",
+                  "type": "datetime",
+                  "timezone": "",
+                  "input": true,
+                  "widget": {
+                    "type": "calendar",
+                    "displayInTimezone": "viewer",
+                    "locale": "en-US",
+                    "useLocaleSettings": false,
+                    "allowInput": true,
+                    "mode": "single",
+                    "enableTime": false,
+                    "noCalendar": false,
+                    "format": "yyyy-MM-dd",
+                    "hourIncrement": 1,
+                    "minuteIncrement": 1,
+                    "time_24hr": true,
+                    "minDate": null,
+                    "disabledDates": "",
+                    "disableWeekends": false,
+                    "disableWeekdays": false,
+                    "disableFunction": "",
+                    "maxDate": null
+                  },
+                  "datepickerMode": "day"
+                }
+              ],
+              "width": 6
+            }
+          ],
+          "autoAdjust": false,
+          "key": "columns11",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change"
+        },
+        {
+          "label": "Fait à",
+          "tableView": true,
+          "validateOn": "change",
+          "validate": {
+            "required": true
+          },
+          "key": "faitACertificatNaissance",
+          "type": "textfield",
+          "input": true,
+          "defaultValue": ""
+        },
+        {
+          "label": "HTML",
+          "tag": "legend",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "<legend>Certificat de nationalité:</legend>\r\n",
+          "key": "html3",
+          "type": "htmlelement",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "validateOn": "change"
+        },
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Numéro",
+                  "tableView": true,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true,
+                    "customMessage": "Il faut saisir minimum 1 caractère et maximum 50 caractères.",
+                    "minLength": 1,
+                    "maxLength": 50
+                  },
+                  "errorLabel": "Il faut saisir minimum 1 caractère et maximum 50 caractères.",
+                  "key": "numeroCertificatNationalite",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": ""
+                }
+              ],
+              "width": 6
+            },
+            {
+              "components": [
+                {
+                  "label": "Fait le ",
+                  "displayInTimezone": "viewer",
+                  "useLocaleSettings": false,
+                  "allowInput": true,
+                  "format": "yyyy-MM-dd",
+                  "shortcutButtons": [],
+                  "enableDate": true,
+                  "datePicker": {
+                    "disable": "",
+                    "disableFunction": "",
+                    "disableWeekends": false,
+                    "disableWeekdays": false,
+                    "minDate": null,
+                    "maxDate": null,
+                    "showWeeks": true,
+                    "startingDay": 0,
+                    "initDate": "",
+                    "minMode": "day",
+                    "maxMode": "year",
+                    "yearRows": 4,
+                    "yearColumns": 5
+                  },
+                  "enableTime": false,
+                  "timePicker": {
+                    "showMeridian": false,
+                    "hourStep": 1,
+                    "minuteStep": 1,
+                    "readonlyInput": false,
+                    "mousewheel": true,
+                    "arrowkeys": true
+                  },
+                  "defaultValue": "",
+                  "defaultDate": "",
+                  "customOptions": {},
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true
+                  },
+                  "enableMinDateInput": false,
+                  "enableMaxDateInput": false,
+                  "key": "faitLeCertificatNationalite",
+                  "type": "datetime",
+                  "timezone": "",
+                  "input": true,
+                  "widget": {
+                    "type": "calendar",
+                    "displayInTimezone": "viewer",
+                    "locale": "en-US",
+                    "useLocaleSettings": false,
+                    "allowInput": true,
+                    "mode": "single",
+                    "enableTime": false,
+                    "noCalendar": false,
+                    "format": "yyyy-MM-dd",
+                    "hourIncrement": 1,
+                    "minuteIncrement": 1,
+                    "time_24hr": true,
+                    "minDate": null,
+                    "disabledDates": "",
+                    "disableWeekends": false,
+                    "disableWeekdays": false,
+                    "disableFunction": "",
+                    "maxDate": null
+                  },
+                  "datepickerMode": "day"
+                }
+              ],
+              "width": 6
+            }
+          ],
+          "key": "columns12",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change",
+          "autoAdjust": false
+        },
+        {
+          "label": "HTML",
+          "tag": "legend",
+          "className": "",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "<legend>Carte nationalité d'identité:</legend>\r\n",
+          "key": "html5",
+          "type": "htmlelement",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "validateOn": "change"
+        },
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Numéro",
+                  "tableView": true,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true,
+                    "customMessage": "Il faut saisir minimum 1 caractère et maximum 50 caractères.",
+                    "minLength": 1,
+                    "maxLength": 50
+                  },
+                  "errorLabel": "Il faut saisir minimum 1 caractère et maximum 50 caractères.",
+                  "key": "numeroCarteNationaliteIdentite",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": ""
+                }
+              ],
+              "width": 6
+            },
+            {
+              "components": [
+                {
+                  "label": "Fait le ",
+                  "displayInTimezone": "viewer",
+                  "useLocaleSettings": false,
+                  "allowInput": true,
+                  "format": "yyyy-MM-dd",
+                  "shortcutButtons": [],
+                  "enableDate": true,
+                  "datePicker": {
+                    "disable": "",
+                    "disableFunction": "",
+                    "disableWeekends": false,
+                    "disableWeekdays": false,
+                    "minDate": null,
+                    "maxDate": null,
+                    "showWeeks": true,
+                    "startingDay": 0,
+                    "initDate": "",
+                    "minMode": "day",
+                    "maxMode": "year",
+                    "yearRows": 4,
+                    "yearColumns": 5
+                  },
+                  "enableTime": false,
+                  "timePicker": {
+                    "showMeridian": false,
+                    "hourStep": 1,
+                    "minuteStep": 1,
+                    "readonlyInput": false,
+                    "mousewheel": true,
+                    "arrowkeys": true
+                  },
+                  "defaultValue": "",
+                  "defaultDate": "",
+                  "customOptions": {},
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true
+                  },
+                  "enableMinDateInput": false,
+                  "enableMaxDateInput": false,
+                  "key": "faitLeCarteNationaliteIdentite",
+                  "type": "datetime",
+                  "timezone": "",
+                  "input": true,
+                  "widget": {
+                    "type": "calendar",
+                    "displayInTimezone": "viewer",
+                    "locale": "en-US",
+                    "useLocaleSettings": false,
+                    "allowInput": true,
+                    "mode": "single",
+                    "enableTime": false,
+                    "noCalendar": false,
+                    "format": "yyyy-MM-dd",
+                    "hourIncrement": 1,
+                    "minuteIncrement": 1,
+                    "time_24hr": true,
+                    "minDate": null,
+                    "disabledDates": "",
+                    "disableWeekends": false,
+                    "disableWeekdays": false,
+                    "disableFunction": "",
+                    "maxDate": null
+                  },
+                  "datepickerMode": "day"
+                }
+              ],
+              "width": 6
+            }
+          ],
+          "key": "columns13",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change",
+          "autoAdjust": false
+        },
+        {
+          "label": "Fait à",
+          "tableView": true,
+          "validateOn": "change",
+          "validate": {
+            "required": true
+          },
+          "key": "faitACartenationaleIdentite",
+          "type": "textfield",
+          "input": true,
+          "defaultValue": null
+        }
+      ],
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    },
+    {
+      "title": "PERSONNE A PREVENIR ",
+      "theme": "success",
+      "breadcrumb": "default",
+      "breadcrumbClickable": true,
+      "buttonSettings": {
+        "previous": true,
+        "cancel": true,
+        "next": true
+      },
+      "key": "page5",
+      "type": "panel",
+      "label": "Page 5",
+      "input": false,
+      "components": [
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Nom de famille ",
+                  "tableView": true,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true
+                  },
+                  "key": "nomDeFamillePersonnePrevenir",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": ""
+                },
+                {
+                  "label": "Numéro de téléphone ",
+                  "inputMask": "28899999999",
+                  "tableView": true,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true
+                  },
+                  "key": "numeroDeTelephonePersonnePrevenir",
+                  "type": "phoneNumber",
+                  "input": true,
+                  "inputType": "tel",
+                  "inputMode": "decimal",
+                  "inputMaskPlaceholderChar": "",
+                  "defaultValue": ""
+                },
+                {
+                  "label": "Genre",
+                  "optionsLabelPosition": "right",
+                  "inline": true,
+                  "dataSrc": "values",
+                  "values": [
+                    {
+                      "label": "HOMME",
+                      "value": "homme"
+                    },
+                    {
+                      "label": "FEMME",
+                      "value": "femme"
+                    }
+                  ],
+                  "dataType": "",
+                  "valueProperty": "",
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": false
+                  },
+                  "key": "genrePersonnePrevenir",
+                  "type": "radio",
+                  "data": {
+                    "url": ""
+                  },
+                  "template": "<span>{{ item.label }}</span>",
+                  "ignoreCache": false,
+                  "input": true,
+                  "validateOn": "change",
+                  "authenticate": false,
+                  "inputType": "radio",
+                  "fieldSet": false,
+                  "defaultValue": ""
+                }
+              ],
+              "width": 6
+            },
+            {
+              "components": [
+                {
+                  "label": "Prénom",
+                  "tableView": true,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true
+                  },
+                  "key": "prenomPersonnePrevenir",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": ""
+                },
+                {
+                  "label": "Autre numéro de téléphone",
+                  "inputMask": "28899999999",
+                  "tableView": true,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true
+                  },
+                  "key": "autreNumeroDeTelephonePersonnePrevenir",
+                  "type": "phoneNumber",
+                  "input": true,
+                  "inputType": "tel",
+                  "inputMode": "decimal",
+                  "inputMaskPlaceholderChar": "",
+                  "defaultValue": ""
+                },
+                {
+                  "label": "Numéro d'une pièce d'identité ",
+                  "tableView": true,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": true
+                  },
+                  "key": "numeroPieceDidentitePersonnePrevenir",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": ""
+                }
+              ],
+              "width": 6
+            }
+          ],
+          "autoAdjust": false,
+          "key": "columns14",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change"
+        }
+      ],
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    }
+  ],
+  "display": "wizard"
+}

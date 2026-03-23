@@ -1,0 +1,306 @@
+{
+  "title": "Description du Service",
+  "label": "Page 1",
+  "type": "panel",
+  "key": "stepIntro",
+  "buttonSettings": {
+    "previous": true,
+    "cancel": true,
+    "next": true
+  },
+  "breadcrumbClickable": true,
+  "navigateOnEnter": false,
+  "saveOnEnter": false,
+  "scrollToTop": false,
+  "collapsible": false,
+  "input": false,
+  "tableView": false,
+  "breadcrumb": "default",
+  "id": "tpl_stepIntro",
+  "placeholder": "",
+  "prefix": "",
+  "customClass": "",
+  "suffix": "",
+  "multiple": false,
+  "defaultValue": null,
+  "protected": false,
+  "unique": false,
+  "persistent": false,
+  "hidden": false,
+  "clearOnHide": false,
+  "refreshOn": "",
+  "redrawOn": "",
+  "modalEdit": false,
+  "dataGridLabel": false,
+  "labelPosition": "top",
+  "description": "",
+  "errorLabel": "",
+  "tooltip": "",
+  "hideLabel": false,
+  "tabindex": "",
+  "disabled": false,
+  "autofocus": false,
+  "dbIndex": false,
+  "customDefaultValue": "",
+  "calculateValue": "",
+  "calculateServer": false,
+  "widget": null,
+  "attributes": {},
+  "validateOn": "change",
+  "validate": {
+    "required": false,
+    "custom": "",
+    "customPrivate": false,
+    "strictDateValidation": false,
+    "multiple": false,
+    "unique": false
+  },
+  "conditional": {
+    "show": null,
+    "when": null,
+    "eq": ""
+  },
+  "overlay": {
+    "style": "",
+    "left": "",
+    "top": "",
+    "width": "",
+    "height": ""
+  },
+  "allowCalculateOverride": false,
+  "encrypted": false,
+  "showCharCount": false,
+  "showWordCount": false,
+  "properties": {},
+  "allowMultipleMasks": false,
+  "addons": [],
+  "tree": false,
+  "lazyLoad": false,
+  "theme": "default",
+  "components": [
+    {
+      "label": "Styles CSS",
+      "tag": "style",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "/* ── Sidebar fournisseur (sticky) ── */\n.sfc-card {\n  position: sticky;\n  top: 20px;\n  background: #fff;\n  border: 1px solid #e5e7eb;\n  border-radius: 12px;\n  padding: 24px;\n  font-family: 'Segoe UI', Roboto, sans-serif;\n  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);\n}\n.sfc-card h3 { font-size:18px;font-weight:700;color:#111827;margin:0 0 4px; }\n.sfc-card .sfc-subtitle { font-size:13.5px;color:#4b5563;margin:0 0 18px;line-height:1.5; }\n.sfc-row { display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;font-size:13.5px;color:#374151;line-height:1.5; }\n.sfc-row .sfc-ico { flex-shrink:0;width:20px;text-align:center;font-size:15px;margin-top:1px;color:#4b5563; }\n.sfc-row a { color:#3b82f6;text-decoration:none; }\n.sfc-row a:hover { text-decoration:underline; }\n.sfc-row strong { color:#111827;font-weight:600; }\n.sfc-stitle { font-size:16px;font-weight:700;color:#111827;margin:20px 0 12px;padding-top:16px;border-top:1px solid #e5e7eb; }\n.sfc-boxes { display:flex;gap:10px;margin-bottom:14px;width:100%; }\n.sfc-box { flex:1;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px; }\n.sfc-box .sfc-lbl { font-size:11.5px;color:#6b7280;font-weight:500;margin:0 0 6px;line-height:1.3; }\n.sfc-box .sfc-val { font-size:14px;font-weight:700;color:#111827;margin:0; }\n.sfc-box .sfc-sub { font-size:11px;color:#9ca3af;font-weight:400; }\n.sfc-link { display:inline-flex;align-items:center;gap:6px;color:#16a34a;font-size:13px;font-weight:600;text-decoration:none;cursor:pointer;margin-top:5px; }\n.sfc-link:hover { text-decoration:underline; }\n.sfc-link-ico { display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:#16a34a;color:#fff;border-radius:50%;font-size:11px;font-weight:700; }\n",
+      "key": "stylesCssSidebar",
+      "type": "htmlelement",
+      "input": false,
+      "id": "tpl_stylesCssSidebar",
+      "defaultValue": null,
+      "persistent": false,
+      "validateOn": "change"
+    },
+    {
+      "label": "stickyInjector",
+      "tag": "div",
+      "key": "stickyInjector",
+      "type": "htmlelement",
+      "customClass": "d-none",
+      "input": false,
+      "calculateValue": "if(typeof window.__sfcStickyDone === 'undefined'){window.__sfcStickyDone=false;}function sfcApply(){var el=document.getElementById('sidebar-fournisseur');if(!el)return false;var col=el.closest('[class*=\"col-\"]');if(col){col.style.position='sticky';col.style.top='20px';col.style.alignSelf='flex-start';}var row=el.closest('.row');if(row){row.style.alignItems='flex-start';row.style.display='flex';}return true;}if(!window.__sfcStickyDone){if(sfcApply()){window.__sfcStickyDone=true;}else{setTimeout(function(){sfcApply();window.__sfcStickyDone=true;},500);setTimeout(function(){sfcApply();},1500);}}",
+      "id": "tpl_stickyInjector",
+      "defaultValue": null,
+      "persistent": false,
+      "validateOn": "change",
+      "attrs": [],
+      "content": ""
+    },
+    {
+      "label": "Columns",
+      "columns": [
+        {
+          "components": [
+            {
+              "label": "Titre du service",
+              "tag": "h2",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "[Intitulé officiel et complet du service public]",
+              "key": "titre",
+              "type": "htmlelement",
+              "input": false,
+              "id": "tpl_titre",
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "Info Pills",
+              "tag": "div",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"display:flex;gap:20px;flex-wrap:wrap;margin-top:20px;\">\n\n  <div style=\"flex:1;min-width:220px;background:#fff;border-radius:12px;padding:25px;box-shadow:0 2px 5px rgba(0,0,0,0.05);border:1px solid #f0f0f0;\">\n    <div style=\"font-size:32px;margin-bottom:10px;\">⏱️</div>\n    <h3 style=\"font-size:16px;font-weight:600;margin:0 0 5px;\">Délai d'exécution</h3>\n    <p style=\"font-size:15px;color:#333;margin:0;\">[Ex : 15 jours ouvrés]</p>\n  </div>\n\n  <div style=\"flex:1;min-width:220px;background:#f9fafb;border-radius:12px;padding:25px;box-shadow:0 2px 5px rgba(0,0,0,0.05);border:1px solid #f0f0f0;\">\n    <div style=\"font-size:32px;margin-bottom:10px;\">💰</div>\n    <h3 style=\"font-size:16px;font-weight:600;margin:0 0 5px;\">Coût de la procédure</h3>\n    <p style=\"font-size:15px;color:#333;margin:0;\">[Ex : Gratuit / 5 000 FCFA]</p>\n  </div>\n\n  <div style=\"flex:1;min-width:220px;background:#f9fafb;border-radius:12px;padding:25px;box-shadow:0 2px 5px rgba(0,0,0,0.05);border:1px solid #f0f0f0;\">\n    <div style=\"font-size:32px;margin-bottom:10px;\">📅</div>\n    <h3 style=\"font-size:16px;font-weight:600;margin:0 0 5px;\">Durée de validité</h3>\n    <p style=\"font-size:15px;color:#333;margin:0;\">[Ex : Permanent / Valable 2 ans]</p>\n  </div>\n\n</div>",
+              "key": "infoPills",
+              "type": "htmlelement",
+              "input": false,
+              "id": "tpl_infoPills",
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "Faire une demande",
+              "action": "custom",
+              "showValidations": false,
+              "rightIcon": "fa fa-arrow-right",
+              "key": "btnFaireUneDemande",
+              "attributes": {
+                "style": "margin-top:20px;"
+              },
+              "type": "button",
+              "custom": "instance.root.setPage(instance.root.page + 1);",
+              "input": true,
+              "id": "tpl_btnFaireUneDemande",
+              "defaultValue": null,
+              "persistent": false,
+              "dataGridLabel": true,
+              "validateOn": "change",
+              "size": "md",
+              "leftIcon": "",
+              "block": false,
+              "disableOnInvalid": false,
+              "theme": "primary"
+            },
+            {
+              "label": "Description",
+              "tag": "div",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"font-size:22px;font-weight:700;margin-bottom:10px;color:#000;margin-top:30px;\">Description</div>\n<div style=\"font-size:16px;line-height:1.6;color:#333;margin-bottom:30px;\">\n  [Description complète du service : objectif, contexte réglementaire, portée. Expliquer ce que le service permet de faire et pourquoi il est nécessaire.]\n</div>\n\n<div style=\"font-size:22px;font-weight:700;margin-bottom:10px;color:#000;\">Identification des personnes légitimes à faire la demande</div>\n<div style=\"font-size:16px;line-height:1.6;color:#333;margin-bottom:30px;\">\n  [Décrire le profil des bénéficiaires : nationalité, statut, conditions particulières d'accès au service.]\n</div>",
+              "key": "descriptionService",
+              "type": "htmlelement",
+              "input": false,
+              "id": "tpl_descriptionService",
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "Conditions",
+              "tag": "div",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"background:#F8F8F8;border:1px solid #E5E5E5;border-radius:12px;padding:25px;margin-bottom:25px;\">\n  <div style=\"font-size:20px;font-weight:700;margin-bottom:15px;color:#000;\">Conditions d'éligibilité</div>\n  <ul style=\"font-size:16px;color:#333;line-height:1.7;padding-left:20px;margin:0;\">\n    <li>[Condition 1 — ex : Avoir au moins 18 ans]</li>\n    <li>[Condition 2 — ex : Être de nationalité togolaise ou résider légalement sur le territoire]</li>\n    <li>[Condition 3 — ex : Ne pas avoir de casier judiciaire incompatible avec la demande]</li>\n  </ul>\n</div>",
+              "key": "conditionsEligibilite",
+              "type": "htmlelement",
+              "input": false,
+              "id": "tpl_conditionsEligibilite",
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "Pièces à fournir",
+              "tag": "div",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"background:#F8F8F8;border:1px solid #E5E5E5;border-radius:12px;padding:25px;margin-bottom:25px;\">\n  <div style=\"font-size:20px;font-weight:700;margin-bottom:15px;color:#000;\">Pièces à fournir</div>\n  <ul style=\"font-size:16px;color:#333;line-height:1.7;padding-left:20px;margin:0;\">\n    <li>[Pièce 1 — ex : Copie de la pièce d'identité nationale ou du passeport]</li>\n    <li>[Pièce 2 — ex : Acte de naissance ou extrait du registre de l'état civil]</li>\n    <li>[Pièce 3 — ex : Justificatif de domicile de moins de 3 mois]</li>\n    <li>[Pièce 4 — si duplicata : Déclaration de perte ou de vol]</li>\n  </ul>\n</div>",
+              "key": "piecesAFournir",
+              "type": "htmlelement",
+              "input": false,
+              "id": "tpl_piecesAFournir",
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "Étapes",
+              "tag": "div",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"font-size:22px;font-weight:700;margin-bottom:20px;color:#000;\">Étapes</div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">1</div><div style=\"font-size:16px;line-height:1.6;color:#333;\">[Étape 1 — ex : Créer un compte sur Xportal et compléter le formulaire en ligne]</div></div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">2</div><div style=\"font-size:16px;line-height:1.6;color:#333;\">[Étape 2 — ex : Joindre les pièces justificatives numérisées (PDF/JPG/PNG, max 2 Mo)]</div></div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">3</div><div style=\"font-size:16px;line-height:1.6;color:#333;\">[Étape 3 — ex : Payer les frais de dossier via Mobile Money ou carte bancaire (si applicable)]</div></div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">4</div><div style=\"font-size:16px;line-height:1.6;color:#333;\">[Étape 4 — ex : Suivi du dossier en temps réel depuis votre espace Xportal]</div></div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">5</div><div style=\"font-size:16px;line-height:1.6;color:#333;\">[Étape 5 — ex : Réception de la décision et retrait du document auprès du service compétent]</div></div>",
+              "key": "etapesProcessus",
+              "type": "htmlelement",
+              "input": false,
+              "id": "tpl_etapesProcessus",
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "Avertissement",
+              "tag": "div",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"background:#FFF8E1;border-left:4px solid #F59E0B;border-radius:8px;padding:16px 20px;margin-top:10px;margin-bottom:25px;\">\n  <div style=\"display:flex;align-items:flex-start;gap:10px;\">\n    <span style=\"font-size:20px;flex-shrink:0;\">⚠️</span>\n    <div>\n      <strong style=\"font-size:15px;color:#92400E;\">Attention</strong>\n      <p style=\"font-size:14px;color:#78350F;margin:6px 0 0;line-height:1.6;\">\n        [Avertissement principal — ex : Toute fausse déclaration expose le demandeur à des poursuites judiciaires. Assurez-vous que toutes les informations fournies sont exactes et que vos documents sont lisibles et en cours de validité.]\n      </p>\n    </div>\n  </div>\n</div>",
+              "key": "avertissement",
+              "type": "htmlelement",
+              "input": false,
+              "id": "tpl_avertissement",
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            }
+          ],
+          "width": 8
+        },
+        {
+          "components": [
+            {
+              "label": "Sidebar Fournisseur",
+              "tag": "div",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div class=\"sfc-card\" id=\"sidebar-fournisseur\">\n\n  <h3>[Nom du fournisseur de service]</h3>\n  <p class=\"sfc-subtitle\">[Ministère ou Direction de rattachement]</p>\n\n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">📞</span>\n    <span><strong>Téléphone :</strong> [+228 XX XX XX XX]</span>\n  </div>\n\n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">✉️</span>\n    <span><strong>Email :</strong> <a href=\"mailto:[contact@exemple.gouv.tg]\">[contact@exemple.gouv.tg]</a></span>\n  </div>\n\n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">📍</span>\n    <span><strong>Adresse :</strong> <a href=\"[URL Google Maps]\" target=\"_blank\">[Adresse physique complète]</a></span>\n  </div>\n\n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">🌐</span>\n    <span><strong>Site web :</strong> <a href=\"[https://exemple.gouv.tg]\" target=\"_blank\">[https://exemple.gouv.tg]</a></span>\n  </div>\n\n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">🕐</span>\n    <span><strong>Ouverture :</strong> [Ex : Lundi – Vendredi, 07h30 – 17h30]</span>\n  </div>\n\n  <h3 class=\"sfc-stitle\">Statistiques</h3>\n\n  <div class=\"sfc-boxes\">\n    <div class=\"sfc-box\">\n      <p class=\"sfc-lbl\">Délai moyen réel de traitement</p>\n      <p class=\"sfc-val\">[N] <span style=\"font-size:12px;font-weight:normal;\">Jours</span></p>\n      <p class=\"sfc-sub\">Base : 6 derniers mois</p>\n    </div>\n    <div class=\"sfc-box\">\n      <p class=\"sfc-lbl\">Demandes de la journée</p>\n      <p class=\"sfc-val\">[N]</p>\n    </div>\n  </div>\n\n  <a href=\"/statistiques\" class=\"sfc-link\" id=\"stats-link\">\n    <span class=\"sfc-link-ico\">➜</span>\n    Voir les statistiques détaillées\n  </a>\n\n</div>",
+              "key": "sidebarFournisseurStats",
+              "type": "htmlelement",
+              "input": false,
+              "id": "tpl_sidebarFournisseurStats",
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            }
+          ],
+          "width": 4
+        }
+      ],
+      "key": "mainLayout",
+      "type": "columns",
+      "input": false,
+      "id": "tpl_mainLayout",
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change",
+      "autoAdjust": false
+    }
+  ]
+}

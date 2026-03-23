@@ -1,0 +1,108 @@
+Rubrique,Détail
+,,
+IDENTIFICATION DU SERVICE,,
+Nom du service,Demande et délivrance de la Carte Nationale d'Identité (CNI)
+Organisme,Ministère de la Sécurité et de la Protection Civile / Direction Générale de la Documentation Nationale (DGDN)
+Direction,Direction Générale de la Documentation Nationale (DGDN)
+Rôle de la direction,"Produire et gérer les documents d'identité des citoyens togolais : Carte Nationale d'Identité, passeport, titre de voyage. La DGDN est l'autorité centrale de certification de l'identité des personnes physiques sur le territoire togolais."
+,,
+CONTEXTE ET BASE LÉGALE,,
+Description du service,"La Carte Nationale d'Identité est le document officiel permettant à tout citoyen togolais d'attester de son identité sur le territoire national et dans certains pays de la CEDEAO. Elle est obligatoire pour de nombreuses démarches administratives (ouverture de compte bancaire, accès à certains services publics, vote). La DGDN produit et personnalise les CNI sur une chaîne sécurisée centralisée à Lomé, mais les dossiers sont collectés dans les préfectures via les Centres de Documentation (CD)."
+Texte réglementaire,"Loi n°98-004 du 11 février 1998 relative à la Carte Nationale d'Identité togolaise ; Décret n°2010-091 du 16 juillet 2010 portant réforme et modernisation de la CNI biométrique ; Arrêté n°014/MSP du 12 mars 2015 fixant les tarifs et les modalités de délivrance"
+Parties non digitalisables selon la loi,"La capture biométrique (photo, empreintes digitales, signature) doit obligatoirement être réalisée en présence physique du demandeur dans un Centre de Documentation agréé. La remise du titre physique est obligatoire."
+Signature électronique reconnue,Non applicable — la CNI est un titre physique sécurisé.
+Documentation officielle existante,"Oui — procédure DGDN, guide de l'usager, tarifs officiels."
+Date de création du service,"La CNI togolaise existe depuis 1960. Réforme biométrique majeure en 2010 avec introduction de la puce électronique et des empreintes digitales."
+,,
+USAGERS,,
+Public cible,"Tout citoyen togolais âgé de 15 ans et plus résidant au Togo ou à l'étranger. La CNI est obligatoire pour l'exercice du droit de vote dès 18 ans."
+Conditions d'éligibilité,"• Être de nationalité togolaise (par naissance, filiation ou naturalisation)
+• Être âgé d'au moins 15 ans
+• Justifier de son état civil par un acte de naissance ou un jugement supplétif"
+Volume estimé,"Environ 250 000 CNI délivrées par an sur l'ensemble du territoire, tous types confondus (première demande, renouvellement, duplicata)."
+,,
+PIÈCES JUSTIFICATIVES,,
+Pour la première demande (majeur),"• Formulaire de demande de CNI rempli et signé (disponible aux guichets DGDN et CD)
+• Copie originale ou certifiée conforme de l'acte de naissance
+• Copie de la pièce d'identité des parents (CNI ou passeport)
+• Justificatif de domicile récent (facture d'eau, d'électricité, ou attestation de domicile signée par le chef de quartier)
+• 2 photos d'identité fond blanc format 4x4 cm
+• Reçu de paiement des droits de CNI"
+Pour le renouvellement,"• Ancienne CNI (même expirée)
+• Formulaire de demande de renouvellement
+• Reçu de paiement des droits"
+Pour le duplicata (perte ou vol),"• Déclaration de perte ou de vol (police ou gendarmerie, originale)
+• Formulaire de demande de duplicata
+• Copie de l'acte de naissance
+• 2 photos d'identité
+• Reçu de paiement des droits de duplicata"
+Pour un mineur (15 à 17 ans),"• Formulaire de demande signé par le représentant légal
+• Copie de l'acte de naissance du mineur
+• Copie de la CNI du représentant légal
+• Présence obligatoire du mineur pour la capture biométrique"
+Coût,"Première demande : 4 000 FCFA
+Renouvellement : 4 000 FCFA
+Duplicata : 8 000 FCFA
+Procédure d'urgence (48h) : 20 000 FCFA
+Paiement accepté : espèces aux guichets DGDN / CD, Flooz, TMoney (déploiement en cours)"
+,,
+ÉTAPES DU PROCESSUS CÔTÉ CITOYEN,,
+Étape 1,"Le citoyen se rend au Centre de Documentation (CD) de sa préfecture ou à la DGDN à Lomé avec les pièces requises. Aucune demande en ligne n'est possible à ce jour pour la CNI biométrique."
+Étape 2,"Dépôt du dossier et paiement des droits à la caisse du CD. Remise d'un récépissé avec numéro de dossier et date estimée de retrait."
+Étape 3,"Capture biométrique : le citoyen est pris en photo numérique, ses empreintes digitales sont relevées sur les 10 doigts, et sa signature numérique est enregistrée. Cette opération est réalisée sur place par un agent habilité."
+Étape 4,"Le dossier numérique (données biographiques + données biométriques) est transmis par lot à la DGDN à Lomé pour personnalisation et impression centralisée."
+Étape 5,"Personnalisation de la CNI à la DGDN : impression sécurisée du titre, intégration de la puce électronique et des données biométriques. Délai standard : 15 à 30 jours ouvrables. Procédure d'urgence : 48h."
+Étape 6,"Retour de la CNI produite dans le Centre de Documentation où le dossier a été déposé. Notification par SMS au numéro communiqué lors du dépôt."
+Étape 7,"Retrait de la CNI au guichet du CD : présentation du récépissé, vérification de l'identité du retraité, signature du registre de délivrance."
+,,
+ACTIONS INTERNES DES AGENTS,,
+Agent de réception CD,"Vérification de la complétude du dossier, encaissement des droits, enregistrement dans le système local."
+Opérateur biométrique,"Capture de la photo, des empreintes et de la signature numérique. Saisie et vérification des données biographiques dans le système."
+Superviseur CD,"Contrôle qualité des données saisies avant transmission à la DGDN. Validation par lot des dossiers à transmettre."
+Agents DGDN (personnalisation),"Réception des fichiers transmis par les CD, personnalisation et impression des CNI sur la chaîne sécurisée."
+Agents DGDN (contrôle qualité),"Vérification visuelle et électronique des CNI produites avant envoi aux CD."
+Agent de distribution CD,Réception des CNI retournées par la DGDN. Notification des bénéficiaires. Délivrance au guichet avec signature du registre.
+,,
+GOULOTS D'ÉTRANGLEMENT IDENTIFIÉS,,
+Goulot 1,"Délai de production trop long : 15 à 30 jours en procédure standard est jugé excessif par les citoyens, notamment pour ceux qui ont besoin de la CNI pour une démarche urgente."
+Goulot 2,"Impossibilité de déposer le dossier en ligne : le citoyen doit impérativement se déplacer deux fois (dépôt + retrait), ce qui est contraignant pour les personnes éloignées ou à mobilité réduite."
+Goulot 3,"Rupture de stock de cartes vierges : épisodes périodiques de rupture paralysant temporairement les CD (signalés en 2021 et 2023)."
+Goulot 4,"Pas de notification SMS systématique dans tous les CD : certains citoyens se déplacent plusieurs fois avant d'apprendre que leur CNI est disponible."
+Goulot 5,"Fragilité de la connexion réseau entre les CD de préfecture et la DGDN : les transmissions de données biométriques par lot sont parfois retardées de plusieurs jours en cas de coupure réseau."
+Goulot 6,"Retrait de CNI non réclamées : un volume important de CNI produites restent non retirées dans les CD, mobilisant de l'espace d'archivage et des ressources."
+,,
+OUTILS ACTUELS,,
+Système de gestion,"Logiciel de gestion biométrique DGDN (développé sur mesure). Interface web locale dans les CD connectée par VPN à la DGDN centrale."
+Transmission des données,VPN sécurisé entre les CD et la DGDN pour la transmission des fichiers biométriques par lot.
+Notification SMS,"Partiellement déployée — certains CD envoient des SMS manuels, d'autres non. Pas d'automatisation systématique."
+Stockage,"Serveur centralisé à la DGDN pour les données biométriques. Archives papier des dossiers dans les CD."
+Base de données centralisée,"Oui — la DGDN dispose d'une base nationale biométrique centralisée des identités. C'est l'une des rares administrations togolaises dans ce cas."
+,,
+STATISTIQUES,,
+Demandes par an,Environ 250 000 (première demande + renouvellements + duplicatas)
+CNI produites par jour à la DGDN,"Environ 1 000 en capacité nominale (pic à 1 500 en période électorale)"
+Taux de dossiers rejetés ou incomplets,Environ 15 % au premier dépôt
+Délai moyen standard,15 à 30 jours ouvrables
+Délai procédure d'urgence,48 heures (moyennant surcoût)
+Nombre de Centres de Documentation,35 sur l'ensemble du territoire (un par préfecture + plusieurs à Lomé)
+Nombre d'agents impliqués,"Environ 200 (opérateurs des CD + personnel DGDN central)"
+Périodes de forte activité,"Avant chaque élection nationale (présidentielle, législatives) : la demande peut tripler"
+,,
+DOCUMENT DÉLIVRÉ,,
+Nature du document,"CNI biométrique : carte plastifiée sécurisée format ID-1, avec photo, données biographiques, puce électronique intégrant les empreintes digitales et une clé cryptographique, et éléments de sécurité imprimés (hologramme, encre UV, guilloché)."
+Durée de validité,10 ans pour les majeurs. 5 ans pour les mineurs (15-17 ans).
+,,
+DIFFICULTÉS ET AXES D'AMÉLIORATION,,
+Principales difficultés,"• Délai de production jugé long pour une procédure standard
+• Déplacement obligatoire des citoyens pour le dépôt et le retrait
+• Pas de notification automatique systématique
+• Ruptures de stock périodiques de cartes vierges
+• Fragilité réseau dans les CD de préfecture"
+Ce qui pourrait être digitalisé,"• Pré-remplissage du formulaire en ligne depuis un portail citoyen (réduction du temps au guichet)
+• Prise de rendez-vous en ligne pour la capture biométrique (suppression des files d'attente)
+• Paiement en ligne (Flooz, TMoney, Visa) avant le déplacement
+• Notification automatique par SMS et email à chaque étape (dossier reçu, en cours de production, prêt à retirer)
+• Suivi en ligne du statut du dossier via numéro de récépissé"
+Ce qui reste physique obligatoirement,"• La capture biométrique (présence physique du demandeur)
+• La remise du titre physique (CNI biométrique)"
+Vision future selon les agents,"Le citoyen devrait pouvoir prendre rendez-vous, pré-remplir son formulaire et payer en ligne. Il se déplacerait une seule fois pour la capture biométrique, puis serait notifié par SMS quand sa CNI est prête à retirer. À terme, les CD mobiles pourraient aller dans les villages reculés pour la capture biométrique, supprimant la contrainte de déplacement pour les populations rurales."

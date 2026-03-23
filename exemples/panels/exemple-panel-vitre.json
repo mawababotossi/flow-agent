@@ -1,0 +1,288 @@
+{
+  "title": "Description",
+  "label": "Page 1",
+  "type": "panel",
+  "key": "page1",
+  "buttonSettings": {
+    "previous": true,
+    "cancel": true,
+    "next": true
+  },
+  "components": [
+    {
+      "label": "Styles CSS",
+      "tag": "style",
+      "content": "/* Carte principale - Sticky */\n.sfc-card {\n  position: sticky;\n  top: 20px;\n  background: #fff;\n  border: 1px solid #e5e7eb;\n  border-radius: 12px;\n  padding: 24px;\n  font-family: 'Segoe UI', Roboto, sans-serif;\n  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);\n}\n.sfc-card h3 {\n  font-size: 18px;\n  font-weight: 700;\n  color: #111827;\n  margin: 0 0 4px;\n}\n.sfc-card .sfc-subtitle {\n  font-size: 13.5px;\n  color: #4b5563;\n  margin: 0 0 18px;\n  line-height: 1.5;\n}\n.sfc-row {\n  display: flex;\n  align-items: flex-start;\n  gap: 10px;\n  margin-bottom: 12px;\n  font-size: 13.5px;\n  color: #374151;\n  line-height: 1.5;\n}\n.sfc-row .sfc-ico {\n  flex-shrink: 0;\n  width: 20px;\n  text-align: center;\n  font-size: 15px;\n  margin-top: 1px;\n  color: #4b5563;\n}\n.sfc-row a {\n  color: #3b82f6;\n  text-decoration: none;\n}\n.sfc-row a:hover {\n  text-decoration: underline;\n}\n.sfc-row strong {\n  color: #111827;\n  font-weight: 600;\n}\n.sfc-stitle {\n  font-size: 16px;\n  font-weight: 700;\n  color: #111827;\n  margin: 20px 0 12px;\n  padding-top: 16px;\n  border-top: 1px solid #e5e7eb;\n}\n.sfc-boxes {\n  display: flex;\n  gap: 10px;\n  margin-bottom: 14px;\n  width: 100%;\n}\n.sfc-box {\n  flex: 1;\n  background: #f9fafb;\n  border: 1px solid #e5e7eb;\n  border-radius: 8px;\n  padding: 12px;\n}\n.sfc-box .sfc-lbl {\n  font-size: 11.5px;\n  color: #6b7280;\n  font-weight: 500;\n  margin: 0 0 6px;\n  line-height: 1.3;\n}\n.sfc-box .sfc-val {\n  font-size: 14px;\n  font-weight: 700;\n  color: #111827;\n  margin: 0;\n}\n.sfc-box .sfc-sub {\n  font-size: 11px;\n  color: #9ca3af;\n  font-weight: 400;\n}\n.sfc-link {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  color: #16a34a;\n  font-size: 13px;\n  font-weight: 600;\n  text-decoration: none;\n  cursor: pointer;\n  margin-top: 5px;\n}\n.sfc-link:hover {\n  text-decoration: underline;\n}\n.sfc-link-ico {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 18px;\n  height: 18px;\n  background: #16a34a;\n  color: #fff;\n  border-radius: 50%;\n  font-size: 11px;\n  font-weight: 700;\n}",
+      "key": "stylesCssSidebar",
+      "type": "htmlelement",
+      "input": false,
+      "defaultValue": null,
+      "persistent": false,
+      "validateOn": "change",
+      "attrs": []
+    },
+    {
+      "label": "stickyInjector",
+      "key": "stickyInjector",
+      "type": "htmlelement",
+      "customClass": "d-none",
+      "input": false,
+      "calculateValue": "if(typeof window.__sfcStickyDone === 'undefined'){window.__sfcStickyDone=false;}function sfcApply(){var el=document.getElementById('sidebar-fournisseur');if(!el)return false;var col=el.closest('[class*=\"col-\"]');if(col){col.style.position='sticky';col.style.top='20px';col.style.alignSelf='flex-start';}var row=el.closest('.row');if(row){row.style.alignItems='flex-start';row.style.display='flex';}return true;}if(!window.__sfcStickyDone){if(sfcApply()){window.__sfcStickyDone=true;}else{setTimeout(function(){sfcApply();window.__sfcStickyDone=true;},500);setTimeout(function(){sfcApply();},1500);}}",
+      "defaultValue": null,
+      "persistent": false,
+      "validateOn": "change",
+      "tag": "p",
+      "attrs": [],
+      "content": ""
+    },
+    {
+      "type": "columns",
+      "key": "mainLayout",
+      "columns": [
+        {
+          "width": 8,
+          "components": [
+            {
+              "label": "HTML",
+              "tag": "h2",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "Demande d’autorisation de vitre teintée de véhicule",
+              "key": "titre",
+              "type": "htmlelement",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "Columns",
+              "columns": [
+                {
+                  "components": [],
+                  "width": 6
+                },
+                {
+                  "components": [],
+                  "width": 6
+                }
+              ],
+              "autoAdjust": false,
+              "key": "columns5",
+              "type": "columns",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "clearOnHide": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "HTML",
+              "tag": "div",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"display:flex;gap:20px;flex-wrap:wrap;margin-top:20px;\"><div style=\"flex:1;min-width:220px;background:#fff;border-radius:12px;padding:25px;box-shadow:0 2px 5px rgba(0,0,0,0.05);border:1px solid #f0f0f0;\"><div style=\"font-size:32px;margin-bottom:10px;\">⏱️</div><h3 style=\"font-size:16px;font-weight:600;margin:0 0 5px;\">Délai d'exécution</h3><p style=\"font-size:15px;color:#333;margin:0;\">30 jours calendaires</p></div><div style=\"flex:1;min-width:220px;background:#f9fafb;border-radius:12px;padding:25px;box-shadow:0 2px 5px rgba(0,0,0,0.05);border:1px solid #f0f0f0;\"><div style=\"font-size:32px;margin-bottom:10px;\">💰</div><h3 style=\"font-size:16px;font-weight:600;margin:0 0 5px;\">Coût de la procédure</h3><p style=\"font-size:15px;color:#333;margin:0;\">10 000 FCFA + 2 000 FCFA (frais de timbre)</p></div><div style=\"flex:1;min-width:220px;background:#f9fafb;border-radius:12px;padding:25px;box-shadow:0 2px 5px rgba(0,0,0,0.05);border:1px solid #f0f0f0;\"><div style=\"font-size:32px;margin-bottom:10px;\">📅</div><h3 style=\"font-size:16px;font-weight:600;margin:0 0 5px;\">Durée de validité</h3><p style=\"font-size:15px;color:#333;margin:0;\">L'autorisation de vitre teintée est valable pour une durée de 2 ans à compter de la date de délivrance.</p></div></div>",
+              "key": "html2",
+              "type": "htmlelement",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "Faire une demande",
+              "showValidations": false,
+              "disableOnInvalid": true,
+              "key": "faireUneDemande",
+              "properties": {
+                "key": "startButton"
+              },
+              "type": "button",
+              "input": true,
+              "defaultValue": null,
+              "persistent": false,
+              "dataGridLabel": true,
+              "validateOn": "change",
+              "size": "md",
+              "leftIcon": "",
+              "rightIcon": "",
+              "block": false,
+              "action": "submit",
+              "theme": "primary"
+            },
+            {
+              "label": "HTML",
+              "tag": "div",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"font-size:22px;font-weight:700;margin-bottom:10px;color:#000;margin-top:30px;\">Description</div><div style=\"font-size:16px;line-height:1.6;color:#333;margin-bottom:30px;\">\nCe service permet aux propriétaires de véhicules de régulariser l'installation de vitres teintées sur leurs véhicules, conformément à la réglementation nationale. Cette autorisation est indispensable pour toute personne souhaitant teinter les vitres de son véhicule afin de garantir le respect des normes de sécurité et de transparence. Les demandes sont soumises à une évaluation par les autorités compétentes pour s'assurer que les véhicules respectent les conditions d'utilisation des vitres teintées sur le territoire.</div><div style=\"font-size:22px;font-weight:700;margin-bottom:10px;color:#000;\">Identification des personnes susceptibles / légitimes à faire la demande</div><div style=\"font-size:16px;line-height:1.6;color:#333;margin-bottom:30px;\">\nToutes personnes (nationaux comme étrangers), qu'ils soient résidents permanents ou en transit sur le territoire national, peuvent déposer une demande d'autorisation de vitre teintée pour leur véhicule . </div>",
+              "key": "description",
+              "type": "htmlelement",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "HTML",
+              "tag": "div",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"background:#F8F8F8;border:1px solid #E5E5E5;border-radius:12px;padding:25px;margin-bottom:25px;\"><div style=\"font-size:20px;font-weight:700;margin-bottom:15px;color:#000;\">Conditions</div><ul style=\"font-size:16px;color:#333;line-height:1.7;padding-left:20px;margin:0;\">\n  \n  <li>\nAvoir au moins 18 ans .\n<li> Être en possession d'un véhicule en bon état avec une carte grise à jour.\n</ul></div>\n\n\n    \n\n",
+              "key": "description1",
+              "type": "htmlelement",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "HTML",
+              "tag": "div",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"background:#F8F8F8;border:1px solid #E5E5E5;border-radius:12px;padding:25px;margin-bottom:25px;\"><div style=\"font-size:20px;font-weight:700;margin-bottom:15px;color:#000;\">Pièces à fournir</div><ul style=\"font-size:16px;color:#333;line-height:1.7;padding-left:20px;margin:0;\"><li>\nUn bulletin N°3 du casier judiciaire de moins de trois (03) mois ;  </li><li>\n  Une copie de la carte d’identité nationale ou du passeport du requérant .\n  </li><li>Une copie de la carte grise du véhicule .\n  </li><li>L'assurance du véhicule .\n  </li></ul></div>\n  \n      \n    \n    \n\n\n    \n    \n    \n    \n\n",
+              "key": "description2",
+              "type": "htmlelement",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "HTML",
+              "tag": "div",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div style=\"font-size:22px;font-weight:700;margin-bottom:20px;color:#000;\">Étapes</div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">1</div><div style=\"font-size:16px;line-height:1.6;color:#333;\">\nSoumission du dossier complet : Inclure les justificatifs d’identité, le casier judiciaire, et la copie de la carte grise ;  </div></div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">2</div><div style=\"font-size:16px;line-height:1.6;color:#333;\">\n    Étude du dossier : Les autorités compétentes examinent la demande pour s'assurer que les critères sont remplis .\n    </div></div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">3</div><div style=\"font-size:16px;line-height:1.6;color:#333;\">\n      Délivrance de l'autorisation : Si la demande est approuvée, une autorisation valable pour une durée de deux ans est délivrée.</div></div>\n      \n      \n          \n    \n    ",
+              "key": "description6",
+              "type": "htmlelement",
+              "input": false,
+              "keyModified": true,
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            }
+          ]
+        },
+        {
+          "width": 4,
+          "components": [
+            {
+              "label": "HTML",
+              "tag": "div",
+              "attrs": [
+                {
+                  "attr": "id",
+                  "value": "sidebar-fournisseur"
+                }
+              ],
+              "content": "<div class=\"sfc-card\" id=\"sidebar-fournisseur\">\n  <h3>Fournisseur de service</h3>\n  <p class=\"sfc-subtitle\">Ministère de la Sécurité</p>\n  \n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">📞</span>\n    <span><strong>Téléphone :</strong> (+228) 22 20 86 54</span>\n  </div>\n  \n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">✉️</span>\n    <span><strong>Email :</strong> contact@securite.gouv.tg</span>\n  </div>\n  \n  \n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">📍</span>\n    <span><strong>Adresse :</strong> <a href=\"https://maps.app.goo.gl/W7TGaeLhprWTtx3e8\" target=\"_blank\">Rue de l'Entente, Souza Nétimé A côté de l'ancienne Primature, Lomé</a></span>\n  </div>\n  \n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">🌐</span>\n    <span><strong>Site web :</strong> <a href=\"https://securite.gouv.tg/\" target=\"_blank\">https://securite.gouv.tg/</a></span>\n  </div>\n  \n  <div class=\"sfc-row\">\n    <span class=\"sfc-ico\">🕐</span>\n    <span><strong>Ouverture :</strong> Lundi – Vendredi, 07h30 – 17h30</span>\n  </div>\n  \n  <h3 class=\"sfc-stitle\">Statistiques</h3>\n  \n  <div class=\"sfc-boxes\">\n    <div class=\"sfc-box\">\n      <p class=\"sfc-lbl\">Délai moyen réel de traitement</p>\n      <p class=\"sfc-val\">45 <span style=\"font-size:12px;font-weight:normal;\">Jours</span></p>\n      <p class=\"sfc-sub\">Base: 6 derniers mois</p>\n    </div>\n    \n    <div class=\"sfc-box\">\n      <p class=\"sfc-lbl\">Demandes de la journée</p>\n      <p class=\"sfc-val\">128</p>\n    </div>\n  </div>\n  \n  <a href=\"/statistiques\" class=\"sfc-link\" id=\"stats-link\">\n    <span class=\"sfc-link-ico\">➜</span> \n    Voir les statistiques détaillées\n  </a>\n</div>",
+              "key": "sidebarFournisseurStats",
+              "type": "htmlelement",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            }
+          ]
+        }
+      ],
+      "input": false,
+      "label": "Columns",
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change",
+      "autoAdjust": false
+    }
+  ],
+  "input": false,
+  "tableView": false,
+  "id": "e0npye",
+  "placeholder": "",
+  "prefix": "",
+  "customClass": "",
+  "suffix": "",
+  "multiple": false,
+  "defaultValue": null,
+  "protected": false,
+  "unique": false,
+  "persistent": false,
+  "hidden": false,
+  "clearOnHide": false,
+  "refreshOn": "",
+  "redrawOn": "",
+  "modalEdit": false,
+  "dataGridLabel": false,
+  "labelPosition": "top",
+  "description": "",
+  "errorLabel": "",
+  "tooltip": "",
+  "hideLabel": false,
+  "tabindex": "",
+  "disabled": false,
+  "autofocus": false,
+  "dbIndex": false,
+  "customDefaultValue": "",
+  "calculateValue": "",
+  "calculateServer": false,
+  "widget": null,
+  "attributes": {},
+  "validateOn": "change",
+  "validate": {
+    "required": false,
+    "custom": "",
+    "customPrivate": false,
+    "strictDateValidation": false,
+    "multiple": false,
+    "unique": false
+  },
+  "conditional": {
+    "show": null,
+    "when": null,
+    "eq": ""
+  },
+  "overlay": {
+    "style": "",
+    "left": "",
+    "top": "",
+    "width": "",
+    "height": ""
+  },
+  "allowCalculateOverride": false,
+  "encrypted": false,
+  "showCharCount": false,
+  "showWordCount": false,
+  "properties": {},
+  "allowMultipleMasks": false,
+  "addons": [],
+  "tree": false,
+  "lazyLoad": false,
+  "theme": "default",
+  "breadcrumb": "default"
+}

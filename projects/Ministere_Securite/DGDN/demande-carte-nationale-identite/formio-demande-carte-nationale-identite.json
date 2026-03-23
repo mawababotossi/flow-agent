@@ -1,0 +1,815 @@
+{
+  "title": "Demande de Carte Nationale d'Identité (CNI)",
+  "name": "demandeCNI",
+  "path": "demande-carte-nationale-identite",
+  "type": "form",
+  "display": "wizard",
+  "i18n": {
+    "en": {
+      "Bienvenue": "Welcome",
+      "Type de demande": "Request Type",
+      "Informations personnelles": "Personal Information",
+      "Pièces justificatives": "Supporting Documents",
+      "Rendez-vous biométrique": "Biometric Appointment",
+      "Récapitulatif et soumission": "Summary and Submission",
+      "Nom de famille": "Last Name",
+      "Prénom(s)": "First Name(s)",
+      "Date de naissance": "Date of Birth",
+      "Lieu de naissance": "Place of Birth",
+      "Nationalité": "Nationality",
+      "Numéro de téléphone": "Phone Number",
+      "Adresse email": "Email Address",
+      "Adresse de résidence": "Home Address",
+      "Ce champ est obligatoire": "This field is required",
+      "Veuillez fournir une adresse email valide": "Please provide a valid email address",
+      "Format de fichier non accepté. Formats autorisés : PDF, JPG, PNG": "File format not accepted. Allowed formats: PDF, JPG, PNG",
+      "La taille du fichier ne doit pas dépasser 2 Mo": "File size must not exceed 2 MB",
+      "Je déclare et certifie sur l'honneur que les informations fournies sont exactes et complètes": "I declare and certify on my honor that the information provided is accurate and complete",
+      "Demande de Carte Nationale d'Identité (CNI)": "National Identity Card Request (CNI)"
+    }
+  },
+  "config": {
+    "development": {
+      "apiBaseUrl": "https://api.dev.gouv.tg/api/v1/admin",
+      "appName": "Développement",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "sandbox": {
+      "apiBaseUrl": "https://api.sandbox.gouv.tg/api/v1/admin",
+      "appName": "Sandbox",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "preprod": {
+      "apiBaseUrl": "https://api.preprod.gouv.tg/api/v1/admin",
+      "appName": "Pré-production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "production": {
+      "apiBaseUrl": "https://api.gouv.tg/api/v1/admin",
+      "appName": "Production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    }
+  },
+  "components": [
+    {
+      "title": "Bienvenue",
+      "label": "Page 1",
+      "type": "panel",
+      "key": "stepIntro",
+      "buttonSettings": { "previous": false, "cancel": true, "next": true },
+      "components": [
+        {
+          "tag": "style",
+          "content": ".sfc-card{position:sticky;top:20px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;font-family:'Segoe UI',Roboto,sans-serif;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05)}.sfc-card h3{font-size:18px;font-weight:700;color:#111827;margin:0 0 4px}.sfc-card .sfc-subtitle{font-size:13.5px;color:#4b5563;margin:0 0 18px;line-height:1.5}.sfc-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;font-size:13.5px;color:#374151;line-height:1.5}.sfc-row .sfc-ico{flex-shrink:0;width:20px;text-align:center;font-size:15px;margin-top:1px;color:#4b5563}.sfc-stitle{font-size:16px;font-weight:700;color:#111827;margin:20px 0 12px;padding-top:16px;border-top:1px solid #e5e7eb}.sfc-boxes{display:flex;gap:10px;margin-bottom:14px;width:100%}.sfc-box{flex:1;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px}.sfc-box .sfc-lbl{font-size:11.5px;color:#6b7280;font-weight:500;margin:0 0 6px}.sfc-box .sfc-val{font-size:14px;font-weight:700;color:#111827;margin:0}.sfc-box .sfc-sub{font-size:11px;color:#9ca3af}",
+          "key": "stylesCss",
+          "type": "htmlelement",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "validateOn": "change"
+        },
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "tag": "h2",
+                  "content": "Demande de Carte Nationale d'Identité (CNI)",
+                  "key": "titre",
+                  "type": "htmlelement",
+                  "input": false,
+                  "defaultValue": null,
+                  "persistent": false,
+                  "validateOn": "change"
+                },
+                {
+                  "tag": "div",
+                  "content": "<div style=\"display:flex;gap:20px;flex-wrap:wrap;margin-top:20px;\"><div style=\"flex:1;min-width:220px;background:#fff;border-radius:12px;padding:25px;box-shadow:0 2px 5px rgba(0,0,0,0.05);border:1px solid #f0f0f0;\"><div style=\"font-size:32px;margin-bottom:10px;\">🪪</div><h3 style=\"font-size:16px;font-weight:600;margin:0 0 5px;\">Document</h3><p style=\"font-size:15px;color:#333;margin:0;\">Carte biométrique sécurisée</p></div><div style=\"flex:1;min-width:220px;background:#f9fafb;border-radius:12px;padding:25px;box-shadow:0 2px 5px rgba(0,0,0,0.05);border:1px solid #f0f0f0;\"><div style=\"font-size:32px;margin-bottom:10px;\">💰</div><h3 style=\"font-size:16px;font-weight:600;margin:0 0 5px;\">Coût</h3><p style=\"font-size:15px;color:#333;margin:0;\">4 000 – 20 000 FCFA</p></div><div style=\"flex:1;min-width:220px;background:#f9fafb;border-radius:12px;padding:25px;box-shadow:0 2px 5px rgba(0,0,0,0.05);border:1px solid #f0f0f0;\"><div style=\"font-size:32px;margin-bottom:10px;\">📅</div><h3 style=\"font-size:16px;font-weight:600;margin:0 0 5px;\">Validité</h3><p style=\"font-size:15px;color:#333;margin:0;\">10 ans (5 ans pour les mineurs)</p></div></div>",
+                  "key": "infoPills",
+                  "type": "htmlelement",
+                  "input": false,
+                  "defaultValue": null,
+                  "persistent": false,
+                  "validateOn": "change"
+                },
+                {
+                  "tag": "div",
+                  "content": "<div style=\"font-size:22px;font-weight:700;margin:30px 0 10px;color:#000;\">Description</div><div style=\"font-size:16px;line-height:1.6;color:#333;margin-bottom:30px;\">La Carte Nationale d'Identité biométrique est le document officiel permettant à tout citoyen togolais d'attester de son identité sur le territoire national et dans certains pays de la CEDEAO. Elle est délivrée par la Direction Générale de la Documentation Nationale (DGDN) du Ministère de la Sécurité et de la Protection Civile.</div><div style=\"font-size:22px;font-weight:700;margin-bottom:10px;color:#000;\">Personnes éligibles</div><div style=\"font-size:16px;line-height:1.6;color:#333;margin-bottom:30px;\">Tout citoyen togolais âgé de 15 ans et plus. Pour les mineurs (15–17 ans), la demande est effectuée par le représentant légal.</div>",
+                  "key": "descriptionService",
+                  "type": "htmlelement",
+                  "input": false,
+                  "defaultValue": null,
+                  "persistent": false,
+                  "validateOn": "change"
+                },
+                {
+                  "tag": "div",
+                  "content": "<div style=\"background:#fff3cd;border:1px solid #ffc107;border-radius:12px;padding:20px;margin-bottom:25px;\"><div style=\"font-size:18px;font-weight:700;margin-bottom:10px;color:#856404;\">Présence physique obligatoire</div><div style=\"font-size:15px;color:#533f03;line-height:1.6;\">La capture biométrique (photo, empreintes digitales, signature) doit obligatoirement être réalisée en personne dans un Centre de Documentation agréé. Vous sélectionnerez votre rendez-vous dans ce formulaire.<br><br>Le retrait de votre carte sera effectué dans le même Centre de Documentation. Vous serez notifié par SMS et email lorsque votre CNI sera prête.</div></div>",
+                  "key": "avertissementBiometrique",
+                  "type": "htmlelement",
+                  "input": false,
+                  "defaultValue": null,
+                  "persistent": false,
+                  "validateOn": "change"
+                },
+                {
+                  "tag": "div",
+                  "content": "<div style=\"background:#F8F8F8;border:1px solid #E5E5E5;border-radius:12px;padding:25px;margin-bottom:25px;\"><div style=\"font-size:20px;font-weight:700;margin-bottom:15px;color:#000;\">Tarifs</div><ul style=\"font-size:16px;color:#333;line-height:1.9;padding-left:20px;margin:0;\"><li><strong>1ère demande</strong> : 4 000 FCFA</li><li><strong>Renouvellement</strong> : 4 000 FCFA</li><li><strong>Duplicata</strong> (perte ou vol) : 8 000 FCFA</li><li><strong>Procédure d'urgence</strong> (48h) : 20 000 FCFA</li></ul></div>",
+                  "key": "tarifs",
+                  "type": "htmlelement",
+                  "input": false,
+                  "defaultValue": null,
+                  "persistent": false,
+                  "validateOn": "change"
+                },
+                {
+                  "tag": "div",
+                  "content": "<div style=\"font-size:22px;font-weight:700;margin-bottom:20px;color:#000;\">Étapes</div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">1</div><div style=\"font-size:16px;line-height:1.6;color:#333;\"><strong>Remplissez le formulaire</strong> — Sélectionnez votre type de demande, uploadez vos pièces et choisissez votre créneau RDV.</div></div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">2</div><div style=\"font-size:16px;line-height:1.6;color:#333;\"><strong>Payez en ligne</strong> — Flooz, TMoney, Visa ou Mastercard sur la plateforme e-Gov.</div></div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">3</div><div style=\"font-size:16px;line-height:1.6;color:#333;\"><strong>Présentez-vous au RDV</strong> — Rendez-vous au Centre de Documentation pour la capture biométrique.</div></div><div style=\"display:flex;align-items:flex-start;margin-bottom:15px;\"><div style=\"width:28px;height:28px;min-width:28px;background:#1BAE4A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;font-size:16px;\">4</div><div style=\"font-size:16px;line-height:1.6;color:#333;\"><strong>Retirez votre CNI</strong> — Vous serez notifié par SMS/Email quand votre carte est prête.</div></div>",
+                  "key": "etapesProcessus",
+                  "type": "htmlelement",
+                  "input": false,
+                  "defaultValue": null,
+                  "persistent": false,
+                  "validateOn": "change"
+                }
+              ],
+              "width": 8
+            },
+            {
+              "components": [
+                {
+                  "tag": "div",
+                  "content": "<div class=\"sfc-card\" id=\"sidebar-fournisseur\"><h3>Fournisseur de service</h3><p class=\"sfc-subtitle\">Ministère de la Sécurité et de la Protection Civile — Direction Générale de la Documentation Nationale (DGDN)</p><div class=\"sfc-row\"><span class=\"sfc-ico\">📞</span><span><strong>Téléphone :</strong> (+228) 22 21 XX XX</span></div><div class=\"sfc-row\"><span class=\"sfc-ico\">✉️</span><span><strong>Email :</strong> dgdn@securite.gouv.tg</span></div><div class=\"sfc-row\"><span class=\"sfc-ico\">📍</span><span><strong>Adresse :</strong> DGDN, Lomé, Togo</span></div><div class=\"sfc-row\"><span class=\"sfc-ico\">🕐</span><span><strong>Ouverture :</strong> Lun – Ven, 07h30 – 15h30</span></div><h3 class=\"sfc-stitle\">Statistiques</h3><div class=\"sfc-boxes\"><div class=\"sfc-box\"><p class=\"sfc-lbl\">Délai standard</p><p class=\"sfc-val\">15–30 <span style=\"font-size:12px;font-weight:normal;\">jours</span></p></div><div class=\"sfc-box\"><p class=\"sfc-lbl\">Urgence</p><p class=\"sfc-val\">48 <span style=\"font-size:12px;font-weight:normal;\">heures</span></p></div></div><div class=\"sfc-boxes\"><div class=\"sfc-box\"><p class=\"sfc-lbl\">Centres de Documentation</p><p class=\"sfc-val\">35</p><p class=\"sfc-sub\">sur le territoire</p></div></div></div>",
+                  "key": "sidebarFournisseur",
+                  "type": "htmlelement",
+                  "input": false,
+                  "defaultValue": null,
+                  "persistent": false,
+                  "validateOn": "change"
+                }
+              ],
+              "width": 4
+            }
+          ],
+          "key": "columnsIntro",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change"
+        }
+      ],
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    },
+    {
+      "title": "Type de demande",
+      "label": "Page 2",
+      "type": "panel",
+      "key": "stepTypedemande",
+      "buttonSettings": { "previous": true, "cancel": true, "next": true },
+      "components": [
+        {
+          "tag": "h3",
+          "content": "Type de demande",
+          "key": "titreTypedemande",
+          "type": "htmlelement",
+          "input": false
+        },
+        {
+          "label": "Type de demande",
+          "widget": "choicesjs",
+          "tableView": true,
+          "data": {
+            "values": [
+              { "label": "1ère demande (majeur)", "value": "premiere_demande" },
+              { "label": "1ère demande (mineur 15–17 ans)", "value": "premiere_demande_mineur" },
+              { "label": "Renouvellement", "value": "renouvellement" },
+              { "label": "Duplicata (perte ou vol)", "value": "duplicata" },
+              { "label": "Procédure d'urgence (48h)", "value": "urgence" }
+            ]
+          },
+          "validate": { "required": true },
+          "errors": { "required": "Ce champ est obligatoire" },
+          "key": "typedemande",
+          "type": "select",
+          "input": true,
+          "defaultValue": null,
+          "persistent": true,
+          "validateOn": "blur"
+        },
+        {
+          "tag": "div",
+          "content": "<div id=\"tarif-info\" style=\"margin-top:15px;\"></div>",
+          "key": "tarifInfo",
+          "type": "htmlelement",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "validateOn": "change",
+          "calculateValue": "var t=data.typedemande;var m='';if(t=='premiere_demande'||t=='premiere_demande_mineur'||t=='renouvellement'){m='<div style=\"background:#e8f5e9;border:1px solid #4caf50;border-radius:8px;padding:15px;\"><strong>Montant à payer : 4 000 FCFA</strong></div>';}else if(t=='duplicata'){m='<div style=\"background:#fff3e0;border:1px solid #ff9800;border-radius:8px;padding:15px;\"><strong>Montant à payer : 8 000 FCFA</strong></div>';}else if(t=='urgence'){m='<div style=\"background:#fce4ec;border:1px solid #e91e63;border-radius:8px;padding:15px;\"><strong>Montant à payer : 20 000 FCFA — Procédure d\\'urgence (48h)</strong></div>';}value=m;"
+        },
+        {
+          "label": "Motif de la demande d'urgence",
+          "key": "motifUrgence",
+          "type": "textarea",
+          "input": true,
+          "rows": 3,
+          "defaultValue": null,
+          "persistent": true,
+          "validateOn": "blur",
+          "validate": { "required": true },
+          "errors": { "required": "Ce champ est obligatoire pour la procédure d'urgence" },
+          "conditional": {
+            "show": true,
+            "when": "typedemande",
+            "eq": "urgence"
+          }
+        },
+        {
+          "label": "Montant du paiement",
+          "key": "montantPaiement",
+          "type": "hidden",
+          "input": true,
+          "defaultValue": 4000,
+          "persistent": true,
+          "calculateValue": "var t=data.typedemande;if(t=='duplicata'){value=8000;}else if(t=='urgence'){value=20000;}else{value=4000;}"
+        }
+      ],
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    },
+    {
+      "title": "Informations personnelles",
+      "label": "Page 3",
+      "type": "panel",
+      "key": "stepInfoPerso",
+      "buttonSettings": { "previous": true, "cancel": true, "next": true },
+      "components": [
+        {
+          "tag": "h3",
+          "content": "Informations personnelles",
+          "key": "titreInfoPerso",
+          "type": "htmlelement",
+          "input": false
+        },
+        {
+          "tag": "p",
+          "content": "Les champs pré-remplis proviennent de votre identité numérique. Si une information est incorrecte, veuillez mettre à jour votre profil e-ID.",
+          "key": "infoEID",
+          "type": "htmlelement",
+          "input": false
+        },
+        {
+          "label": "Columns",
+          "columns": [
+            {
+              "components": [
+                {
+                  "label": "Nom de famille",
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "Ce champ est obligatoire" },
+                  "key": "nom",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": "{{ config.users.lastName }}",
+                  "persistent": true
+                },
+                {
+                  "label": "Date de naissance",
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "Ce champ est obligatoire" },
+                  "key": "dateNaissance",
+                  "type": "datetime",
+                  "input": true,
+                  "format": "dd/MM/yyyy",
+                  "defaultValue": null,
+                  "persistent": true
+                },
+                {
+                  "label": "Nationalité",
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "Ce champ est obligatoire" },
+                  "key": "nationalite",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": "Togolaise",
+                  "persistent": true
+                },
+                {
+                  "label": "Adresse email",
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": {
+                    "required": true,
+                    "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+                  },
+                  "errors": {
+                    "required": "Ce champ est obligatoire",
+                    "pattern": "Veuillez fournir une adresse email valide"
+                  },
+                  "key": "email",
+                  "type": "email",
+                  "input": true,
+                  "defaultValue": "{{ config.users.email }}",
+                  "persistent": true
+                },
+                {
+                  "label": "Numéro de téléphone",
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "Ce champ est obligatoire" },
+                  "key": "telephone",
+                  "type": "phoneNumber",
+                  "input": true,
+                  "defaultValue": "{{ config.users.phone }}",
+                  "persistent": true
+                }
+              ],
+              "width": 6
+            },
+            {
+              "components": [
+                {
+                  "label": "Prénom(s)",
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "Ce champ est obligatoire" },
+                  "key": "prenom",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": "{{ config.users.firstName }}",
+                  "persistent": true
+                },
+                {
+                  "label": "Lieu de naissance",
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "Ce champ est obligatoire" },
+                  "key": "lieuNaissance",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": null,
+                  "persistent": true
+                },
+                {
+                  "label": "Adresse de résidence",
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "Ce champ est obligatoire" },
+                  "key": "adresseResidence",
+                  "type": "textarea",
+                  "input": true,
+                  "rows": 3,
+                  "defaultValue": null,
+                  "persistent": true
+                },
+                {
+                  "label": "Nom du père",
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "key": "nomPere",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": null,
+                  "persistent": true,
+                  "conditional": {
+                    "show": true,
+                    "when": "typedemande",
+                    "in": ["premiere_demande", "premiere_demande_mineur"]
+                  }
+                },
+                {
+                  "label": "Nom de la mère",
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "key": "nomMere",
+                  "type": "textfield",
+                  "input": true,
+                  "defaultValue": null,
+                  "persistent": true,
+                  "conditional": {
+                    "show": true,
+                    "when": "typedemande",
+                    "in": ["premiere_demande", "premiere_demande_mineur"]
+                  }
+                }
+              ],
+              "width": 6
+            }
+          ],
+          "key": "columnsInfoPerso",
+          "type": "columns",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "clearOnHide": false,
+          "validateOn": "change"
+        },
+        {
+          "tag": "div",
+          "content": "<div style=\"background:#e3f2fd;border:1px solid #2196f3;border-radius:8px;padding:15px;margin-top:10px;\"><strong>Pour un mineur (15–17 ans) :</strong> Les informations ci-dessus concernent le représentant légal. Les informations du mineur sont à saisir ci-dessous.</div>",
+          "key": "infoMineur",
+          "type": "htmlelement",
+          "input": false,
+          "conditional": {
+            "show": true,
+            "when": "typedemande",
+            "eq": "premiere_demande_mineur"
+          }
+        },
+        {
+          "label": "Nom du mineur",
+          "key": "nomMineur",
+          "type": "textfield",
+          "input": true,
+          "defaultValue": null,
+          "persistent": true,
+          "validateOn": "blur",
+          "validate": { "required": true },
+          "errors": { "required": "Ce champ est obligatoire" },
+          "conditional": { "show": true, "when": "typedemande", "eq": "premiere_demande_mineur" }
+        },
+        {
+          "label": "Prénom(s) du mineur",
+          "key": "prenomMineur",
+          "type": "textfield",
+          "input": true,
+          "defaultValue": null,
+          "persistent": true,
+          "validateOn": "blur",
+          "validate": { "required": true },
+          "errors": { "required": "Ce champ est obligatoire" },
+          "conditional": { "show": true, "when": "typedemande", "eq": "premiere_demande_mineur" }
+        },
+        {
+          "label": "Date de naissance du mineur",
+          "key": "dateNaissanceMineur",
+          "type": "datetime",
+          "input": true,
+          "format": "dd/MM/yyyy",
+          "defaultValue": null,
+          "persistent": true,
+          "validateOn": "blur",
+          "validate": { "required": true },
+          "errors": { "required": "Ce champ est obligatoire" },
+          "conditional": { "show": true, "when": "typedemande", "eq": "premiere_demande_mineur" }
+        }
+      ],
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    },
+    {
+      "title": "Pièces justificatives",
+      "label": "Page 4",
+      "type": "panel",
+      "key": "stepPieces",
+      "buttonSettings": { "previous": true, "cancel": true, "next": true },
+      "components": [
+        {
+          "tag": "h3",
+          "content": "Pièces justificatives",
+          "key": "titrePieces",
+          "type": "htmlelement",
+          "input": false
+        },
+        {
+          "tag": "p",
+          "content": "Formats acceptés : PDF, JPG, PNG. Taille maximale : 2 Mo par fichier.",
+          "key": "infoFormats",
+          "type": "htmlelement",
+          "input": false
+        },
+        {
+          "label": "Copie de l'acte de naissance",
+          "key": "acteDeNaissance",
+          "type": "file",
+          "input": true,
+          "storage": "url",
+          "url": "",
+          "fileTypes": [{ "label": "PDF / JPG / PNG", "value": "application/pdf,image/jpeg,image/png" }],
+          "fileMaxSize": "2MB",
+          "multiple": false,
+          "validate": { "required": true },
+          "errors": {
+            "required": "Ce champ est obligatoire",
+            "pattern": "Format de fichier non accepté. Formats autorisés : PDF, JPG, PNG",
+            "maxSize": "La taille du fichier ne doit pas dépasser 2 Mo"
+          },
+          "persistent": true,
+          "validateOn": "blur",
+          "conditional": {
+            "show": true,
+            "when": "typedemande",
+            "in": ["premiere_demande", "premiere_demande_mineur", "duplicata"]
+          }
+        },
+        {
+          "label": "Ancienne Carte Nationale d'Identité",
+          "key": "ancienneCni",
+          "type": "file",
+          "input": true,
+          "storage": "url",
+          "url": "",
+          "fileTypes": [{ "label": "PDF / JPG / PNG", "value": "application/pdf,image/jpeg,image/png" }],
+          "fileMaxSize": "2MB",
+          "multiple": false,
+          "validate": { "required": true },
+          "errors": {
+            "required": "Ce champ est obligatoire",
+            "maxSize": "La taille du fichier ne doit pas dépasser 2 Mo"
+          },
+          "persistent": true,
+          "validateOn": "blur",
+          "conditional": {
+            "show": true,
+            "when": "typedemande",
+            "eq": "renouvellement"
+          }
+        },
+        {
+          "label": "Déclaration de perte ou de vol (police ou gendarmerie)",
+          "key": "declarationPerte",
+          "type": "file",
+          "input": true,
+          "storage": "url",
+          "url": "",
+          "fileTypes": [{ "label": "PDF / JPG / PNG", "value": "application/pdf,image/jpeg,image/png" }],
+          "fileMaxSize": "2MB",
+          "multiple": false,
+          "validate": { "required": true },
+          "errors": {
+            "required": "Ce champ est obligatoire — déclaration originale police ou gendarmerie exigée",
+            "maxSize": "La taille du fichier ne doit pas dépasser 2 Mo"
+          },
+          "persistent": true,
+          "validateOn": "blur",
+          "conditional": {
+            "show": true,
+            "when": "typedemande",
+            "eq": "duplicata"
+          }
+        },
+        {
+          "label": "Copie de la CNI du représentant légal",
+          "key": "cniRepresentantLegal",
+          "type": "file",
+          "input": true,
+          "storage": "url",
+          "url": "",
+          "fileTypes": [{ "label": "PDF / JPG / PNG", "value": "application/pdf,image/jpeg,image/png" }],
+          "fileMaxSize": "2MB",
+          "multiple": false,
+          "validate": { "required": true },
+          "errors": {
+            "required": "Ce champ est obligatoire",
+            "maxSize": "La taille du fichier ne doit pas dépasser 2 Mo"
+          },
+          "persistent": true,
+          "validateOn": "blur",
+          "conditional": {
+            "show": true,
+            "when": "typedemande",
+            "eq": "premiere_demande_mineur"
+          }
+        }
+      ],
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    },
+    {
+      "title": "Rendez-vous biométrique",
+      "label": "Page 5",
+      "type": "panel",
+      "key": "stepRdv",
+      "buttonSettings": { "previous": true, "cancel": true, "next": true },
+      "components": [
+        {
+          "tag": "h3",
+          "content": "Rendez-vous biométrique",
+          "key": "titreRdv",
+          "type": "htmlelement",
+          "input": false
+        },
+        {
+          "tag": "p",
+          "content": "Sélectionnez le Centre de Documentation et le créneau souhaité pour votre capture biométrique (photo, empreintes digitales, signature). Un agent confirmera votre créneau sous 48h.",
+          "key": "infoRdv",
+          "type": "htmlelement",
+          "input": false
+        },
+        {
+          "label": "Centre de Documentation",
+          "widget": "choicesjs",
+          "tableView": true,
+          "data": {
+            "values": [
+              { "label": "DGDN — Lomé (siège central)", "value": "DGDN_LOME" },
+              { "label": "CD Lomé-Golfe", "value": "CD_LOME_GOLFE" },
+              { "label": "CD Agou", "value": "CD_AGOU" },
+              { "label": "CD Agoé-Nyivé", "value": "CD_AGOE_NYIVE" },
+              { "label": "CD Akébou", "value": "CD_AKEBOU" },
+              { "label": "CD Amou", "value": "CD_AMOU" },
+              { "label": "CD Anie", "value": "CD_ANIE" },
+              { "label": "CD Assoli", "value": "CD_ASSOLI" },
+              { "label": "CD Ave", "value": "CD_AVE" },
+              { "label": "CD Bas-Mono", "value": "CD_BAS_MONO" },
+              { "label": "CD Bassar", "value": "CD_BASSAR" },
+              { "label": "CD Binah", "value": "CD_BINAH" },
+              { "label": "CD Blitta", "value": "CD_BLITTA" },
+              { "label": "CD Cinkassé", "value": "CD_CINKASSE" },
+              { "label": "CD Danyi", "value": "CD_DANYI" },
+              { "label": "CD Dankpen", "value": "CD_DANKPEN" },
+              { "label": "CD Est-Mono", "value": "CD_EST_MONO" },
+              { "label": "CD Haho", "value": "CD_HAHO" },
+              { "label": "CD Kéran", "value": "CD_KERAN" },
+              { "label": "CD Kloto", "value": "CD_KLOTO" },
+              { "label": "CD Kozah", "value": "CD_KOZAH" },
+              { "label": "CD Kpélé", "value": "CD_KPELE" },
+              { "label": "CD Kpendjal", "value": "CD_KPENDJAL" },
+              { "label": "CD Moyen-Mono", "value": "CD_MOYEN_MONO" },
+              { "label": "CD Ogou", "value": "CD_OGOU" },
+              { "label": "CD Oti", "value": "CD_OTI" },
+              { "label": "CD Sotouboua", "value": "CD_SOTOUBOUA" },
+              { "label": "CD Tchamba", "value": "CD_TCHAMBA" },
+              { "label": "CD Tchaoudjo", "value": "CD_TCHAOUDJO" },
+              { "label": "CD Tone", "value": "CD_TONE" },
+              { "label": "CD Tsévié", "value": "CD_TSEVIE" },
+              { "label": "CD Vo", "value": "CD_VO" },
+              { "label": "CD Wawa", "value": "CD_WAWA" },
+              { "label": "CD Yoto", "value": "CD_YOTO" },
+              { "label": "CD Zio", "value": "CD_ZIO" }
+            ]
+          },
+          "validate": { "required": true },
+          "errors": { "required": "Veuillez sélectionner un Centre de Documentation" },
+          "key": "centreDocumentation",
+          "type": "select",
+          "input": true,
+          "defaultValue": null,
+          "persistent": true,
+          "validateOn": "blur"
+        },
+        {
+          "label": "Date souhaitée pour le rendez-vous",
+          "key": "dateRdvSouhaite",
+          "type": "datetime",
+          "input": true,
+          "format": "dd/MM/yyyy",
+          "datePicker": {
+            "minDate": "today",
+            "disableWeekends": true
+          },
+          "validate": { "required": true },
+          "errors": { "required": "Ce champ est obligatoire" },
+          "defaultValue": null,
+          "persistent": true,
+          "validateOn": "blur"
+        },
+        {
+          "label": "Créneau horaire souhaité",
+          "widget": "choicesjs",
+          "data": {
+            "values": [
+              { "label": "Matin (07h30 – 10h00)", "value": "matin" },
+              { "label": "Milieu de matinée (10h00 – 12h30)", "value": "milieu_matin" },
+              { "label": "Après-midi (13h00 – 15h30)", "value": "apres_midi" }
+            ]
+          },
+          "validate": { "required": true },
+          "errors": { "required": "Veuillez sélectionner un créneau horaire" },
+          "key": "creneauRdv",
+          "type": "select",
+          "input": true,
+          "defaultValue": null,
+          "persistent": true,
+          "validateOn": "blur"
+        },
+        {
+          "tag": "div",
+          "content": "<div style=\"background:#f3e5f5;border:1px solid #9c27b0;border-radius:8px;padding:15px;margin-top:10px;\"><strong>Procédure d'urgence :</strong> Votre rendez-vous sera planifié dans les 24h suivant la validation de votre dossier. Présentez-vous au Centre de Documentation avec votre récépissé.</div>",
+          "key": "infoUrgenceRdv",
+          "type": "htmlelement",
+          "input": false,
+          "conditional": { "show": true, "when": "typedemande", "eq": "urgence" }
+        }
+      ],
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    },
+    {
+      "title": "Récapitulatif et soumission",
+      "label": "Page 6",
+      "type": "panel",
+      "key": "stepRecap",
+      "buttonSettings": { "previous": true, "cancel": true, "next": false },
+      "components": [
+        {
+          "tag": "h3",
+          "content": "Récapitulatif de votre demande",
+          "key": "titreRecap",
+          "type": "htmlelement",
+          "input": false
+        },
+        {
+          "tag": "div",
+          "key": "recapContent",
+          "type": "htmlelement",
+          "input": false,
+          "defaultValue": null,
+          "persistent": false,
+          "validateOn": "change",
+          "calculateValue": "var typeLabels={'premiere_demande':'1ère demande (majeur)','premiere_demande_mineur':'1ère demande (mineur)','renouvellement':'Renouvellement','duplicata':'Duplicata','urgence':'Procédure d\\'urgence'};var centreLabel=data.centreDocumentation||'—';value='<div style=\"background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:20px;font-size:15px;line-height:1.8;\"><table style=\"width:100%;border-collapse:collapse;\"><tr><td style=\"padding:6px 0;font-weight:600;color:#6b7280;width:40%;\">Type de demande</td><td>'+(typeLabels[data.typedemande]||'—')+'</td></tr><tr><td style=\"padding:6px 0;font-weight:600;color:#6b7280;\">Nom</td><td>'+(data.nom||'—')+' '+(data.prenom||'—')+'</td></tr><tr><td style=\"padding:6px 0;font-weight:600;color:#6b7280;\">Date de naissance</td><td>'+(data.dateNaissance||'—')+'</td></tr><tr><td style=\"padding:6px 0;font-weight:600;color:#6b7280;\">Téléphone</td><td>'+(data.telephone||'—')+'</td></tr><tr><td style=\"padding:6px 0;font-weight:600;color:#6b7280;\">Email</td><td>'+(data.email||'—')+'</td></tr><tr><td style=\"padding:6px 0;font-weight:600;color:#6b7280;\">Centre de Documentation</td><td>'+centreLabel+'</td></tr><tr><td style=\"padding:6px 0;font-weight:600;color:#6b7280;\">Date RDV souhaitée</td><td>'+(data.dateRdvSouhaite||'—')+'</td></tr><tr><td style=\"padding:6px 0;font-weight:600;color:#6b7280;\">Montant à payer</td><td style=\"font-weight:700;color:#1BAE4A;\">'+(data.montantPaiement||'4 000')+' FCFA</td></tr></table></div>'"
+        },
+        {
+          "label": "Je déclare et certifie sur l'honneur que les informations fournies sont exactes et complètes",
+          "tableView": false,
+          "validate": { "required": true },
+          "errors": { "required": "Vous devez certifier l'exactitude des informations pour continuer" },
+          "key": "declaration",
+          "type": "checkbox",
+          "input": true,
+          "defaultValue": false,
+          "persistent": true,
+          "validateOn": "change"
+        },
+        {
+          "label": "Soumettre ma demande",
+          "action": "submit",
+          "theme": "success",
+          "key": "submit",
+          "type": "button",
+          "input": true,
+          "disableOnInvalid": true,
+          "block": true
+        }
+      ],
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    }
+  ]
+}

@@ -1,0 +1,6226 @@
+[
+  {
+    "name": "signature E-Cert",
+    "id": "tg.gouv.gnspd.certSign",
+    "json": {
+      "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+      "name": "signature E-Cert",
+      "id": "tg.gouv.gnspd.certSign",
+      "appliesTo": [
+        "bpmn:ServiceTask"
+      ],
+      "entriesVisible": true,
+      "icon": {
+        "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+      },
+      "groups": [
+        {
+          "id": "system-configuration",
+          "label": "Configuration Système"
+        },
+        {
+          "id": "configuration",
+          "label": "Configuration"
+        },
+        {
+          "id": "cost-configuration",
+          "label": "Configuration des coûts"
+        },
+        {
+          "id": "system-visibility",
+          "label": "Configuration de visibilité"
+        }
+      ],
+      "properties": [
+        {
+          "label": "Implementation Type",
+          "description": "Type d'implémentation",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "external",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:type"
+          }
+        },
+        {
+          "label": "Topic",
+          "description": "Le topic de publication",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "flow-cert-sign",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:topic"
+          }
+        },
+        {
+          "label": "Utilisateur",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdId"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Mot de passe",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdKey"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Formatter les données une à une dans la dataMap",
+          "type": "Dropdown",
+          "value": "",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdIsFormat"
+          },
+          "group": "configuration"
+        },
+        {
+          "description": "Décrivez le contenu à envoyer au format json avec uniquement des doubles apostrophes",
+          "type": "Text",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdData"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Veuillez cocher afin d'utiliser la nouvelle méthode de remplacement",
+          "type": "Dropdown",
+          "value": "",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdUseNewMethod"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Veuillez sélectionner la valeure par défaut dans le remplacement",
+          "type": "Dropdown",
+          "value": "",
+          "choices": [
+            {
+              "name": "",
+              "value": "undefined"
+            },
+            {
+              "name": "Null",
+              "value": "null"
+            },
+            {
+              "name": "Chaîne vide",
+              "value": ""
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdDefaultValue"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Lister sous forme d'Array les valeures à laisser telles quelles si nont trouvées",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdIgnoreList"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Voir l'évènement",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "false",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskIsVisible"
+          }
+        },
+        {
+          "label": "Nom de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskLabel"
+          }
+        },
+        {
+          "label": "Statut de la tâche si en pause",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "Pending",
+          "choices": [
+            {
+              "name": "Pending",
+              "value": "Pending"
+            },
+            {
+              "name": "PendingPortal",
+              "value": "PendingPortal"
+            },
+            {
+              "name": "PendingPayment",
+              "value": "PendingPayment"
+            },
+            {
+              "name": "PendingBackOffice",
+              "value": "PendingBackOffice"
+            },
+            {
+              "name": "Review",
+              "value": "Review"
+            },
+            {
+              "name": "Submitted",
+              "value": "Submitted"
+            },
+            {
+              "name": "Rejected",
+              "value": "Rejected"
+            },
+            {
+              "name": "Completed",
+              "value": "Completed"
+            },
+            {
+              "name": "Failed",
+              "value": "Failed"
+            },
+            {
+              "name": "PendingCompletion",
+              "value": "PendingCompletion"
+            },
+            {
+              "name": "PendingPublic",
+              "value": "PendingPublic"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskStatus"
+          }
+        },
+        {
+          "label": "Ordre de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskOrder"
+          }
+        },
+        {
+          "label": "Type de la tâche",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "citizen",
+          "choices": [
+            {
+              "name": "Citoyen",
+              "value": "citizen"
+            },
+            {
+              "name": "Backoffice",
+              "value": "backoffice"
+            },
+            {
+              "name": "System",
+              "value": "system"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskKind"
+          }
+        },
+        {
+          "label": "Coût variable",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostVariable"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût total",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostTotal"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût unitaire",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostUnitaire"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Formulaire utilisateur du portail",
+    "id": "tg.gouv.gnspd.flowPortail",
+    "json": {
+      "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+      "name": "Formulaire utilisateur du portail",
+      "id": "tg.gouv.gnspd.flowPortail",
+      "appliesTo": [
+        "bpmn:ServiceTask"
+      ],
+      "entriesVisible": true,
+      "icon": {
+        "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor' fill='none' stroke-width='60'%3E%3Crect x='300' y='200' width='1400' height='1600' rx='100'/%3E%3Cpath d='M500 500h1000M500 700h800M500 900h600M500 1100h1000M500 1300h700M500 1500h900'/%3E%3Ccircle cx='1400' cy='600' r='80' fill='currentColor'/%3E%3Cpath d='M1200 1400l200 200 400-400' stroke-width='80' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E"
+      },
+      "groups": [
+        {
+          "id": "system-configuration",
+          "label": "Configuration Système"
+        },
+        {
+          "id": "form-configuration",
+          "label": "Configuration du Formulaire"
+        },
+        {
+          "id": "execution-configuration",
+          "label": "Configuration d'Exécution"
+        },
+        {
+          "id": "payment-configuration",
+          "label": "Configuration des Frais"
+        },
+        {
+          "id": "data-configuration",
+          "label": "Configuration des Données"
+        },
+        {
+          "id": "cost-configuration",
+          "label": "Configuration des coûts"
+        },
+        {
+          "id": "system-visibility",
+          "label": "Configuration de visibilité"
+        }
+      ],
+      "properties": [
+        {
+          "label": "Implementation Type",
+          "description": "Type d'implémentation",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "external",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:type"
+          }
+        },
+        {
+          "label": "Topic",
+          "description": "Le topic de publication",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "flow-portail-form",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:topic"
+          }
+        },
+        {
+          "label": "Order",
+          "description": "Ordre d'exécution de l'étape",
+          "group": "system-configuration",
+          "placeholder": "Veuillez entrer un nombre (ex: 1, 2, 3...)",
+          "type": "String",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdOrder"
+          },
+          "constraints": {
+            "notEmpty": true,
+            "min": 1,
+            "pattern": "^[0-9]+$"
+          }
+        },
+        {
+          "label": "Nom d'étape",
+          "description": "Nom de l'étape du processus",
+          "group": "form-configuration",
+          "type": "String",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "stepName"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Formulaire associé",
+          "description": "Sélectionner le formulaire à utiliser",
+          "group": "form-configuration",
+          "type": "String",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdFormKey"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Il s'agit d'une resoumission",
+          "description": "Indique si cette étape est une resoumission",
+          "group": "form-configuration",
+          "type": "Dropdown",
+          "value": "false",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "isResubmission"
+          }
+        },
+        {
+          "label": "Description / Instructions",
+          "description": "Instructions ou description pour l'utilisateur",
+          "group": "form-configuration",
+          "type": "Text",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "description"
+          }
+        },
+        {
+          "label": "Exécution",
+          "description": "Type d'exécution du formulaire",
+          "group": "execution-configuration",
+          "type": "Dropdown",
+          "value": "PORTAIL",
+          "choices": [
+            {
+              "name": "PORTAIL",
+              "value": "PORTAIL"
+            },
+            {
+              "name": "ADMIN",
+              "value": "ADMIN"
+            },
+            {
+              "name": "MOBILE",
+              "value": "MOBILE"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "executionType"
+          }
+        },
+        {
+          "label": "Frais à payer",
+          "description": "Montant des frais en F CFA",
+          "group": "payment-configuration",
+          "type": "String",
+          "value": "0",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "paymentAmount"
+          },
+          "constraints": {
+            "pattern": "^[0-9]+$"
+          }
+        },
+        {
+          "label": "Frais calculés à payer",
+          "description": "Utiliser les clés des soumissions directement pour calculer les frais",
+          "group": "payment-configuration",
+          "type": "Dropdown",
+          "value": "false",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "calculatePayment"
+          }
+        },
+        {
+          "label": "Opérateur de calcul",
+          "description": "Opération à effectuer pour le calcul des frais",
+          "group": "payment-configuration",
+          "type": "Dropdown",
+          "value": "ADDITION",
+          "choices": [
+            {
+              "name": "ADDITION",
+              "value": "ADDITION"
+            },
+            {
+              "name": "SOUSTRACTION",
+              "value": "SOUSTRACTION"
+            },
+            {
+              "name": "MULTIPLICATION",
+              "value": "MULTIPLICATION"
+            },
+            {
+              "name": "DIVISION",
+              "value": "DIVISION"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "calculationOperator"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "condition": {
+            "property": "calculatePayment",
+            "equals": "true"
+          }
+        },
+        {
+          "label": "Variable 1",
+          "description": "Première variable pour le calcul",
+          "group": "payment-configuration",
+          "type": "String",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "variable1"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "condition": {
+            "property": "calculatePayment",
+            "equals": "true"
+          }
+        },
+        {
+          "label": "Variable 2",
+          "description": "Deuxième variable pour le calcul",
+          "group": "payment-configuration",
+          "type": "String",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "variable2"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "condition": {
+            "property": "calculatePayment",
+            "equals": "true"
+          }
+        },
+        {
+          "label": "Données Initiales du formulaire",
+          "description": "Données JSON pour pré-remplir le formulaire",
+          "group": "data-configuration",
+          "type": "Text",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "initialFormData"
+          }
+        },
+        {
+          "label": "Données de Formulaire associé",
+          "description": "Données spécifiques au formulaire associé",
+          "group": "data-configuration",
+          "type": "Text",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "associatedFormData"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Voir l'évènement",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "false",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskIsVisible"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Nom de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskLabel"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Statut de la tâche si en pause",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "Pending",
+          "choices": [
+            {
+              "name": "Pending",
+              "value": "Pending"
+            },
+            {
+              "name": "PendingPortal",
+              "value": "PendingPortal"
+            },
+            {
+              "name": "PendingPayment",
+              "value": "PendingPayment"
+            },
+            {
+              "name": "PendingBackOffice",
+              "value": "PendingBackOffice"
+            },
+            {
+              "name": "Review",
+              "value": "Review"
+            },
+            {
+              "name": "Submitted",
+              "value": "Submitted"
+            },
+            {
+              "name": "Rejected",
+              "value": "Rejected"
+            },
+            {
+              "name": "Completed",
+              "value": "Completed"
+            },
+            {
+              "name": "Failed",
+              "value": "Failed"
+            },
+            {
+              "name": "PendingCompletion",
+              "value": "PendingCompletion"
+            },
+            {
+              "name": "PendingPublic",
+              "value": "PendingPublic"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskStatus"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Ordre de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskOrder"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Type de la tâche",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "citizen",
+          "choices": [
+            {
+              "name": "Citoyen",
+              "value": "citizen"
+            },
+            {
+              "name": "Backoffice",
+              "value": "backoffice"
+            },
+            {
+              "name": "System",
+              "value": "system"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskKind"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Coût variable",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostVariable"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût total",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostTotal"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût unitaire",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostUnitaire"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Enregistrement DB",
+    "id": "tg.gouv.gnspd.dbSave",
+    "json": {
+      "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+      "name": "Enregistrement DB",
+      "id": "tg.gouv.gnspd.dbSave",
+      "appliesTo": [
+        "bpmn:ServiceTask"
+      ],
+      "entriesVisible": true,
+      "icon": {
+        "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+      },
+      "groups": [
+        {
+          "id": "system-configuration",
+          "label": "Configuration Système"
+        },
+        {
+          "id": "configuration",
+          "label": "Configuration"
+        },
+        {
+          "id": "cost-configuration",
+          "label": "Configuration des coûts"
+        },
+        {
+          "id": "system-visibility",
+          "label": "Configuration de visibilité"
+        }
+      ],
+      "properties": [
+        {
+          "label": "Implementation Type",
+          "description": "Type d'implémentation",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "external",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:type"
+          }
+        },
+        {
+          "label": "Topic",
+          "description": "Le topic de publication",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "flow-db-save",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:topic"
+          }
+        },
+        {
+          "label": "Type de base de données",
+          "type": "Dropdown",
+          "value": "",
+          "choices": [
+            {
+              "name": "MySQL",
+              "value": "mysql"
+            },
+            {
+              "name": "mariadb",
+              "value": "mariadb"
+            },
+            {
+              "name": "PostgreSQL",
+              "value": "postgresql"
+            },
+            {
+              "name": "Oracle",
+              "value": "oracle"
+            },
+            {
+              "name": "Microsoft SQL Server",
+              "value": "mssql"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdDbType"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Host",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdDbHost"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Port",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdDbPort"
+          },
+          "constraints": {
+            "pattern": "^[0-9]*$"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Utilisateur",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdDbUser"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Mot de passe",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdDbPassword"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Base de données",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdDbName"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Model de requête",
+          "type": "Text",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdDbQueryTemplate"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Voir l'évènement",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "false",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskIsVisible"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Nom de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskLabel"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Statut de la tâche si en pause",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "Pending",
+          "choices": [
+            {
+              "name": "Pending",
+              "value": "Pending"
+            },
+            {
+              "name": "PendingPortal",
+              "value": "PendingPortal"
+            },
+            {
+              "name": "PendingPayment",
+              "value": "PendingPayment"
+            },
+            {
+              "name": "PendingBackOffice",
+              "value": "PendingBackOffice"
+            },
+            {
+              "name": "Review",
+              "value": "Review"
+            },
+            {
+              "name": "Submitted",
+              "value": "Submitted"
+            },
+            {
+              "name": "Rejected",
+              "value": "Rejected"
+            },
+            {
+              "name": "Completed",
+              "value": "Completed"
+            },
+            {
+              "name": "Failed",
+              "value": "Failed"
+            },
+            {
+              "name": "PendingCompletion",
+              "value": "PendingCompletion"
+            },
+            {
+              "name": "PendingPublic",
+              "value": "PendingPublic"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskStatus"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Ordre de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskOrder"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Type de la tâche",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "citizen",
+          "choices": [
+            {
+              "name": "Citoyen",
+              "value": "citizen"
+            },
+            {
+              "name": "Backoffice",
+              "value": "backoffice"
+            },
+            {
+              "name": "System",
+              "value": "system"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskKind"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Coût variable",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostVariable"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût total",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostTotal"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût unitaire",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostUnitaire"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        }
+      ]
+    }
+  },
+  {
+    "name": "receiveTask",
+    "id": "tg.gouv.gnspd.receiveTask",
+    "json": {
+      "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+      "name": "receiveTask",
+      "id": "tg.gouv.gnspd.receiveTask",
+      "appliesTo": [
+        "bpmn:ReceiveTask"
+      ],
+      "entriesVisible": true,
+      "icon": {
+        "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+      },
+      "groups": [
+        {
+          "id": "system-configuration",
+          "label": "Configuration Système"
+        },
+        {
+          "id": "cost-configuration",
+          "label": "Configuration des coûts"
+        },
+        {
+          "id": "system-visibility",
+          "label": "Configuration de visibilité"
+        }
+      ],
+      "properties": [
+        {
+          "label": "Implementation Type",
+          "description": "Type d'implémentation",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "external",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:type"
+          }
+        },
+        {
+          "label": "Topic",
+          "description": "Le topic de publication pour les tâches utilisateur",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "flow-receive-task",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:topic"
+          }
+        },
+        {
+          "label": "Voir l'évènement",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "false",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskIsVisible"
+          }
+        },
+        {
+          "label": "Nom de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskLabel"
+          }
+        },
+        {
+          "label": "Statut de la tâche si en pause",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "Pending",
+          "choices": [
+            {
+              "name": "Pending",
+              "value": "Pending"
+            },
+            {
+              "name": "PendingPortal",
+              "value": "PendingPortal"
+            },
+            {
+              "name": "PendingPayment",
+              "value": "PendingPayment"
+            },
+            {
+              "name": "PendingBackOffice",
+              "value": "PendingBackOffice"
+            },
+            {
+              "name": "Review",
+              "value": "Review"
+            },
+            {
+              "name": "Submitted",
+              "value": "Submitted"
+            },
+            {
+              "name": "Rejected",
+              "value": "Rejected"
+            },
+            {
+              "name": "Completed",
+              "value": "Completed"
+            },
+            {
+              "name": "Failed",
+              "value": "Failed"
+            },
+            {
+              "name": "PendingCompletion",
+              "value": "PendingCompletion"
+            },
+            {
+              "name": "PendingPublic",
+              "value": "PendingPublic"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskStatus"
+          }
+        },
+        {
+          "label": "Ordre de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskOrder"
+          }
+        },
+        {
+          "label": "Type de la tâche",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "citizen",
+          "choices": [
+            {
+              "name": "Citoyen",
+              "value": "citizen"
+            },
+            {
+              "name": "Backoffice",
+              "value": "backoffice"
+            },
+            {
+              "name": "System",
+              "value": "system"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskKind"
+          }
+        },
+        {
+          "label": "Coût variable",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostVariable"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût total",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostTotal"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût unitaire",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostUnitaire"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Exécuter une requête http",
+    "id": "tg.gouv.gnspd.requestHttp",
+    "json": {
+      "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+      "name": "Exécuter une requête http",
+      "id": "tg.gouv.gnspd.requestHttp",
+      "appliesTo": [
+        "bpmn:ServiceTask"
+      ],
+      "entriesVisible": true,
+      "icon": {
+        "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+      },
+      "groups": [
+        {
+          "id": "system-configuration",
+          "label": "Configuration Système"
+        },
+        {
+          "id": "configuration",
+          "label": "Configuration"
+        },
+        {
+          "id": "cost-configuration",
+          "label": "Configuration des coûts"
+        },
+        {
+          "id": "system-visibility",
+          "label": "Configuration de visibilité"
+        }
+      ],
+      "properties": [
+        {
+          "label": "Implementation Type",
+          "description": "Type d'implémentation",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "external",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:type"
+          }
+        },
+        {
+          "label": "Topic",
+          "description": "Le topic de publication",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "flow-http-request",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:topic"
+          }
+        },
+        {
+          "label": "Complétez la fonction afin de retourner la configuration json de la requête.",
+          "type": "Text",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdConfig"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Voir l'évènement",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "false",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskIsVisible"
+          }
+        },
+        {
+          "label": "Nom de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskLabel"
+          }
+        },
+        {
+          "label": "Statut de la tâche si en pause",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "Pending",
+          "choices": [
+            {
+              "name": "Pending",
+              "value": "Pending"
+            },
+            {
+              "name": "PendingPortal",
+              "value": "PendingPortal"
+            },
+            {
+              "name": "PendingPayment",
+              "value": "PendingPayment"
+            },
+            {
+              "name": "PendingBackOffice",
+              "value": "PendingBackOffice"
+            },
+            {
+              "name": "Review",
+              "value": "Review"
+            },
+            {
+              "name": "Submitted",
+              "value": "Submitted"
+            },
+            {
+              "name": "Rejected",
+              "value": "Rejected"
+            },
+            {
+              "name": "Completed",
+              "value": "Completed"
+            },
+            {
+              "name": "Failed",
+              "value": "Failed"
+            },
+            {
+              "name": "PendingCompletion",
+              "value": "PendingCompletion"
+            },
+            {
+              "name": "PendingPublic",
+              "value": "PendingPublic"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskStatus"
+          }
+        },
+        {
+          "label": "Ordre de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskOrder"
+          }
+        },
+        {
+          "label": "Type de la tâche",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "citizen",
+          "choices": [
+            {
+              "name": "Citoyen",
+              "value": "citizen"
+            },
+            {
+              "name": "Backoffice",
+              "value": "backoffice"
+            },
+            {
+              "name": "System",
+              "value": "system"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskKind"
+          }
+        },
+        {
+          "label": "Coût variable",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostVariable"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût total",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostTotal"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût unitaire",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostUnitaire"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Modification de l'état d'une étape",
+    "id": "tg.gouv.gnspd.stepNotification",
+    "json": {
+      "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+      "name": "Modification de l'état d'une étape",
+      "id": "tg.gouv.gnspd.stepNotification",
+      "appliesTo": [
+        "bpmn:ServiceTask"
+      ],
+      "entriesVisible": true,
+      "icon": {
+        "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+      },
+      "groups": [
+        {
+          "id": "system-configuration",
+          "label": "Configuration Système"
+        },
+        {
+          "id": "configuration",
+          "label": "Configuration"
+        },
+        {
+          "id": "cost-configuration",
+          "label": "Configuration des coûts"
+        },
+        {
+          "id": "system-visibility",
+          "label": "Configuration de visibilité"
+        }
+      ],
+      "properties": [
+        {
+          "label": "Implementation Type",
+          "description": "Type d'implémentation",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "external",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:type"
+          }
+        },
+        {
+          "label": "Topic",
+          "description": "Le topic de publication",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "flow-step-notification",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:topic"
+          }
+        },
+        {
+          "label": "Statut",
+          "type": "Dropdown",
+          "value": "",
+          "choices": [
+            {
+              "name": "Pending",
+              "value": "Pending"
+            },
+            {
+              "name": "PendingPeer",
+              "value": "PendingPeer"
+            },
+            {
+              "name": "PendingPayment",
+              "value": "PendingPayment"
+            },
+            {
+              "name": "PendingUser",
+              "value": "PendingUser"
+            },
+            {
+              "name": "PendingBackOffice",
+              "value": "PendingBackOffice"
+            },
+            {
+              "name": "Success",
+              "value": "Success"
+            },
+            {
+              "name": "Fail",
+              "value": "Fail"
+            },
+            {
+              "name": "WaitingForControls",
+              "value": "WaitingForControls"
+            },
+            {
+              "name": "SavedAsDraft",
+              "value": "SavedAsDraft"
+            },
+            {
+              "name": "Submited",
+              "value": "Submited"
+            },
+            {
+              "name": "Terminated",
+              "value": "Terminated"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdStatus"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Cocher s'il s'agit d'une modification sur le portail",
+          "type": "Dropdown",
+          "value": "",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdIsPortal"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Ordre de l'étape",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdStepOrder"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Données à transmettre",
+          "type": "Text",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdPassData"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Coût à transmettre",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdPassCost"
+          },
+          "constraints": {
+            "pattern": "^[0-9]*$"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Ne pas lever d'eception si la tâche n'est pas trouvée",
+          "type": "Dropdown",
+          "value": "",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdIgnoreNotFound"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Voir l'évènement",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "false",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskIsVisible"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Nom de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskLabel"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Statut de la tâche si en pause",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "Pending",
+          "choices": [
+            {
+              "name": "Pending",
+              "value": "Pending"
+            },
+            {
+              "name": "PendingPortal",
+              "value": "PendingPortal"
+            },
+            {
+              "name": "PendingPayment",
+              "value": "PendingPayment"
+            },
+            {
+              "name": "PendingBackOffice",
+              "value": "PendingBackOffice"
+            },
+            {
+              "name": "Review",
+              "value": "Review"
+            },
+            {
+              "name": "Submitted",
+              "value": "Submitted"
+            },
+            {
+              "name": "Rejected",
+              "value": "Rejected"
+            },
+            {
+              "name": "Completed",
+              "value": "Completed"
+            },
+            {
+              "name": "Failed",
+              "value": "Failed"
+            },
+            {
+              "name": "PendingCompletion",
+              "value": "PendingCompletion"
+            },
+            {
+              "name": "PendingPublic",
+              "value": "PendingPublic"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskStatus"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Ordre de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskOrder"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Type de la tâche",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "citizen",
+          "choices": [
+            {
+              "name": "Citoyen",
+              "value": "citizen"
+            },
+            {
+              "name": "Backoffice",
+              "value": "backoffice"
+            },
+            {
+              "name": "System",
+              "value": "system"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskKind"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Coût variable",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostVariable"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût total",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostTotal"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût unitaire",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostUnitaire"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Signature SignServer",
+    "id": "tg.gouv.gnspd.signServer",
+    "json": {
+      "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+      "name": "Signature SignServer",
+      "id": "tg.gouv.gnspd.signServer",
+      "appliesTo": [
+        "bpmn:ServiceTask"
+      ],
+      "entriesVisible": true,
+      "icon": {
+        "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+      },
+      "groups": [
+        {
+          "id": "system-configuration",
+          "label": "Configuration Système"
+        },
+        {
+          "id": "configuration",
+          "label": "Configuration"
+        },
+        {
+          "id": "cost-configuration",
+          "label": "Configuration des coûts"
+        },
+        {
+          "id": "system-visibility",
+          "label": "Configuration de visibilité"
+        }
+      ],
+      "properties": [
+        {
+          "label": "Implementation Type",
+          "description": "Type d'implémentation",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "external",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:type"
+          }
+        },
+        {
+          "label": "Topic",
+          "description": "Le topic de publication",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "flow-sign-server",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:topic"
+          }
+        },
+        {
+          "label": "URL Données",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdRestDataUrl"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Liste des statuts de réponse acceptables",
+          "description": "Lister les entiers comme suit[200,201,202,203,204,205]",
+          "value": "",
+          "type": "String",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdAcceptedHttpStatus"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Attachments",
+          "type": "Text",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdAttachments"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Type de fichier",
+          "type": "Dropdown",
+          "value": "",
+          "choices": [
+            {
+              "name": "UPLOAD",
+              "value": "UPLOAD"
+            },
+            {
+              "name": "PHOTO",
+              "value": "PHOTO"
+            },
+            {
+              "name": "DIPLOME",
+              "value": "DIPLOME"
+            },
+            {
+              "name": "ATTESTATION",
+              "value": "ATTESTATION"
+            },
+            {
+              "name": "CERTIFICAT",
+              "value": "CERTIFICAT"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdRestTag"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Nom du fichier avec extension",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdRestStreamName"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Faire une envoi non sécurisé",
+          "type": "Dropdown",
+          "value": "",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdIsInsecure"
+          },
+          "group": "configuration"
+        },
+        {
+          "description": "Décrivez le contenu à envoyer au format json avec uniquement des doubles apostrophes",
+          "type": "Text",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCustomData"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Voir l'évènement",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "false",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskIsVisible"
+          }
+        },
+        {
+          "label": "Nom de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskLabel"
+          }
+        },
+        {
+          "label": "Statut de la tâche si en pause",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "Pending",
+          "choices": [
+            {
+              "name": "Pending",
+              "value": "Pending"
+            },
+            {
+              "name": "PendingPortal",
+              "value": "PendingPortal"
+            },
+            {
+              "name": "PendingPayment",
+              "value": "PendingPayment"
+            },
+            {
+              "name": "PendingBackOffice",
+              "value": "PendingBackOffice"
+            },
+            {
+              "name": "Review",
+              "value": "Review"
+            },
+            {
+              "name": "Submitted",
+              "value": "Submitted"
+            },
+            {
+              "name": "Rejected",
+              "value": "Rejected"
+            },
+            {
+              "name": "Completed",
+              "value": "Completed"
+            },
+            {
+              "name": "Failed",
+              "value": "Failed"
+            },
+            {
+              "name": "PendingCompletion",
+              "value": "PendingCompletion"
+            },
+            {
+              "name": "PendingPublic",
+              "value": "PendingPublic"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskStatus"
+          }
+        },
+        {
+          "label": "Ordre de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskOrder"
+          }
+        },
+        {
+          "label": "Type de la tâche",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "citizen",
+          "choices": [
+            {
+              "name": "Citoyen",
+              "value": "citizen"
+            },
+            {
+              "name": "Backoffice",
+              "value": "backoffice"
+            },
+            {
+              "name": "System",
+              "value": "system"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskKind"
+          }
+        },
+        {
+          "label": "Coût variable",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostVariable"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût total",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostTotal"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût unitaire",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostUnitaire"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        }
+      ]
+    }
+  },
+  {
+    "name": "endEvent",
+    "id": "tg.gouv.gnspd.endEvent",
+    "json": {
+      "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+      "name": "endEvent",
+      "id": "tg.gouv.gnspd.endEvent",
+      "appliesTo": [
+        "bpmn:EndEvent"
+      ],
+      "entriesVisible": true,
+      "icon": {
+        "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+      },
+      "groups": [
+        {
+          "id": "system-configuration",
+          "label": "Configuration Système"
+        },
+        {
+          "id": "cost-configuration",
+          "label": "Configuration des coûts"
+        },
+        {
+          "id": "system-visibility",
+          "label": "Configuration de visibilité"
+        }
+      ],
+      "properties": [
+        {
+          "label": "Implementation Type",
+          "description": "Type d'implémentation",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "external",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:type"
+          }
+        },
+        {
+          "label": "Topic",
+          "description": "Topic du worker",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "tg.gouv.gnspd.endEvent",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:topic"
+          }
+        },
+        {
+          "label": "Voir l'évènement",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "false",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskIsVisible"
+          }
+        },
+        {
+          "label": "Nom de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskLabel"
+          }
+        },
+        {
+          "label": "Statut de la tâche si en pause",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "Pending",
+          "choices": [
+            {
+              "name": "Pending",
+              "value": "Pending"
+            },
+            {
+              "name": "PendingPortal",
+              "value": "PendingPortal"
+            },
+            {
+              "name": "PendingPayment",
+              "value": "PendingPayment"
+            },
+            {
+              "name": "PendingBackOffice",
+              "value": "PendingBackOffice"
+            },
+            {
+              "name": "Review",
+              "value": "Review"
+            },
+            {
+              "name": "Submitted",
+              "value": "Submitted"
+            },
+            {
+              "name": "Rejected",
+              "value": "Rejected"
+            },
+            {
+              "name": "Validated",
+              "value": "Validated"
+            },
+            {
+              "name": "Failed",
+              "value": "Failed"
+            },
+            {
+              "name": "Canceled",
+              "value": "Canceled"
+            },
+            {
+              "name": "Processing",
+              "value": "Processing"
+            },
+            {
+              "name": "Completed",
+              "value": "Completed"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskStatus"
+          }
+        },
+        {
+          "label": "Type de la tâche",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "citizen",
+          "choices": [
+            {
+              "name": "Citoyen",
+              "value": "citizen"
+            },
+            {
+              "name": "Backoffice",
+              "value": "backoffice"
+            },
+            {
+              "name": "System",
+              "value": "system"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskKind"
+          }
+        },
+        {
+          "label": "Coût variable",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostVariable"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût total",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostTotal"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût unitaire",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostUnitaire"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        }
+      ]
+    }
+  },
+  {
+    "name": "userTask",
+    "id": "tg.gouv.gnspd.userTask",
+    "json": {
+      "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+      "name": "userTask",
+      "id": "tg.gouv.gnspd.userTask",
+      "appliesTo": [
+        "bpmn:UserTask"
+      ],
+      "entriesVisible": true,
+      "icon": {
+        "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+      },
+      "groups": [
+        {
+          "id": "system-configuration",
+          "label": "Configuration Système"
+        },
+        {
+          "id": "task-instructions",
+          "label": "Instructions et consignes"
+        },
+        {
+          "id": "handler-configuration",
+          "label": "Configuration ou information du traiteur"
+        },
+        {
+          "id": "system-visibility",
+          "label": "Configuration de visibilité"
+        },
+        {
+          "id": "cost-configuration",
+          "label": "Configuration des coûts"
+        }
+      ],
+      "properties": [
+        {
+          "label": "Consigne par défaut",
+          "group": "task-instructions",
+          "type": "String",
+          "value": "Veuillez traiter cette tâche",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdInstructionDefault"
+          }
+        },
+        {
+          "label": "Template de consigne",
+          "description": "Le template Jinja2 de la consigne",
+          "group": "task-instructions",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdInstructionTemplate"
+          }
+        },
+        {
+          "label": "Source de donnée de la consigne",
+          "description": "Source de donnée de la consigne",
+          "group": "task-instructions",
+          "type": "String",
+          "value": "{}",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdInstructionData"
+          }
+        },
+        {
+          "label": "Assignee",
+          "description": "Assignation de la tâche",
+          "group": "handler-configuration",
+          "type": "String",
+          "value": "${gnspdTaskAssignee}",
+          "binding": {
+            "type": "property",
+            "name": "camunda:assignee"
+          }
+        },
+        {
+          "label": "Candidate Groups",
+          "description": "Groupes candidats pour la tâche",
+          "group": "handler-configuration",
+          "type": "String",
+          "value": "${gnspdTaskCandidateGroups}",
+          "binding": {
+            "type": "property",
+            "name": "camunda:assignee"
+          }
+        },
+        {
+          "label": "Affectation des entreprises",
+          "description": "Liste des entreprises autorisées pour l'assignation (ex: IDs séparés par virgules ou JSON)",
+          "group": "handler-configuration",
+          "type": "Text",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCandidateCompanies"
+          }
+        },
+        {
+          "label": "Voir la tâche",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "true",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskIsVisible"
+          }
+        },
+        {
+          "label": "Nom de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskLabel"
+          }
+        },
+        {
+          "label": "Statut de la tâche si en pause",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "Pending",
+          "choices": [
+            {
+              "name": "Pending",
+              "value": "Pending"
+            },
+            {
+              "name": "PendingPortal",
+              "value": "PendingPortal"
+            },
+            {
+              "name": "PendingPayment",
+              "value": "PendingPayment"
+            },
+            {
+              "name": "PendingBackOffice",
+              "value": "PendingBackOffice"
+            },
+            {
+              "name": "Review",
+              "value": "Review"
+            },
+            {
+              "name": "Submitted",
+              "value": "Submitted"
+            },
+            {
+              "name": "Rejected",
+              "value": "Rejected"
+            },
+            {
+              "name": "Validated",
+              "value": "Validated"
+            },
+            {
+              "name": "Failed",
+              "value": "Failed"
+            },
+            {
+              "name": "Canceled",
+              "value": "Canceled"
+            },
+            {
+              "name": "Processing",
+              "value": "Processing"
+            },
+            {
+              "name": "Completed",
+              "value": "Completed"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskStatus"
+          }
+        },
+        {
+          "label": "Type de la tâche",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "citizen",
+          "choices": [
+            {
+              "name": "Citoyen",
+              "value": "citizen"
+            },
+            {
+              "name": "Backoffice",
+              "value": "backoffice"
+            },
+            {
+              "name": "System",
+              "value": "system"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskKind"
+          }
+        },
+        {
+          "label": "Coût variable",
+          "group": "cost-configuration",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostVariable"
+          },
+          "placeholder": ""
+        },
+        {
+          "label": "Coût total",
+          "group": "cost-configuration",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostTotal"
+          },
+          "placeholder": ""
+        },
+        {
+          "label": "Coût unitaire",
+          "group": "cost-configuration",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostUnitaire"
+          },
+          "placeholder": ""
+        }
+      ]
+    }
+  },
+  {
+    "name": "Générer un bordereau de voyage",
+    "id": "tg.gouv.gnspd.generateVoucher",
+    "json": {
+      "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+      "name": "Générer un bordereau de voyage",
+      "id": "tg.gouv.gnspd.generateVoucher",
+      "appliesTo": [
+        "bpmn:ServiceTask"
+      ],
+      "entriesVisible": true,
+      "icon": {
+        "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+      },
+      "groups": [
+        {
+          "id": "system-configuration",
+          "label": "Configuration Système"
+        },
+        {
+          "id": "system-visibility",
+          "label": "Configuration de visibilité"
+        },
+        {
+          "id": "cost-configuration",
+          "label": "Configuration des coûts"
+        }
+      ],
+      "properties": [
+        {
+          "label": "Implementation Type",
+          "description": "Type d'implémentation",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "external",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:type"
+          }
+        },
+        {
+          "label": "Topic",
+          "description": "Topic du worker",
+          "group": "system-configuration",
+          "type": "String",
+          "value": "tg.gouv.gnspd.generateVoucher",
+          "editable": false,
+          "binding": {
+            "type": "property",
+            "name": "camunda:topic"
+          }
+        },
+        {
+          "label": "Voir la tâche",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "false",
+          "choices": [
+            {
+              "name": "Oui",
+              "value": "true"
+            },
+            {
+              "name": "Non",
+              "value": "false"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskIsVisible"
+          }
+        },
+        {
+          "label": "Nom de la tâche",
+          "group": "system-visibility",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskLabel"
+          }
+        },
+        {
+          "label": "Statut de la tâche si en pause",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "Pending",
+          "choices": [
+            {
+              "name": "Pending",
+              "value": "Pending"
+            },
+            {
+              "name": "PendingPortal",
+              "value": "PendingPortal"
+            },
+            {
+              "name": "PendingPayment",
+              "value": "PendingPayment"
+            },
+            {
+              "name": "PendingBackOffice",
+              "value": "PendingBackOffice"
+            },
+            {
+              "name": "Review",
+              "value": "Review"
+            },
+            {
+              "name": "Submitted",
+              "value": "Submitted"
+            },
+            {
+              "name": "Rejected",
+              "value": "Rejected"
+            },
+            {
+              "name": "Validated",
+              "value": "Validated"
+            },
+            {
+              "name": "Failed",
+              "value": "Failed"
+            },
+            {
+              "name": "Canceled",
+              "value": "Canceled"
+            },
+            {
+              "name": "Processing",
+              "value": "Processing"
+            },
+            {
+              "name": "Completed",
+              "value": "Completed"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskStatus"
+          }
+        },
+        {
+          "label": "Type de la tâche",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "citizen",
+          "choices": [
+            {
+              "name": "Citoyen",
+              "value": "citizen"
+            },
+            {
+              "name": "Backoffice",
+              "value": "backoffice"
+            },
+            {
+              "name": "System",
+              "value": "system"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskKind"
+          }
+        },
+        {
+          "label": "Coût variable",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostVariable"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût total",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostTotal"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût unitaire",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostUnitaire"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Envoyer un message",
+    "id": "tg.gouv.gnspd.sendMessage",
+    "json": {
+      "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+      "name": "Envoyer un message",
+      "id": "tg.gouv.gnspd.sendMessage",
+      "appliesTo": [
+        "bpmn:SendTask"
+      ],
+      "properties": [
+        {
+          "value": "gnspd-sendMessage",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "group"
+          },
+          "group": "system-configuration"
+        },
+        {
+          "value": "operation-send-message",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "operation"
+          },
+          "group": "system-configuration"
+        },
+        {
+          "label": "La référence du message",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdMessageRef"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "La destination du message",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdMessageDestination"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Le message à envoyer",
+          "type": "Text",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdMessage"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Exclure les notifications",
+          "type": "Boolean",
+          "value": false,
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdExcludeNotifications"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Exclure SMS",
+          "type": "Boolean",
+          "value": false,
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdExcludeSMS"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Exclure Email",
+          "type": "Boolean",
+          "value": false,
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdExcludeEmail"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Exclure WhatsApp",
+          "type": "Boolean",
+          "value": false,
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdExcludeWhatsApp"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Exclure Push",
+          "type": "Boolean",
+          "value": false,
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdExcludePush"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Type de la tâche",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "citizen",
+          "choices": [
+            {
+              "name": "Citoyen",
+              "value": "citizen"
+            },
+            {
+              "name": "Backoffice",
+              "value": "backoffice"
+            },
+            {
+              "name": "System",
+              "value": "system"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskKind"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Coût variable",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostVariable"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût total",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostTotal"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût unitaire",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostUnitaire"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Requête XMLRPC vers Odoo",
+    "id": "tg.gouv.gnspd.odoo",
+    "json": {
+      "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+      "name": "Requête XMLRPC vers Odoo",
+      "id": "tg.gouv.gnspd.odoo",
+      "appliesTo": [
+        "bpmn:ServiceTask"
+      ],
+      "properties": [
+        {
+          "value": "gnspd-odoo",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "group"
+          },
+          "group": "system-configuration"
+        },
+        {
+          "value": "operation-odoo",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "operation"
+          },
+          "group": "system-configuration"
+        },
+        {
+          "label": "Méthode Odoo",
+          "type": "String",
+          "value": "execute_kw",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdOdooMethod"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Modèle Odoo",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdOdooModel"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Action Odoo",
+          "type": "String",
+          "value": "search_read",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdOdooAction"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Arguments Odoo",
+          "description": "Exemple:[[[\"id\", \"=\", 1]]]",
+          "type": "Text",
+          "value": "[]",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdOdooArgs"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Autres options",
+          "description": "Précisez d'autres options comme le nombre de valeurs limite Exemple:{\"limit\": 100}",
+          "type": "Text",
+          "value": "{}",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdOptions"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Modèle de la donnée",
+          "description": "Précisez le Modèle à utiliser pour la génération du document",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdReportModel"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Donnée du document",
+          "type": "Text",
+          "value": "{}",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdReportData"
+          },
+          "constraints": {
+            "notEmpty": true
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Type de document",
+          "description": "Type de document générer. DOCX par défaut",
+          "type": "Dropdown",
+          "value": "docx",
+          "choices": [
+            {
+              "name": "DOCX",
+              "value": "docx"
+            },
+            {
+              "name": "PDF",
+              "value": "pdf"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdReportOutput"
+          },
+          "group": "configuration"
+        },
+        {
+          "label": "Type de la tâche",
+          "group": "system-visibility",
+          "type": "Dropdown",
+          "value": "citizen",
+          "choices": [
+            {
+              "name": "Citoyen",
+              "value": "citizen"
+            },
+            {
+              "name": "Backoffice",
+              "value": "backoffice"
+            },
+            {
+              "name": "System",
+              "value": "system"
+            }
+          ],
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdTaskKind"
+          },
+          "constraints": {
+            "notEmpty": true
+          }
+        },
+        {
+          "label": "Coût variable",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostVariable"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût total",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostTotal"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        },
+        {
+          "label": "Coût unitaire",
+          "type": "String",
+          "value": "",
+          "binding": {
+            "type": "camunda:inputParameter",
+            "name": "gnspdCostUnitaire"
+          },
+          "placeholder": "",
+          "group": "cost-configuration"
+        }
+      ]
+    }
+  },
+  {
+    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+    "name": "Générer un fichier à partir d'un template.",
+    "id": "tg.gouv.gnspd.generateTemplate",
+    "appliesTo": [
+      "bpmn:ServiceTask"
+    ],
+    "entriesVisible": true,
+    "icon": {
+      "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+    },
+    "groups": [
+      {
+        "id": "system-configuration",
+        "label": "Configuration Système"
+      },
+      {
+        "id": "configuration",
+        "label": "Configuration"
+      },
+      {
+        "id": "cost-configuration",
+        "label": "Configuration des coûts"
+      },
+      {
+        "id": "system-visibility",
+        "label": "Configuration de visibilité"
+      }
+    ],
+    "properties": [
+      {
+        "label": "Implementation Type",
+        "description": "Type d'implémentation",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "external",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:type"
+        }
+      },
+      {
+        "label": "Topic",
+        "description": "Le topic de publication",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "flow-generate-template",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:topic"
+        }
+      },
+      {
+        "label": "Nom du fichier à génerer",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdGeneratedName"
+        },
+        "constraints": {
+          "notEmpty": true
+        },
+        "group": "configuration"
+      },
+      {
+        "label": "Templates Disponibles",
+        "type": "Text",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTemplate"
+        },
+        "constraints": {
+          "notEmpty": true
+        },
+        "group": "configuration"
+      },
+      {
+        "label": "Données du template",
+        "description": "Il s'agit d'un objet Json dont les clés sont les noms des champs du fichier template et les valeurs peuvent être des raccourcis aux entrées précédentes.",
+        "type": "Text",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTempData"
+        },
+        "constraints": {
+          "notEmpty": true
+        },
+        "group": "configuration"
+      },
+      {
+        "label": "Options d'impression",
+        "description": "Il s'agit des options d'impression. (Ex:{'format':'A4'})",
+        "type": "Text",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdPrintOptions"
+        },
+        "constraints": {
+          "notEmpty": true
+        },
+        "group": "configuration"
+      },
+      {
+        "label": "Liste des groupes",
+        "type": "Dropdown",
+        "value": "",
+        "choices": [
+          {
+            "name": "@{group.name}",
+            "value": "@{group.id}"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdGroups"
+        },
+        "group": "configuration"
+      },
+      {
+        "label": "Liste des rôles",
+        "type": "Dropdown",
+        "value": "",
+        "choices": [
+          {
+            "name": "@{role.name}",
+            "value": "@{role.id}"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdRoles"
+        },
+        "group": "configuration"
+      },
+      {
+        "label": "Voir l'évènement",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "false",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskIsVisible"
+        }
+      },
+      {
+        "label": "Nom de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskLabel"
+        }
+      },
+      {
+        "label": "Statut de la tâche si en pause",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "Pending",
+        "choices": [
+          {
+            "name": "Pending",
+            "value": "Pending"
+          },
+          {
+            "name": "PendingPortal",
+            "value": "PendingPortal"
+          },
+          {
+            "name": "PendingPayment",
+            "value": "PendingPayment"
+          },
+          {
+            "name": "PendingBackOffice",
+            "value": "PendingBackOffice"
+          },
+          {
+            "name": "Review",
+            "value": "Review"
+          },
+          {
+            "name": "Submitted",
+            "value": "Submitted"
+          },
+          {
+            "name": "Rejected",
+            "value": "Rejected"
+          },
+          {
+            "name": "Completed",
+            "value": "Completed"
+          },
+          {
+            "name": "Failed",
+            "value": "Failed"
+          },
+          {
+            "name": "PendingCompletion",
+            "value": "PendingCompletion"
+          },
+          {
+            "name": "PendingPublic",
+            "value": "PendingPublic"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskStatus"
+        }
+      },
+      {
+        "label": "Ordre de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskOrder"
+        }
+      },
+      {
+        "label": "Type de la tâche",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "citizen",
+        "choices": [
+          {
+            "name": "Citoyen",
+            "value": "citizen"
+          },
+          {
+            "name": "Backoffice",
+            "value": "backoffice"
+          },
+          {
+            "name": "System",
+            "value": "system"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskKind"
+        }
+      },
+      {
+        "label": "Coût variable",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostVariable"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Coût total",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostTotal"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Coût unitaire",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostUnitaire"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      }
+    ]
+  },
+  {
+    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+    "name": "Transfert Rest",
+    "id": "tg.gouv.gnspd.restBuilder",
+    "appliesTo": [
+      "bpmn:ServiceTask"
+    ],
+    "entriesVisible": true,
+    "icon": {
+      "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+    },
+    "groups": [
+      {
+        "id": "system-configuration",
+        "label": "Configuration Système"
+      },
+      {
+        "id": "request-configuration",
+        "label": "Configuration de la requête"
+      },
+      {
+        "id": "authentication",
+        "label": "Authentification"
+      },
+      {
+        "id": "headers-cookies",
+        "label": "En-têtes et Cookies"
+      },
+      {
+        "id": "file-configuration",
+        "label": "Configuration des fichiers"
+      },
+      {
+        "id": "data-configuration",
+        "label": "Configuration des données"
+      },
+      {
+        "id": "cost-configuration",
+        "label": "Configuration des coûts"
+      },
+      {
+        "id": "system-visibility",
+        "label": "Configuration de visibilité"
+      }
+    ],
+    "properties": [
+      {
+        "label": "Implementation Type",
+        "description": "Type d'implémentation",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "external",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:type"
+        }
+      },
+      {
+        "label": "Topic",
+        "description": "Le topic de publication",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "flow-rest-builder",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:topic"
+        }
+      },
+      {
+        "label": "URL Données",
+        "group": "request-configuration",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdRestDataUrl"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Type de requête",
+        "group": "request-configuration",
+        "type": "Dropdown",
+        "value": "false",
+        "choices": [
+          {
+            "name": "Pas d'Authentication",
+            "value": "noAuth"
+          },
+          {
+            "name": "Basic Authentication",
+            "value": "basicAuth"
+          },
+          {
+            "name": "Bearer Token",
+            "value": "bearerToken"
+          },
+          {
+            "name": "Header Token",
+            "value": "headerToken"
+          },
+          {
+            "name": "API Key",
+            "value": "apiKey"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdRestType"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Content Type",
+        "group": "request-configuration",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdContentType"
+        }
+      },
+      {
+        "label": "Temps TimeOut",
+        "group": "request-configuration",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTimeOutValue"
+        }
+      },
+      {
+        "label": "Méthode HTTP",
+        "group": "request-configuration",
+        "type": "Dropdown",
+        "value": "false",
+        "choices": [
+          {
+            "name": "GET",
+            "value": "GET"
+          },
+          {
+            "name": "POST",
+            "value": "POST"
+          },
+          {
+            "name": "PUT",
+            "value": "PUT"
+          },
+          {
+            "name": "DELETE",
+            "value": "DELETE"
+          },
+          {
+            "name": "PATCH",
+            "value": "PATCH"
+          },
+          {
+            "name": "HEAD",
+            "value": "HEAD"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdRestMethod"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "URL Authentification",
+        "group": "authentication",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdRestAuthUrl"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Content Type de l'Authentification",
+        "group": "authentication",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdAuthContentType"
+        }
+      },
+      {
+        "label": "Liste des statuts de réponse acceptables pour l'authentification",
+        "group": "authentication",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdAcceptedAuthHttpStatus"
+        }
+      },
+      {
+        "label": "Liste des statuts de réponse acceptables",
+        "group": "request-configuration",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdAcceptedHttpStatus"
+        }
+      },
+      {
+        "label": "Utilisateur ",
+        "group": "authentication",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdRestUser"
+        }
+      },
+      {
+        "label": "Mot de passe",
+        "group": "authentication",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdRestPassword"
+        }
+      },
+      {
+        "label": "Header Personnalisé",
+        "group": "headers-cookies",
+        "type": "Text",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCustomHeader"
+        }
+      },
+      {
+        "label": "Cookies",
+        "description": "Ajouter des paires clé-valeur pour les cookies: [ { \"key\": \"Clé1\", \"value\": \"Value1\" }, { \"key\": \"Clé2\", \"value\": \"Value2\" } ]",
+        "group": "headers-cookies",
+        "type": "Text",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCookies"
+        }
+      },
+      {
+        "label": "Attachments",
+        "group": "file-configuration",
+        "type": "Text",
+        "value": "",
+        "placeholder": "$this.data.taskKey.fileUid",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdAttachments"
+        }
+      },
+      {
+        "label": "Préciser au système qu'un retour de fichier stream est attendu",
+        "group": "file-configuration",
+        "type": "Dropdown",
+        "value": "",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdRestFile"
+        }
+      },
+      {
+        "label": "Type de fichier",
+        "group": "file-configuration",
+        "type": "Dropdown",
+        "value": "",
+        "choices": [
+          {
+            "name": "UPLOAD",
+            "value": "UPLOAD"
+          },
+          {
+            "name": "PHOTO",
+            "value": "PHOTO"
+          },
+          {
+            "name": "DIPLOME",
+            "value": "DIPLOME"
+          },
+          {
+            "name": "ATTESTATION",
+            "value": "ATTESTATION"
+          },
+          {
+            "name": "CERTIFICAT",
+            "value": "CERTIFICAT"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdRestTag"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Nom du fichier avec extension",
+        "group": "file-configuration",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdRestStreamName"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Preciser si les données doivent être envoyées",
+        "group": "data-configuration",
+        "type": "Dropdown",
+        "value": "",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdRestSendData"
+        }
+      },
+      {
+        "label": "Préciser au système qu'un retour de sa part est nécessaire au déclenchement de la prochaine étape.",
+        "group": "data-configuration",
+        "type": "Dropdown",
+        "value": "",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdRestFeedback"
+        }
+      },
+      {
+        "description": "Préciser le schéma du retour à faire. Ex: {title: \"...\", message:\"....\", ...}",
+        "group": "data-configuration",
+        "type": "Text",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdRestFeedbackSchema"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Décider des données à envoyer.",
+        "group": "data-configuration",
+        "type": "Dropdown",
+        "value": "",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdIsCustomData"
+        }
+      },
+      {
+        "description": "Préciser la clé dans le data del'instance pour la valeur à récupérer",
+        "group": "data-configuration",
+        "type": "Text",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdSingleVariableKey"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Format des données à envoyer",
+        "group": "data-configuration",
+        "type": "Dropdown",
+        "value": "",
+        "choices": [
+          {
+            "name": "JSON",
+            "value": "JSON"
+          },
+          {
+            "name": "XML",
+            "value": "XML"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdDataFormat"
+        }
+      },
+      {
+        "description": "Décrivez le contenu à envoyer au format spécifié ci-dessus (si json, utilisez uniquement des doubles apostrophes)",
+        "group": "data-configuration",
+        "type": "Text",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCustomData"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Activer l'exclusion des données systèmes",
+        "group": "data-configuration",
+        "type": "Dropdown",
+        "value": "",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdExcludSystemData"
+        }
+      },
+      {
+        "label": "Les données systèmes à exclure si l'excusion des données systèmes est activée}",
+        "group": "data-configuration",
+        "type": "Text",
+        "value": "${\"applicant\": this.data.applicant, \"recordUid\": this.data.recordUid}",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdSystemData"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Lister sous forme d'Array les valeures à laisser telles quelles si nont trouvées",
+        "group": "data-configuration",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdIgnoreList"
+        }
+      },
+      {
+        "label": "Voir l'évènement",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "false",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskIsVisible"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Nom de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskLabel"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Statut de la tâche si en pause",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "Pending",
+        "choices": [
+          {
+            "name": "Pending",
+            "value": "Pending"
+          },
+          {
+            "name": "PendingPortal",
+            "value": "PendingPortal"
+          },
+          {
+            "name": "PendingPayment",
+            "value": "PendingPayment"
+          },
+          {
+            "name": "PendingBackOffice",
+            "value": "PendingBackOffice"
+          },
+          {
+            "name": "Review",
+            "value": "Review"
+          },
+          {
+            "name": "Submitted",
+            "value": "Submitted"
+          },
+          {
+            "name": "Rejected",
+            "value": "Rejected"
+          },
+          {
+            "name": "Completed",
+            "value": "Completed"
+          },
+          {
+            "name": "Failed",
+            "value": "Failed"
+          },
+          {
+            "name": "PendingCompletion",
+            "value": "PendingCompletion"
+          },
+          {
+            "name": "PendingPublic",
+            "value": "PendingPublic"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskStatus"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Ordre de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskOrder"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Type de la tâche",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "citizen",
+        "choices": [
+          {
+            "name": "Citoyen",
+            "value": "citizen"
+          },
+          {
+            "name": "Backoffice",
+            "value": "backoffice"
+          },
+          {
+            "name": "System",
+            "value": "system"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskKind"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Coût variable",
+        "group": "cost-configuration",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostVariable"
+        },
+        "placeholder": ""
+      },
+      {
+        "label": "Coût total",
+        "group": "cost-configuration",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostTotal"
+        },
+        "placeholder": ""
+      },
+      {
+        "label": "Coût unitaire",
+        "group": "cost-configuration",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostUnitaire"
+        },
+        "placeholder": ""
+      }
+    ]
+  },
+  {
+    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+    "name": "Business Rule Task",
+    "id": "tg.gouv.gnspd.bussinessRuleTask",
+    "appliesTo": [
+      "bpmn:BusinessRuleTask"
+    ],
+    "entriesVisible": true,
+    "icon": {
+      "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+    },
+    "groups": [
+      {
+        "id": "system-configuration",
+        "label": "Configuration Système"
+      },
+      {
+        "id": "cost-configuration",
+        "label": "Configuration des coûts"
+      },
+      {
+        "id": "system-visibility",
+        "label": "Configuration de visibilité"
+      }
+    ],
+    "properties": [
+      {
+        "label": "Implementation Type",
+        "description": "Type d'implémentation",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "external",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:type"
+        }
+      },
+      {
+        "label": "Topic",
+        "description": "Le topic de publication pour les tâches business rule",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "flow-bussiness-rule-task",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:topic"
+        }
+      },
+      {
+        "label": "Voir l'évènement",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "false",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskIsVisible"
+        }
+      },
+      {
+        "label": "Nom de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskLabel"
+        }
+      },
+      {
+        "label": "Statut de la tâche si en pause",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "Pending",
+        "choices": [
+          {
+            "name": "Pending",
+            "value": "Pending"
+          },
+          {
+            "name": "PendingPortal",
+            "value": "PendingPortal"
+          },
+          {
+            "name": "PendingPayment",
+            "value": "PendingPayment"
+          },
+          {
+            "name": "PendingBackOffice",
+            "value": "PendingBackOffice"
+          },
+          {
+            "name": "Review",
+            "value": "Review"
+          },
+          {
+            "name": "Submitted",
+            "value": "Submitted"
+          },
+          {
+            "name": "Rejected",
+            "value": "Rejected"
+          },
+          {
+            "name": "Completed",
+            "value": "Completed"
+          },
+          {
+            "name": "Failed",
+            "value": "Failed"
+          },
+          {
+            "name": "PendingCompletion",
+            "value": "PendingCompletion"
+          },
+          {
+            "name": "PendingPublic",
+            "value": "PendingPublic"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskStatus"
+        }
+      },
+      {
+        "label": "Ordre de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskOrder"
+        }
+      },
+      {
+        "label": "Type de la tâche",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "citizen",
+        "choices": [
+          {
+            "name": "Citoyen",
+            "value": "citizen"
+          },
+          {
+            "name": "Backoffice",
+            "value": "backoffice"
+          },
+          {
+            "name": "System",
+            "value": "system"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskKind"
+        }
+      },
+      {
+        "label": "Coût variable",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostVariable"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Coût total",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostTotal"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Coût unitaire",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostUnitaire"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      }
+    ]
+  },
+  {
+    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+    "name": "Envoyer une notification",
+    "id": "tg.gouv.gnspd.sendNotification",
+    "appliesTo": [
+      "bpmn:ServiceTask"
+    ],
+    "entriesVisible": true,
+    "icon": {
+      "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+    },
+    "groups": [
+      {
+        "id": "system-configuration",
+        "label": "Configuration Système"
+      },
+      {
+        "id": "notification-in-app",
+        "label": "Notification In-App"
+      },
+      {
+        "id": "notification-email",
+        "label": "Canaux de notification Email"
+      },
+      {
+        "id": "notification-sms",
+        "label": "Canaux de notification SMS"
+      },
+      {
+        "id": "file-attachment",
+        "label": "Configuration des fichiers"
+      },
+      {
+        "id": "cost-configuration",
+        "label": "Configuration des coûts"
+      },
+      {
+        "id": "system-visibility",
+        "label": "Configuration de visibilité"
+      }
+    ],
+    "properties": [
+      {
+        "label": "Implementation Type",
+        "description": "Type d'implémentation",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "external",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:type"
+        }
+      },
+      {
+        "label": "Topic",
+        "description": "Le topic de publication",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "flow-notify",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:topic"
+        }
+      },
+      {
+        "label": "Notification In-App",
+        "group": "notification-in-app",
+        "type": "Dropdown",
+        "value": "false",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdNotifyInApp"
+        }
+      },
+      {
+        "label": "Template In-App",
+        "group": "notification-in-app",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdNotifyTemplateInApp"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Les variables du message In-App",
+        "group": "notification-in-app",
+        "type": "Text",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdNotifyContentInApp"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Notification Email",
+        "group": "notification-email",
+        "type": "Dropdown",
+        "value": "false",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdNotifySendEmail"
+        }
+      },
+      {
+        "label": "Adresse Email",
+        "description": "Préciser un email ou utilisez @USER_EMAIL comme référence a l'email de l'utilisateur",
+        "group": "notification-email",
+        "type": "String",
+        "value": "",
+        "placeholder": "$this.data.applicant.email ou email@example.com",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdNotifyEmail"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Template email",
+        "group": "notification-email",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdNotifyTemplateEmail"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Les variables du message email",
+        "group": "notification-email",
+        "type": "Text",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdNotifyContentEmail"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Activer SMS",
+        "group": "notification-sms",
+        "type": "Dropdown",
+        "value": "false",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdNotifySendSMS"
+        }
+      },
+      {
+        "label": "Numéro de téléphone",
+        "description": "Préciser un numéro de téléphone ou utilisez @USER_PHONE comme référence au numéro de l'utilisateur",
+        "group": "notification-sms",
+        "type": "String",
+        "value": "",
+        "placeholder": "@USER_PHONE ou 228XXXXXXXX",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdNotifyPhone"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Template sms",
+        "group": "notification-sms",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdNotifyTemplateSMS"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Les variables du message sms",
+        "group": "notification-sms",
+        "type": "Text",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdNotifyContentSMS"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Attacher un fichier",
+        "group": "file-attachment",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdNotifyAttachment"
+        },
+        "constraints": {
+          "notEmpty": false
+        }
+      },
+      {
+        "label": "Voir l'évènement",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "false",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskIsVisible"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Nom de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskLabel"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Statut de la tâche si en pause",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "Pending",
+        "choices": [
+          {
+            "name": "Pending",
+            "value": "Pending"
+          },
+          {
+            "name": "PendingPortal",
+            "value": "PendingPortal"
+          },
+          {
+            "name": "PendingPayment",
+            "value": "PendingPayment"
+          },
+          {
+            "name": "PendingBackOffice",
+            "value": "PendingBackOffice"
+          },
+          {
+            "name": "Review",
+            "value": "Review"
+          },
+          {
+            "name": "Submitted",
+            "value": "Submitted"
+          },
+          {
+            "name": "Rejected",
+            "value": "Rejected"
+          },
+          {
+            "name": "Completed",
+            "value": "Completed"
+          },
+          {
+            "name": "Failed",
+            "value": "Failed"
+          },
+          {
+            "name": "PendingCompletion",
+            "value": "PendingCompletion"
+          },
+          {
+            "name": "PendingPublic",
+            "value": "PendingPublic"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskStatus"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Ordre de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskOrder"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Type de la tâche",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "citizen",
+        "choices": [
+          {
+            "name": "Citoyen",
+            "value": "citizen"
+          },
+          {
+            "name": "Backoffice",
+            "value": "backoffice"
+          },
+          {
+            "name": "System",
+            "value": "system"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskKind"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Coût variable",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostVariable"
+        },
+        "placeholder": ""
+      },
+      {
+        "label": "Coût total",
+        "group": "cost-configuration",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostTotal"
+        },
+        "placeholder": ""
+      },
+      {
+        "label": "Coût unitaire",
+        "group": "cost-configuration",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostUnitaire"
+        },
+        "placeholder": ""
+      }
+    ]
+  },
+  {
+    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+    "name": "Début",
+    "id": "tg.gouv.gnspd.startEvent",
+    "appliesTo": [
+      "bpmn:StartEvent"
+    ],
+    "entriesVisible": true,
+    "icon": {
+      "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+    },
+    "groups": [
+      {
+        "id": "system-configuration",
+        "label": "Configuration Système"
+      },
+      {
+        "id": "start-configuration",
+        "label": "Configuration de démarrage"
+      },
+      {
+        "id": "payment",
+        "label": "Configuration des frais"
+      },
+      {
+        "id": "cost-configuration",
+        "label": "Configuration des coûts"
+      },
+      {
+        "id": "system-visibility",
+        "label": "Configuration de visibilité"
+      },
+      {
+        "id": "environment-configuration",
+        "label": "Configuration des environnements"
+      }
+    ],
+    "properties": [
+      {
+        "label": "Implementation Type",
+        "description": "Type d'implémentation",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "external",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:type"
+        }
+      },
+      {
+        "label": "Topic",
+        "description": "Le topic de publication",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "flow-start",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:topic"
+        }
+      },
+      {
+        "label": "Nom d'étape",
+        "description": "Nom de l'étape de déclenchement du processus",
+        "group": "start-configuration",
+        "type": "String",
+        "value": "Début",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdStepName"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Description / Instructions",
+        "description": "Instructions pour l'utilisateur qui démarre le processus",
+        "group": "start-configuration",
+        "type": "Text",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdDescription"
+        }
+      },
+      {
+        "label": "Priorité",
+        "description": "Priorité de l'étape de démarrage du processus",
+        "group": "start-configuration",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdPriority"
+        }
+      },
+      {
+        "label": "Exécution",
+        "description": "Type d'exécution du processus",
+        "group": "start-configuration",
+        "type": "Hidden",
+        "value": "PORTAIL",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdExecution"
+        }
+      },
+      {
+        "label": "Frais à payer",
+        "description": "Montant fixe des frais en F CFA",
+        "group": "payment",
+        "type": "String",
+        "value": "0",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdPaymentAmount"
+        },
+        "constraints": {
+          "pattern": "^[0-9]+$"
+        }
+      },
+      {
+        "label": "Opérateur",
+        "description": "Frais calculés à payer - Opérateur de calcul",
+        "group": "payment",
+        "type": "Dropdown",
+        "value": "ADDITION",
+        "choices": [
+          {
+            "name": "Addition",
+            "value": "ADDITION"
+          },
+          {
+            "name": "Soustraction",
+            "value": "SOUSTRACTION"
+          },
+          {
+            "name": "Multiplication",
+            "value": "MULTIPLICATION"
+          },
+          {
+            "name": "Division",
+            "value": "DIVISION"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCalculationOperator"
+        }
+      },
+      {
+        "label": "Variable 1",
+        "description": "Première variable pour le calcul des frais",
+        "group": "payment",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCalculationVar1"
+        }
+      },
+      {
+        "label": "Variable 2",
+        "description": "Deuxième variable pour le calcul des frais",
+        "group": "payment",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCalculationVar2"
+        }
+      },
+      {
+        "label": "Voir l'évènement",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "false",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskIsVisible"
+        }
+      },
+      {
+        "label": "Nom de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskLabel"
+        }
+      },
+      {
+        "label": "Statut de la tâche si en pause",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "Pending",
+        "choices": [
+          {
+            "name": "Pending",
+            "value": "Pending"
+          },
+          {
+            "name": "PendingPortal",
+            "value": "PendingPortal"
+          },
+          {
+            "name": "PendingPayment",
+            "value": "PendingPayment"
+          },
+          {
+            "name": "PendingBackOffice",
+            "value": "PendingBackOffice"
+          },
+          {
+            "name": "Review",
+            "value": "Review"
+          },
+          {
+            "name": "Submitted",
+            "value": "Submitted"
+          },
+          {
+            "name": "Rejected",
+            "value": "Rejected"
+          },
+          {
+            "name": "Completed",
+            "value": "Completed"
+          },
+          {
+            "name": "Failed",
+            "value": "Failed"
+          },
+          {
+            "name": "PendingCompletion",
+            "value": "PendingCompletion"
+          },
+          {
+            "name": "PendingPublic",
+            "value": "PendingPublic"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskStatus"
+        }
+      },
+      {
+        "label": "Ordre de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskOrder"
+        }
+      },
+      {
+        "label": "Type de la tâche",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "citizen",
+        "choices": [
+          {
+            "name": "Citoyen",
+            "value": "citizen"
+          },
+          {
+            "name": "Backoffice",
+            "value": "backoffice"
+          },
+          {
+            "name": "System",
+            "value": "system"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskKind"
+        }
+      },
+      {
+        "label": "Coût variable",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostVariable"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Coût total",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostTotal"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Coût unitaire",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostUnitaire"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Configuration DEV",
+        "description": "Configuration JSON pour l'environnement de développement (URLs, secrets, etc.)",
+        "group": "environment-configuration",
+        "type": "Text",
+        "value": "{}",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "development"
+        }
+      },
+      {
+        "label": "Configuration SANDBOX",
+        "description": "Configuration JSON pour l'environnement sandbox (URLs, secrets, etc.)",
+        "group": "environment-configuration",
+        "type": "Text",
+        "value": "{}",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "sandbox"
+        }
+      },
+      {
+        "label": "Configuration PREPROD",
+        "description": "Configuration JSON pour l'environnement de pré-production (URLs, secrets, etc.)",
+        "group": "environment-configuration",
+        "type": "Text",
+        "value": "{}",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "preproduction"
+        }
+      },
+      {
+        "label": "Configuration PROD",
+        "description": "Configuration JSON pour l'environnement de production (URLs, secrets, etc.)",
+        "group": "environment-configuration",
+        "type": "Text",
+        "value": "{}",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "production"
+        }
+      }
+    ]
+  },
+  {
+    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+    "name": "Générer un qrcode à partir d'un lien url",
+    "id": "tg.gouv.gnspd.generateUrlQrcode",
+    "appliesTo": [
+      "bpmn:ServiceTask"
+    ],
+    "entriesVisible": true,
+    "icon": {
+      "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+    },
+    "groups": [
+      {
+        "id": "system-configuration",
+        "label": "Configuration Système"
+      },
+      {
+        "id": "operation-parameters",
+        "label": "Paramètres de l'opération"
+      },
+      {
+        "id": "cost-configuration",
+        "label": "Configuration des coûts"
+      },
+      {
+        "id": "system-visibility",
+        "label": "Configuration de visibilité"
+      }
+    ],
+    "properties": [
+      {
+        "label": "Implementation Type",
+        "description": "Type d'implémentation",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "external",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:type"
+        }
+      },
+      {
+        "label": "Topic",
+        "description": "Le topic de publication",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "flow-generate-url-qrcode",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:topic"
+        }
+      },
+      {
+        "label": "Url",
+        "description": "L'URL pour générer le QR code",
+        "group": "operation-parameters",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdUrl"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Voir l'évènement",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "false",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskIsVisible"
+        }
+      },
+      {
+        "label": "Nom de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskLabel"
+        }
+      },
+      {
+        "label": "Statut de la tâche si en pause",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "Pending",
+        "choices": [
+          {
+            "name": "Pending",
+            "value": "Pending"
+          },
+          {
+            "name": "PendingPortal",
+            "value": "PendingPortal"
+          },
+          {
+            "name": "PendingPayment",
+            "value": "PendingPayment"
+          },
+          {
+            "name": "PendingBackOffice",
+            "value": "PendingBackOffice"
+          },
+          {
+            "name": "Review",
+            "value": "Review"
+          },
+          {
+            "name": "Submitted",
+            "value": "Submitted"
+          },
+          {
+            "name": "Rejected",
+            "value": "Rejected"
+          },
+          {
+            "name": "Completed",
+            "value": "Completed"
+          },
+          {
+            "name": "Failed",
+            "value": "Failed"
+          },
+          {
+            "name": "PendingCompletion",
+            "value": "PendingCompletion"
+          },
+          {
+            "name": "PendingPublic",
+            "value": "PendingPublic"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskStatus"
+        }
+      },
+      {
+        "label": "Ordre de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskOrder"
+        }
+      },
+      {
+        "label": "Type de la tâche",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "citizen",
+        "choices": [
+          {
+            "name": "Citoyen",
+            "value": "citizen"
+          },
+          {
+            "name": "Backoffice",
+            "value": "backoffice"
+          },
+          {
+            "name": "System",
+            "value": "system"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskKind"
+        }
+      },
+      {
+        "label": "Coût variable",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostVariable"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Coût total",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostTotal"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Coût unitaire",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostUnitaire"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      }
+    ]
+  },
+  {
+    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+    "name": "Apposer une image sur un PDF",
+    "id": "tg.gouv.gnspd.pdfImage",
+    "appliesTo": [
+      "bpmn:ServiceTask"
+    ],
+    "entriesVisible": true,
+    "icon": {
+      "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+    },
+    "groups": [
+      {
+        "id": "system-configuration",
+        "label": "Configuration Système"
+      },
+      {
+        "id": "configuration",
+        "label": "Configuration"
+      },
+      {
+        "id": "cost-configuration",
+        "label": "Configuration des coûts"
+      },
+      {
+        "id": "system-visibility",
+        "label": "Configuration de visibilité"
+      }
+    ],
+    "properties": [
+      {
+        "label": "Implementation Type",
+        "description": "Type d'implémentation",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "external",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:type"
+        }
+      },
+      {
+        "label": "Topic",
+        "description": "Le topic de publication",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "flow-pdf-image",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:topic"
+        }
+      },
+      {
+        "label": "Uploader un pdf pour indiquer la position de l'image",
+        "type": "String",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdPdfFile"
+        },
+        "constraints": {
+          "notEmpty": true
+        },
+        "group": "configuration"
+      },
+      {
+        "label": "Position X",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdClickedX"
+        },
+        "constraints": {
+          "notEmpty": true
+        },
+        "group": "configuration"
+      },
+      {
+        "label": "Position Y",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdClickedY"
+        },
+        "constraints": {
+          "notEmpty": true
+        },
+        "group": "configuration"
+      },
+      {
+        "label": "Numéro de page",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCurrentPage"
+        },
+        "constraints": {
+          "notEmpty": true
+        },
+        "group": "configuration"
+      },
+      {
+        "label": "Le fichier sur lequel apposer l'image",
+        "type": "String",
+        "value": "",
+        "placeholder": "EX_YYY",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdFile"
+        },
+        "constraints": {
+          "notEmpty": true
+        },
+        "group": "configuration"
+      },
+      {
+        "label": "L'image à apposer",
+        "type": "String",
+        "value": "",
+        "placeholder": "EX_YYY",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdImage"
+        },
+        "constraints": {
+          "notEmpty": true
+        },
+        "group": "configuration"
+      },
+      {
+        "label": "Voir l'évènement",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "false",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskIsVisible"
+        }
+      },
+      {
+        "label": "Nom de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskLabel"
+        }
+      },
+      {
+        "label": "Statut de la tâche si en pause",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "Pending",
+        "choices": [
+          {
+            "name": "Pending",
+            "value": "Pending"
+          },
+          {
+            "name": "PendingPortal",
+            "value": "PendingPortal"
+          },
+          {
+            "name": "PendingPayment",
+            "value": "PendingPayment"
+          },
+          {
+            "name": "PendingBackOffice",
+            "value": "PendingBackOffice"
+          },
+          {
+            "name": "Review",
+            "value": "Review"
+          },
+          {
+            "name": "Submitted",
+            "value": "Submitted"
+          },
+          {
+            "name": "Rejected",
+            "value": "Rejected"
+          },
+          {
+            "name": "Completed",
+            "value": "Completed"
+          },
+          {
+            "name": "Failed",
+            "value": "Failed"
+          },
+          {
+            "name": "PendingCompletion",
+            "value": "PendingCompletion"
+          },
+          {
+            "name": "PendingPublic",
+            "value": "PendingPublic"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskStatus"
+        }
+      },
+      {
+        "label": "Ordre de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskOrder"
+        }
+      },
+      {
+        "label": "Type de la tâche",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "citizen",
+        "choices": [
+          {
+            "name": "Citoyen",
+            "value": "citizen"
+          },
+          {
+            "name": "Backoffice",
+            "value": "backoffice"
+          },
+          {
+            "name": "System",
+            "value": "system"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskKind"
+        }
+      },
+      {
+        "label": "Coût variable",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostVariable"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Coût total",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostTotal"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Coût unitaire",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostUnitaire"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      }
+    ]
+  },
+  {
+    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+    "name": "Script Task",
+    "id": "tg.gouv.gnspd.scriptTask",
+    "appliesTo": [
+      "bpmn:ScriptTask"
+    ],
+    "entriesVisible": true,
+    "icon": {
+      "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+    },
+    "groups": [
+      {
+        "id": "system-configuration",
+        "label": "Configuration Système"
+      },
+      {
+        "id": "cost-configuration",
+        "label": "Configuration des coûts"
+      },
+      {
+        "id": "system-visibility",
+        "label": "Configuration de visibilité"
+      }
+    ],
+    "properties": [
+      {
+        "label": "Implementation Type",
+        "description": "Type d'implémentation",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "external",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:type"
+        }
+      },
+      {
+        "label": "Topic",
+        "description": "Le topic de publication pour les tâches script",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "flow-script-task",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:topic"
+        }
+      },
+      {
+        "label": "Voir l'évènement",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "false",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskIsVisible"
+        }
+      },
+      {
+        "label": "Nom de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskLabel"
+        }
+      },
+      {
+        "label": "Statut de la tâche si en pause",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "Pending",
+        "choices": [
+          {
+            "name": "Pending",
+            "value": "Pending"
+          },
+          {
+            "name": "PendingPortal",
+            "value": "PendingPortal"
+          },
+          {
+            "name": "PendingPayment",
+            "value": "PendingPayment"
+          },
+          {
+            "name": "PendingBackOffice",
+            "value": "PendingBackOffice"
+          },
+          {
+            "name": "Review",
+            "value": "Review"
+          },
+          {
+            "name": "Submitted",
+            "value": "Submitted"
+          },
+          {
+            "name": "Rejected",
+            "value": "Rejected"
+          },
+          {
+            "name": "Completed",
+            "value": "Completed"
+          },
+          {
+            "name": "Failed",
+            "value": "Failed"
+          },
+          {
+            "name": "PendingCompletion",
+            "value": "PendingCompletion"
+          },
+          {
+            "name": "PendingPublic",
+            "value": "PendingPublic"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskStatus"
+        }
+      },
+      {
+        "label": "Ordre de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskOrder"
+        }
+      },
+      {
+        "label": "Type de la tâche",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "citizen",
+        "choices": [
+          {
+            "name": "Citoyen",
+            "value": "citizen"
+          },
+          {
+            "name": "Backoffice",
+            "value": "backoffice"
+          },
+          {
+            "name": "System",
+            "value": "system"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskKind"
+        }
+      },
+      {
+        "label": "Coût variable",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostVariable"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Coût total",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostTotal"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Coût unitaire",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostUnitaire"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      }
+    ]
+  },
+  {
+    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+    "name": "Fonction",
+    "id": "tg.gouv.gnspd.function",
+    "appliesTo": [
+      "bpmn:ServiceTask"
+    ],
+    "entriesVisible": true,
+    "icon": {
+      "contents": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 2000 2000'%3E%3Cg stroke='currentColor'%3E%3Cpath fill='none' stroke-linecap='round' stroke-miterlimit='2.3' stroke-width='70' d='M722.297 656.594C722.317 737.279 768 840 821.517 880.15c14.362 10.775 1.471 7.63 18.999 18.584C704.714 939.974 528 1010 448 1160v420h1087.5v-420c-80-150-256.714-220.026-392.515-261.266c96-60 118.195-143.433 118.218-242.14C1260.89 520 1151.5 400 991.75 400C832 400 722.61 520 722.297 656.594z'/%3E%3Cpath fill='currentColor' fill-rule='evenodd' d='M752 550c38.64 3.52 39.962-25.563 145.847-19.322c158.153 9.322 107.028 57.135 214.93 60.28c84.098-3.145 80.524-29.91 119.223-40.958c-64-70-127.297-114.535-240-150c-96 30-176 80-240 150z'/%3E%3Cpath fill='none' stroke-width='70' d='M684 1560v-280m614 280v-280M768 920s-37.712 122.288 0 160c105.595 105.595 342.405 105.595 448 0c37.712-37.712 0-160 0-160'/%3E%3C/g%3E%3C/svg%3E"
+    },
+    "groups": [
+      {
+        "id": "system-configuration",
+        "label": "Configuration Système"
+      },
+      {
+        "id": "configuration",
+        "label": "Configuration"
+      },
+      {
+        "id": "cost-configuration",
+        "label": "Configuration des coûts"
+      },
+      {
+        "id": "system-visibility",
+        "label": "Configuration de visibilité"
+      }
+    ],
+    "properties": [
+      {
+        "label": "Implementation Type",
+        "description": "Type d'implémentation",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "external",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:type"
+        }
+      },
+      {
+        "label": "Topic",
+        "description": "Le topic de publication",
+        "group": "system-configuration",
+        "type": "String",
+        "value": "flow-function",
+        "editable": false,
+        "binding": {
+          "type": "property",
+          "name": "camunda:topic"
+        }
+      },
+      {
+        "label": "Nom d'étape",
+        "type": "String",
+        "value": "name",
+        "group": "configuration",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdStepName"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Exécution",
+        "type": "String",
+        "value": "SYSTEM",
+        "editable": false,
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdExécution"
+        },
+        "constraints": {
+          "notEmpty": true
+        },
+        "group": "configuration"
+      },
+      {
+        "label": "Codes des champs (formKey, formKey1, ..., formKeyN)",
+        "type": "String",
+        "group": "system-configuration",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdFormKey"
+        },
+        "constraints": {
+          "notEmpty": true
+        }
+      },
+      {
+        "label": "Condition Javascript - transformer(formKey)",
+        "description": "Fonction JS qui traite les champs",
+        "type": "Text",
+        "group": "operation-setup",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTransformFunction"
+        }
+      },
+      {
+        "label": "Voir l'évènement",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "false",
+        "choices": [
+          {
+            "name": "Oui",
+            "value": "true"
+          },
+          {
+            "name": "Non",
+            "value": "false"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskIsVisible"
+        }
+      },
+      {
+        "label": "Nom de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskLabel"
+        }
+      },
+      {
+        "label": "Statut de la tâche si en pause",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "Pending",
+        "choices": [
+          {
+            "name": "Pending",
+            "value": "Pending"
+          },
+          {
+            "name": "PendingPortal",
+            "value": "PendingPortal"
+          },
+          {
+            "name": "PendingPayment",
+            "value": "PendingPayment"
+          },
+          {
+            "name": "PendingBackOffice",
+            "value": "PendingBackOffice"
+          },
+          {
+            "name": "Review",
+            "value": "Review"
+          },
+          {
+            "name": "Submitted",
+            "value": "Submitted"
+          },
+          {
+            "name": "Rejected",
+            "value": "Rejected"
+          },
+          {
+            "name": "Completed",
+            "value": "Completed"
+          },
+          {
+            "name": "Failed",
+            "value": "Failed"
+          },
+          {
+            "name": "PendingCompletion",
+            "value": "PendingCompletion"
+          },
+          {
+            "name": "PendingPublic",
+            "value": "PendingPublic"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskStatus"
+        }
+      },
+      {
+        "label": "Ordre de la tâche",
+        "group": "system-visibility",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskOrder"
+        }
+      },
+      {
+        "label": "Type de la tâche",
+        "group": "system-visibility",
+        "type": "Dropdown",
+        "value": "citizen",
+        "choices": [
+          {
+            "name": "Citoyen",
+            "value": "citizen"
+          },
+          {
+            "name": "Backoffice",
+            "value": "backoffice"
+          },
+          {
+            "name": "System",
+            "value": "system"
+          }
+        ],
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdTaskKind"
+        }
+      },
+      {
+        "label": "Coût variable",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostVariable"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Coût total",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostTotal"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      },
+      {
+        "label": "Coût unitaire",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "camunda:inputParameter",
+          "name": "gnspdCostUnitaire"
+        },
+        "placeholder": "",
+        "group": "cost-configuration"
+      }
+    ]
+  }
+]

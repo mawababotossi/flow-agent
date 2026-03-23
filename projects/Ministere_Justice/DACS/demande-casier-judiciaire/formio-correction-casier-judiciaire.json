@@ -1,0 +1,303 @@
+{
+  "title": "Correction — Casier Judiciaire (Bulletin n°3)",
+  "name": "correctionCasierJudiciaire",
+  "path": "correction-casier-judiciaire",
+  "type": "form",
+  "display": "wizard",
+  "i18n": {
+    "en": {
+      "Correction du dossier": "File Correction",
+      "Récapitulatif et resoumission": "Summary and Resubmission",
+      "Motif de la correction demandée": "Reason for requested correction",
+      "Pièces corrigées": "Corrected documents",
+      "Commentaire (optionnel)": "Comment (optional)",
+      "Tentatives restantes": "Remaining attempts",
+      "Ce champ est obligatoire": "This field is required",
+      "Format de fichier non accepté. Formats autorisés : PDF, JPG, PNG": "File format not accepted. Allowed formats: PDF, JPG, PNG",
+      "La taille du fichier ne doit pas dépasser 2 Mo": "File size must not exceed 2 MB",
+      "Je certifie que les corrections apportées sont exactes": "I certify that the corrections made are accurate"
+    }
+  },
+  "config": {
+    "development": {
+      "apiBaseUrl": "https://api.dev.gouv.tg/api/v1/admin",
+      "appName": "Développement",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "sandbox": {
+      "apiBaseUrl": "https://api.sandbox.gouv.tg/api/v1/admin",
+      "appName": "Sandbox",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "preprod": {
+      "apiBaseUrl": "https://api.preprod.gouv.tg/api/v1/admin",
+      "appName": "Pré-production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "production": {
+      "apiBaseUrl": "https://api.gouv.tg/api/v1/admin",
+      "appName": "Production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    }
+  },
+  "components": [
+    {
+      "title": "Correction du dossier",
+      "label": "Page 1",
+      "type": "panel",
+      "key": "stepCorrection",
+      "buttonSettings": {
+        "previous": true,
+        "cancel": true,
+        "next": true
+      },
+      "components": [
+        {
+          "tag": "h3",
+          "content": "Correction du dossier",
+          "key": "titreCorrection",
+          "type": "htmlelement",
+          "input": false
+        },
+        {
+          "tag": "div",
+          "content": "<div style=\"background:#FEF2F2;border:1px solid #FCA5A5;border-radius:8px;padding:16px;margin-bottom:20px;\"><div style=\"font-size:16px;font-weight:700;color:#991B1B;margin-bottom:8px;\">Correction demandée par l'agent DACS</div><div style=\"font-size:15px;color:#991B1B;line-height:1.6;\" id=\"motifDisplay\"></div></div>",
+          "key": "htmlMotifAlert",
+          "type": "htmlelement",
+          "input": false,
+          "logic": [
+            {
+              "name": "afficherMotif",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = true;"
+              },
+              "actions": [
+                {
+                  "name": "injecterMotif",
+                  "type": "customAction",
+                  "customAction": "var el = document.getElementById('motifDisplay'); if(el && data.motifAgent) { el.innerHTML = data.motifAgent; }"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Motif de correction",
+          "hidden": true,
+          "tableView": true,
+          "clearOnHide": false,
+          "key": "motifAgent",
+          "type": "textfield",
+          "input": true
+        },
+        {
+          "label": "Numéro de dossier",
+          "hidden": true,
+          "tableView": true,
+          "clearOnHide": false,
+          "key": "numeroDossier",
+          "type": "textfield",
+          "input": true
+        },
+        {
+          "label": "Nombre de corrections",
+          "hidden": true,
+          "tableView": true,
+          "clearOnHide": false,
+          "key": "nbCorrections",
+          "type": "textfield",
+          "input": true
+        },
+        {
+          "tag": "div",
+          "key": "htmlCompteur",
+          "type": "htmlelement",
+          "input": false,
+          "content": "",
+          "logic": [
+            {
+              "name": "calculerCompteur",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = true;"
+              },
+              "actions": [
+                {
+                  "name": "afficherCompteur",
+                  "type": "customAction",
+                  "customAction": "var nb = parseInt(data.nbCorrections) || 0; var restantes = 3 - nb; var couleur = restantes <= 1 ? '#DC2626' : '#F59E0B'; component.content = '<div style=\"background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px;margin-bottom:16px;\"><span style=\"font-size:14px;color:' + couleur + ';font-weight:700;\">Tentatives restantes : ' + restantes + ' sur 3</span></div>';"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "Pièces corrigées",
+          "tableView": false,
+          "storage": "base64",
+          "webcam": false,
+          "multiple": true,
+          "fileTypes": [
+            {
+              "label": "",
+              "value": ""
+            }
+          ],
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "fileMaxSize": "2MB",
+          "validateOn": "blur",
+          "validate": {
+            "required": true
+          },
+          "errors": {
+            "required": "Ce champ est obligatoire",
+            "filePattern": "Format de fichier non accepté. Formats autorisés : PDF, JPG, PNG",
+            "fileMaxSize": "La taille du fichier ne doit pas dépasser 2 Mo"
+          },
+          "key": "piecesCorrigees",
+          "type": "file",
+          "input": true
+        },
+        {
+          "label": "Commentaire (optionnel)",
+          "tableView": true,
+          "validate": {
+            "maxLength": 500
+          },
+          "key": "commentaire",
+          "type": "textarea",
+          "input": true,
+          "autoExpand": false
+        }
+      ],
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    },
+    {
+      "title": "Récapitulatif et resoumission",
+      "label": "Page 2",
+      "type": "panel",
+      "key": "stepRecapCorrection",
+      "buttonSettings": {
+        "previous": true,
+        "cancel": true,
+        "next": true
+      },
+      "components": [
+        {
+          "tag": "h3",
+          "content": "Récapitulatif de la correction",
+          "key": "titreRecapCorrection",
+          "type": "htmlelement",
+          "input": false
+        },
+        {
+          "label": "HTML",
+          "tag": "div",
+          "attrs": [
+            {
+              "attr": "id",
+              "value": "recapDisplay"
+            }
+          ],
+          "refreshOnChange": true,
+          "key": "htmlRecapitulatifFinal",
+          "logic": [
+            {
+              "name": "logiqueConstruction",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = true;"
+              },
+              "actions": [
+                {
+                  "name": "actionJS",
+                  "type": "customAction",
+                  "customAction": "const recapDiv = document.getElementById(\"recapDisplay\");\nlet list_of_datagrid = [];\nlet data_stock = [];\nconst exclude = [\"button\", \"file\", \"container\", \"panel\", \"datagrid\"];\nconst excludeKeys = [\"luEtApprouve\", \"motifAgent\", \"numeroDossier\", \"nbCorrections\"];\nconst includesLabelForSelect = [\"libelle\", \"label\"];\n\nutils.eachComponent(\n  form.components,\n  (component, path) => {\n    let splitted_path = path.split(\".\");\n    let skip = false;\n\n    if (\n      !exclude.includes(component.type) &&\n      !excludeKeys.includes(component.key) &&\n      !component.hidden &&\n      ![null, undefined, \"\", [], {}, \"[]\", \"{}\"].includes(data[component.key]) &&\n      !(typeof data[component.key] === \"string\" && [\"null\", \"undefined\", \"\", \"[]\", \"{}\"].includes(data[component.key]))\n    ) {\n      if (component.type === \"datagrid\") {\n        list_of_datagrid.push(component.key);\n      } else {\n        if (\n          splitted_path.length >= 2 &&\n          list_of_datagrid.includes(splitted_path[splitted_path.length - 2])\n        ) {\n          skip = true;\n        }\n      }\n      if (!skip) {\n        data_stock.push({\n          key: component.key,\n          label: component.label,\n          value: data[component.key] || (component.type === \"datagrid\" ? [] : \"\"),\n          type: component.type,\n          components: component.components || \"\",\n        });\n      }\n    }\n  },\n  false\n);\n\nlet ourTable = `\n<style>\n  .recap-container {\n    width: 100%;\n    margin: 0 auto;\n  }\n  .recap-table {\n    width: 100%;\n    border-collapse: collapse;\n  }\n  .recap-table thead th {\n    background-color: #eeeeee;\n    color: black;\n    font-weight: bold;\n    padding: 10px;\n    border: 3px solid #ccc;\n    text-align: center;\n    font-family: poppins;\n    font-size: 16px;\n  }\n  .recap-table th, .recap-table td {\n    border: 3px solid #ccc;\n    padding: 8px;\n    text-align: left;\n    font-size: 14px;\n    font-family: poppins;\n  }\n  .recap-table td:first-child {\n    width: 5%;\n    text-align: center;\n  }\n  .recap-table td:nth-child(2) {\n    width: 50%;\n  }\n  .recap-table td:last-child {\n    width: 45%;\n  }\n</style>\n<div class=\"recap-container\">\n  <table class=\"recap-table\">\n    <thead>\n      <tr>\n        <th>#</th>\n        <th>Champs du formulaire</th>\n        <th>Données saisies</th>\n      </tr>\n    </thead>\n    <tbody>`;\n\nlet index = 1;\n\ndata_stock.forEach((elmt) => {\n  if (elmt.type === \"select\") {\n    if (elmt.value !== undefined) {\n      let valueToDisplay;\n      if (typeof elmt.value === \"object\" && !Array.isArray(elmt.value)) {\n        const includedPropertyName = includesLabelForSelect.find(\n          (propName) => elmt.value[propName] !== undefined\n        );\n        valueToDisplay = includedPropertyName ? elmt.value[includedPropertyName] : \"\";\n      } else if (Array.isArray(elmt.value)) {\n        valueToDisplay = elmt.value.join(\", \");\n      } else {\n        valueToDisplay = elmt.value;\n      }\n      ourTable += `<tr><td>${index++}</td><td><b>${elmt.label}</b></td><td>${valueToDisplay}</td></tr>`;\n    }\n  } else if (elmt.type === \"datetime\") {\n    ourTable += `<tr><td>${index++}</td><td><b>${elmt.label}</b></td><td>${moment(elmt.value).format('LL')}</td></tr>`;\n  } else {\n    ourTable += `<tr><td>${index++}</td><td><b>${elmt.label}</b></td><td>${elmt.value}</td></tr>`;\n  }\n});\n\nourTable += `\n    </tbody>\n  </table>\n  <hr>\n</div>`;\n\nrecapDiv.innerHTML = ourTable;\n"
+                }
+              ]
+            }
+          ],
+          "type": "htmlelement",
+          "input": false,
+          "keyModified": true,
+          "defaultValue": null,
+          "persistent": false,
+          "validateOn": "change",
+          "content": ""
+        },
+        {
+          "label": "Je certifie que les corrections apportées sont exactes",
+          "defaultValue": false,
+          "validate": {
+            "required": true
+          },
+          "key": "luEtApprouve",
+          "type": "checkbox",
+          "input": true,
+          "dataGridLabel": true,
+          "labelPosition": "right",
+          "validateOn": "change",
+          "inputType": "checkbox",
+          "value": "",
+          "name": ""
+        }
+      ],
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change"
+    }
+  ],
+  "actions": [
+    {
+      "name": "publishToRabbitMQ",
+      "type": "rabbitmq",
+      "topic": "submissions.topic",
+      "payload": "{{ submission.data }}"
+    }
+  ]
+}

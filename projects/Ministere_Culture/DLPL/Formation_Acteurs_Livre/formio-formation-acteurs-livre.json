@@ -1,0 +1,724 @@
+{
+    "title": "Formation des Acteurs de la Chaîne du Livre",
+    "name": "formationActeursLivre",
+    "path": "formation-acteurs-livre",
+    "type": "form",
+    "display": "wizard",
+    "i18n": {
+        "en": {
+            "Présentation du service": "Service Presentation",
+            "Identité du Candidat": "Applicant Identity",
+            "Profil Littéraire": "Literary Profile",
+            "Pièces justificatives": "Supporting Documents",
+            "Récapitulatif et soumission": "Review and Submit",
+            "Commencer": "Start",
+            "Soumettre la demande": "Submit request"
+        }
+    },
+    "config": {
+        "sandbox": {
+            "apiBaseUrl": "https://api.sandbox.gouv.tg/api/v1/admin",
+            "appName": "Sandbox",
+            "users": {
+                "firstName": "user.firstName",
+                "lastName": "user.lastName",
+                "email": "user.email",
+                "phone": "user.phone"
+            }
+        },
+        "production": {
+            "apiBaseUrl": "https://api.gouv.tg/api/v1/admin",
+            "appName": "Production",
+            "users": {
+                "firstName": "user.firstName",
+                "lastName": "user.lastName",
+                "email": "user.email",
+                "phone": "user.phone"
+            }
+        },
+        "preprod": {
+            "apiBaseUrl": "https://api.preprod.gouv.tg/api/v1/admin",
+            "appName": "Pré-production",
+            "users": {
+                "firstName": "user.firstName",
+                "lastName": "user.lastName",
+                "email": "user.email",
+                "phone": "user.phone"
+            }
+        },
+        "development": {
+            "apiBaseUrl": "https://api.dev.gouv.tg/api/v1/admin",
+            "appName": "Développement",
+            "users": {
+                "firstName": "user.firstName",
+                "lastName": "user.lastName",
+                "email": "user.email",
+                "phone": "user.phone"
+            }
+        }
+    },
+    "components": [
+        {
+            "type": "panel",
+            "title": "<i class='fa fa-info-circle me-2'></i> Présentation",
+            "theme": "primary",
+            "breadcrumb": "default",
+            "buttonSettings": {
+                "previous": true,
+                "cancel": true,
+                "next": true
+            },
+            "key": "stepIntro",
+            "components": [
+                {
+                    "type": "htmlelement",
+                    "tag": "style",
+                    "key": "stylesCssSidebar",
+                    "content": "/* ── Premium Sidebar ── */\n.sfc-card {\n  position: sticky;\n  top: 20px;\n  background: #fff;\n  border: 1px solid #e5e7eb;\n  border-radius: 12px;\n  padding: 24px;\n  font-family: 'Segoe UI', Roboto, sans-serif;\n  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);\n}\n.sfc-card h3 { font-size:18px;font-weight:700;color:#111827;margin:0 0 4px; }\n.sfc-card .sfc-subtitle { font-size:13.5px;color:#4b5563;margin:0 0 18px;line-height:1.5; }\n.sfc-row { display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;font-size:13.5px;color:#374151;line-height:1.5; }\n.sfc-row .sfc-ico { flex-shrink:0;width:20px;text-align:center;font-size:15px;margin-top:1px;color:#4b5563; }\n.sfc-stitle { font-size:16px;font-weight:700;color:#111827;margin:20px 0 12px;padding-top:16px;border-top:1px solid #e5e7eb; }\n.sfc-boxes { display:flex;gap:10px;margin-bottom:14px;width:100%; }\n.sfc-box { flex:1;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px; transition: all 0.2s; }\n.sfc-box:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }\n.sfc-box .sfc-lbl { font-size:11.5px;color:#6b7280;font-weight:500;margin:0 0 6px;line-height:1.3; }\n.sfc-box .sfc-val { font-size:14px;font-weight:700;color:#111827;margin:0; }\n\n/* Premium Info Pills */\n.premium-pill { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: default; }\n.premium-pill:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }\n"
+                },
+                {
+                    "type": "columns",
+                    "key": "columnsIntro",
+                    "columns": [
+                        {
+                            "width": 8,
+                            "size": "md",
+                            "components": [
+                                {
+                                    "type": "htmlelement",
+                                    "tag": "h2",
+                                    "key": "titre",
+                                    "content": "<span style='color: #1e3a8a; font-weight: 800; border-bottom: 3px solid #3b82f6; padding-bottom: 5px;'>Formation des acteurs de la chaîne du livre</span>"
+                                },
+                                {
+                                    "type": "htmlelement",
+                                    "tag": "div",
+                                    "key": "htmlPillsIntro",
+                                    "content": "<div style=\"display:flex;gap:20px;flex-wrap:wrap;margin-top:25px;\">\n<div class=\"premium-pill\" style=\"flex:1;min-width:180px;background:#fff;border-radius:12px;padding:25px;border:1px solid #e5e7eb;\"><div style=\"font-size:32px;margin-bottom:10px;color:#10b981;\"><i class='fa fa-gift'></i></div><h3 style=\"font-size:16px;font-weight:700;margin:0 0 5px;color:#111827;\">Coût</h3><p style=\"font-size:15px;color:#4b5563;margin:0;\">100% Gratuit</p></div>\n<div class=\"premium-pill\" style=\"flex:1;min-width:180px;background:#f9fafb;border-radius:12px;padding:25px;border:1px solid #e5e7eb;\"><div style=\"font-size:32px;margin-bottom:10px;color:#3b82f6;\"><i class='fa fa-clock-o'></i></div><h3 style=\"font-size:16px;font-weight:700;margin:0 0 5px;color:#111827;\">Délai</h3><p style=\"font-size:15px;color:#4b5563;margin:0;\">15 Jours</p></div>\n<div class=\"premium-pill\" style=\"flex:1;min-width:180px;background:#fff;border-radius:12px;padding:25px;border:1px solid #e5e7eb;\"><div style=\"font-size:32px;margin-bottom:10px;color:#8b5cf6;\"><i class='fa fa-users'></i></div><h3 style=\"font-size:16px;font-weight:700;margin:0 0 5px;color:#111827;\">Places</h3><p style=\"font-size:15px;color:#4b5563;margin:0;\">Max 35 / session</p></div>\n</div>"
+                                },
+                                {
+                                    "type": "htmlelement",
+                                    "tag": "div",
+                                    "key": "htmlDescService",
+                                    "content": "<div style=\"background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 20px; margin: 30px 0;\"><div style=\"font-size:18px;font-weight:700;margin-bottom:10px;color:#1e3a8a;\"><i class='fa fa-bullhorn me-2'></i> À propos du service</div><div style=\"font-size:15px;line-height:1.6;color:#1e40af;margin-bottom:0;\">Ce service permet aux acteurs togolais du livre (écrivains, bibliothécaires, éditeurs, libraires) de postuler pour des sessions de formation ciblées visant à renforcer leurs compétences littéraires et techniques. La formation est validée par une attestation certifiée ATD.</div></div>"
+                                },
+                                {
+                                    "type": "htmlelement",
+                                    "tag": "div",
+                                    "key": "htmlAvertissement",
+                                    "content": "<div style=\"background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:25px;margin-bottom:25px;box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);\"><div style=\"font-weight:700;color:#92400E;font-size:16px;\"><i class='fa fa-exclamation-triangle me-2'></i> Avertissement de Sécurité / Pièces requises</div><div style=\"color:#B45309;font-size:14.5px;margin-top:10px;line-height:1.6;\"><ul style='margin-bottom:0;'><li style='margin-bottom:5px;'><strong>Écrivain :</strong> Préparez une ébauche de texte (PDF sécurisé).</li><li style='margin-bottom:5px;'><strong>Éditeur :</strong> Préparez votre catalogue ou lettre de motivation (PDF).</li><li><strong>Authentification E-ID :</strong> Votre identité (Nom, Prénom, Email) sera verrouillée pour garantir la véracité des dépôts.</li></ul></div></div>"
+                                },
+                                {
+                                    "type": "htmlelement",
+                                    "tag": "div",
+                                    "key": "htmlEtapesProcess",
+                                    "content": "<div style=\"font-size:22px;font-weight:700;margin-bottom:20px;color:#111827;\">Processus Digitalisé</div><div style=\"display:flex;align-items:center;margin-bottom:15px;background:#f3f4f6;padding:15px;border-radius:10px;transition:0.2s;\"><div style=\"width:32px;height:32px;min-width:32px;background:#10b981;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:15px;font-size:16px;box-shadow:0 0 10px rgba(16,185,129,0.5);\">1</div><div style=\"font-size:15px;font-weight:500;color:#374151;\">Soumission rapide 100% en ligne (Zéro déplacement)</div></div><div style=\"display:flex;align-items:center;margin-bottom:15px;background:#f3f4f6;padding:15px;border-radius:10px;\"><div style=\"width:32px;height:32px;min-width:32px;background:#10b981;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:15px;font-size:16px;\">2</div><div style=\"font-size:15px;font-weight:500;color:#374151;\">Instruction et évaluation asynchrone par le jury DLPL</div></div><div style=\"display:flex;align-items:center;margin-bottom:15px;background:#f3f4f6;padding:15px;border-radius:10px;\"><div style=\"width:32px;height:32px;min-width:32px;background:#10b981;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:15px;font-size:16px;\">3</div><div style=\"font-size:15px;font-weight:500;color:#374151;\">Notifications proactives par SMS et Email</div></div>"
+                                }
+                            ]
+                        },
+                        {
+                            "width": 4,
+                            "size": "md",
+                            "components": [
+                                {
+                                    "type": "htmlelement",
+                                    "tag": "div",
+                                    "key": "htmlSidebarDLPL",
+                                    "content": "<div class=\"sfc-card\" id=\"sidebar-fournisseur\"><h3 style='border-bottom:2px solid #e5e7eb;padding-bottom:10px;margin-bottom:15px;'>Fournisseur de service</h3><p class=\"sfc-subtitle\"><strong>Direction du Livre et de la Promotion Littéraire (DLPL)</strong><br>Ministère de la Culture</p><div class=\"sfc-row\"><span class=\"sfc-ico\">📍</span><span><strong>Adresse :</strong> Lomé, Togo</span></div><div class=\"sfc-row\"><span class=\"sfc-ico\">🕐</span><span><strong>Horaires :</strong> 07h30 – 17h30 (Lun-Ven)</span></div><div class=\"sfc-row\"><span class=\"sfc-ico\">✉️</span><span><strong>Email :</strong> contact.dlpl@culture.gouv.tg</span></div><h3 class=\"sfc-stitle\">Mesures de performance</h3><div class=\"sfc-boxes\"><div class=\"sfc-box\"><p class=\"sfc-lbl\">Délai de traitement cible</p><p class=\"sfc-val\" style='color:#10b981;'>15 <span style=\"font-size:12px;font-weight:normal;\">Jours</span></p></div><div class=\"sfc-box\"><p class=\"sfc-lbl\">Sessions Annuelles</p><p class=\"sfc-val\" style='color:#3b82f6;'>1 - 3</p></div></div></div>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "panel",
+            "title": "<i class='fa fa-user me-2'></i> Identité du Candidat",
+            "theme": "primary",
+            "breadcrumb": "default",
+            "buttonSettings": {
+                "previous": true,
+                "cancel": true,
+                "next": true
+            },
+            "key": "stepIdentite",
+            "components": [
+                {
+                    "type": "columns",
+                    "key": "col1",
+                    "columns": [
+                        {
+                            "width": 6,
+                            "size": "md",
+                            "components": [
+                                {
+                                    "type": "textfield",
+                                    "key": "nom",
+                                    "label": "Nom de famille",
+                                    "validateOn": "blur",
+                                    "tooltip": "Votre nom tel qu'il apparaît sur votre pièce d'identité",
+                                    "customClass": "form-group-premium",
+                                    "validate": {
+                                        "required": true,
+                                        "minLength": 2,
+                                        "maxLength": 100
+                                    },
+                                    "errors": {
+                                        "required": "Le nom de famille est obligatoire.",
+                                        "minLength": "Le nom doit comporter au moins 2 caractères."
+                                    },
+                                    "logic": [
+                                        {
+                                            "name": "eID Lock",
+                                            "trigger": {
+                                                "type": "javascript",
+                                                "javascript": "result = !!(data.nom && String(data.nom).trim().length > 0);"
+                                            },
+                                            "actions": [
+                                                {
+                                                    "name": "Disable",
+                                                    "type": "property",
+                                                    "property": {
+                                                        "label": "Disabled",
+                                                        "value": "disabled",
+                                                        "type": "boolean"
+                                                    },
+                                                    "state": true
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "defaultValue": "{{ config.users.lastName }}"
+                                }
+                            ]
+                        },
+                        {
+                            "width": 6,
+                            "size": "md",
+                            "components": [
+                                {
+                                    "type": "textfield",
+                                    "key": "prenom",
+                                    "label": "Prénoms",
+                                    "validateOn": "blur",
+                                    "tooltip": "Vos prénoms tels qu'ils apparaissent sur votre pièce d'identité",
+                                    "customClass": "form-group-premium",
+                                    "validate": {
+                                        "required": true,
+                                        "minLength": 2,
+                                        "maxLength": 100
+                                    },
+                                    "errors": {
+                                        "required": "Le(s) prénom(s) est/sont obligatoire(s)."
+                                    },
+                                    "logic": [
+                                        {
+                                            "name": "eID Lock",
+                                            "trigger": {
+                                                "type": "javascript",
+                                                "javascript": "result = !!(data.prenom && String(data.prenom).trim().length > 0);"
+                                            },
+                                            "actions": [
+                                                {
+                                                    "name": "Disable",
+                                                    "type": "property",
+                                                    "property": {
+                                                        "label": "Disabled",
+                                                        "value": "disabled",
+                                                        "type": "boolean"
+                                                    },
+                                                    "state": true
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "defaultValue": "{{ config.users.firstName }}"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "columns",
+                    "key": "col2",
+                    "columns": [
+                        {
+                            "width": 6,
+                            "size": "md",
+                            "components": [
+                                {
+                                    "type": "email",
+                                    "key": "email",
+                                    "label": "Adresse e-mail",
+                                    "validateOn": "blur",
+                                    "customClass": "form-group-premium",
+                                    "validate": {
+                                        "required": true
+                                    },
+                                    "errors": {
+                                        "required": "L'adresse email est requise.",
+                                        "pattern": "L'adresse email n'a pas un format valide."
+                                    },
+                                    "logic": [
+                                        {
+                                            "name": "eID Lock",
+                                            "trigger": {
+                                                "type": "javascript",
+                                                "javascript": "result = !!(data.email && String(data.email).trim().length > 0);"
+                                            },
+                                            "actions": [
+                                                {
+                                                    "name": "Disable",
+                                                    "type": "property",
+                                                    "property": {
+                                                        "label": "Disabled",
+                                                        "value": "disabled",
+                                                        "type": "boolean"
+                                                    },
+                                                    "state": true
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "defaultValue": "{{ config.users.email }}"
+                                }
+                            ]
+                        },
+                        {
+                            "width": 6,
+                            "size": "md",
+                            "components": [
+                                {
+                                    "type": "phoneNumber",
+                                    "key": "telephone",
+                                    "label": "Numéro de téléphone",
+                                    "validateOn": "blur",
+                                    "tooltip": "Format : +228XXXXXXXX",
+                                    "customClass": "form-group-premium",
+                                    "validate": {
+                                        "required": true,
+                                        "pattern": "^\\+228[0-9]{8}$"
+                                    },
+                                    "errors": {
+                                        "required": "Le numéro de téléphone est obligatoire.",
+                                        "pattern": "Le format attendu est +228 suivi de 8 chiffres."
+                                    },
+                                    "defaultValue": "{{ config.users.phone }}"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "columns",
+                    "key": "col3",
+                    "columns": [
+                        {
+                            "width": 6,
+                            "size": "md",
+                            "components": [
+                                {
+                                    "type": "datetime",
+                                    "key": "dateNaissance",
+                                    "label": "Date de naissance",
+                                    "enableTime": false,
+                                    "validateOn": "blur",
+                                    "customClass": "form-group-premium",
+                                    "validate": {
+                                        "required": true
+                                    },
+                                    "errors": {
+                                        "required": "Veuillez renseigner votre date de naissance."
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "width": 6,
+                            "size": "md",
+                            "components": [
+                                {
+                                    "type": "textfield",
+                                    "key": "lieuNaissance",
+                                    "label": "Lieu de naissance",
+                                    "validateOn": "blur",
+                                    "customClass": "form-group-premium",
+                                    "validate": {
+                                        "required": true,
+                                        "minLength": 2,
+                                        "maxLength": 100
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "columns",
+                    "key": "col4",
+                    "columns": [
+                        {
+                            "width": 6,
+                            "size": "md",
+                            "components": [
+                                {
+                                    "type": "select",
+                                    "key": "nationalite",
+                                    "label": "Nationalité",
+                                    "dataSrc": "url",
+                                    "data": {
+                                        "url": "{{ config.apiBaseUrl }}/references/nationalities"
+                                    },
+                                    "validateOn": "blur",
+                                    "validate": {
+                                        "required": true
+                                    },
+                                    "customClass": "form-group-premium"
+                                }
+                            ]
+                        },
+                        {
+                            "width": 6,
+                            "size": "md",
+                            "components": [
+                                {
+                                    "type": "select",
+                                    "key": "dernierDiplome",
+                                    "label": "Dernier diplôme obtenu",
+                                    "dataSrc": "values",
+                                    "data": {
+                                        "values": [
+                                            {
+                                                "label": "Baccalauréat",
+                                                "value": "bac"
+                                            },
+                                            {
+                                                "label": "Licence",
+                                                "value": "licence"
+                                            },
+                                            {
+                                                "label": "Master",
+                                                "value": "master"
+                                            },
+                                            {
+                                                "label": "Doctorat",
+                                                "value": "doctorat"
+                                            },
+                                            {
+                                                "label": "Autre",
+                                                "value": "autre"
+                                            }
+                                        ]
+                                    },
+                                    "validateOn": "blur",
+                                    "validate": {
+                                        "required": true
+                                    },
+                                    "customClass": "form-group-premium"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "textfield",
+                    "key": "adresse",
+                    "label": "Adresse de résidence",
+                    "validateOn": "blur",
+                    "validate": {
+                        "required": false,
+                        "maxLength": 200
+                    },
+                    "customClass": "form-group-premium"
+                }
+            ]
+        },
+        {
+            "type": "panel",
+            "title": "<i class='fa fa-book me-2'></i> Profil Littéraire",
+            "theme": "primary",
+            "breadcrumb": "default",
+            "buttonSettings": {
+                "previous": true,
+                "cancel": true,
+                "next": true
+            },
+            "key": "stepProfil",
+            "components": [
+                {
+                    "type": "radio",
+                    "key": "categorieActeur",
+                    "label": "Catégorie d'acteur de la chaîne du livre",
+                    "inline": false,
+                    "values": [
+                        {
+                            "label": "Écrivain en herbe",
+                            "value": "ecrivain"
+                        },
+                        {
+                            "label": "Bibliothécaire",
+                            "value": "bibliothecaire"
+                        },
+                        {
+                            "label": "Libraire",
+                            "value": "libraire"
+                        },
+                        {
+                            "label": "Éditeur",
+                            "value": "editeur"
+                        },
+                        {
+                            "label": "Autre acteur de la chaîne",
+                            "value": "autre"
+                        }
+                    ],
+                    "validateOn": "blur",
+                    "validate": {
+                        "required": true
+                    },
+                    "customClass": "form-group-premium",
+                    "errors": {
+                        "required": "Veuillez sélectionner votre domaine d'activité."
+                    }
+                },
+                {
+                    "type": "select",
+                    "key": "genreLitteraire",
+                    "label": "Genre littéraire de prédilection",
+                    "dataSrc": "values",
+                    "data": {
+                        "values": [
+                            {
+                                "label": "Roman",
+                                "value": "roman"
+                            },
+                            {
+                                "label": "Poésie",
+                                "value": "poesie"
+                            },
+                            {
+                                "label": "Théâtre",
+                                "value": "theatre"
+                            },
+                            {
+                                "label": "Nouvelle",
+                                "value": "nouvelle"
+                            },
+                            {
+                                "label": "Essai",
+                                "value": "essai"
+                            }
+                        ]
+                    },
+                    "clearOnHide": true,
+                    "conditional": {
+                        "show": true,
+                        "when": "categorieActeur",
+                        "eq": "ecrivain"
+                    },
+                    "validateOn": "blur",
+                    "validate": {
+                        "required": true
+                    },
+                    "customClass": "form-group-premium"
+                },
+                {
+                    "type": "textfield",
+                    "key": "titreOeuvre",
+                    "label": "Titre de l'œuvre soumise (si applicable)",
+                    "clearOnHide": true,
+                    "conditional": {
+                        "show": true,
+                        "when": "categorieActeur",
+                        "eq": "ecrivain"
+                    },
+                    "validateOn": "blur",
+                    "validate": {
+                        "required": false,
+                        "maxLength": 200
+                    },
+                    "customClass": "form-group-premium"
+                },
+                {
+                    "type": "textarea",
+                    "key": "descriptionExperience",
+                    "label": "Description de votre expérience (Réalisations, structures...)",
+                    "clearOnHide": true,
+                    "customConditional": "show = (data.categorieActeur !== 'ecrivain' && data.categorieActeur !== 'editeur' && data.categorieActeur);",
+                    "validateOn": "blur",
+                    "validate": {
+                        "required": true,
+                        "minLength": 50,
+                        "maxLength": 2000
+                    },
+                    "customClass": "form-group-premium",
+                    "errors": {
+                        "minLength": "Vous devez décrire votre expérience avec au moins 50 caractères."
+                    }
+                },
+                {
+                    "type": "textfield",
+                    "key": "nomMaisonEdition",
+                    "label": "Nom de la maison d'édition",
+                    "clearOnHide": true,
+                    "conditional": {
+                        "show": true,
+                        "when": "categorieActeur",
+                        "eq": "editeur"
+                    },
+                    "validateOn": "blur",
+                    "validate": {
+                        "required": true,
+                        "minLength": 2,
+                        "maxLength": 200
+                    },
+                    "customClass": "form-group-premium"
+                },
+                {
+                    "type": "textarea",
+                    "key": "motivation",
+                    "label": "Quelle est votre motivation pour suivre cette formation ?",
+                    "validateOn": "blur",
+                    "validate": {
+                        "required": true,
+                        "minLength": 50,
+                        "maxLength": 2000
+                    },
+                    "customClass": "form-group-premium mx-0 mt-3",
+                    "errors": {
+                        "minLength": "Votre motivation doit comporter au moins 50 caractères."
+                    }
+                }
+            ]
+        },
+        {
+            "type": "panel",
+            "title": "<i class='fa fa-paperclip me-2'></i> Pièces justificatives",
+            "theme": "primary",
+            "breadcrumb": "default",
+            "buttonSettings": {
+                "previous": true,
+                "cancel": true,
+                "next": true
+            },
+            "key": "stepPieces",
+            "components": [
+                {
+                    "type": "htmlelement",
+                    "tag": "div",
+                    "content": "<div class='alert alert-info'><i class='fa fa-info-circle me-2'></i> <strong>Rappel :</strong> Les documents doivent être nets et lisibles (Taille Max : 2Mo pour l'identité, 5Mo pour les œuvres). Format PDF recommandé.</div>",
+                    "key": "alertPieces",
+                    "customClass": "mb-4"
+                },
+                {
+                    "type": "file",
+                    "key": "fileIdentite",
+                    "label": "Pièce d'identité valide (Format PDF ou Image)",
+                    "storage": "base64",
+                    "filePattern": "application/pdf,image/jpeg,image/png",
+                    "fileMaxSize": "2MB",
+                    "validateOn": "blur",
+                    "validate": {
+                        "required": true
+                    },
+                    "customClass": "form-group-premium border p-3 rounded"
+                },
+                {
+                    "type": "file",
+                    "key": "fileEbaucheTexte",
+                    "label": "Ébauche de texte / manuscrit (Format PDF)",
+                    "storage": "base64",
+                    "filePattern": "application/pdf",
+                    "fileMaxSize": "5MB",
+                    "clearOnHide": true,
+                    "conditional": {
+                        "show": true,
+                        "when": "categorieActeur",
+                        "eq": "ecrivain"
+                    },
+                    "validateOn": "blur",
+                    "validate": {
+                        "required": true
+                    },
+                    "customClass": "form-group-premium border p-3 rounded mt-3"
+                },
+                {
+                    "type": "file",
+                    "key": "fileCatalogueEditeur",
+                    "label": "Catalogue de la maison ou lettre de motivation (Format PDF)",
+                    "storage": "base64",
+                    "filePattern": "application/pdf",
+                    "fileMaxSize": "5MB",
+                    "clearOnHide": true,
+                    "conditional": {
+                        "show": true,
+                        "when": "categorieActeur",
+                        "eq": "editeur"
+                    },
+                    "validateOn": "blur",
+                    "validate": {
+                        "required": true
+                    },
+                    "customClass": "form-group-premium border p-3 rounded mt-3"
+                },
+                {
+                    "type": "file",
+                    "key": "fileJustificatifExperience",
+                    "label": "Justificatif d'expérience (optionnel, PDF/Image)",
+                    "storage": "base64",
+                    "filePattern": "application/pdf,image/jpeg,image/png",
+                    "fileMaxSize": "2MB",
+                    "clearOnHide": true,
+                    "customConditional": "show = (data.categorieActeur === 'bibliothecaire' || data.categorieActeur === 'libraire');",
+                    "validateOn": "blur",
+                    "validate": {
+                        "required": false
+                    },
+                    "customClass": "form-group-premium border p-3 rounded mt-3"
+                }
+            ]
+        },
+        {
+            "type": "panel",
+            "title": "<i class='fa fa-check-circle me-2'></i> Récapitulatif et soumission",
+            "theme": "success",
+            "breadcrumb": "default",
+            "buttonSettings": {
+                "previous": true,
+                "cancel": true,
+                "next": true
+            },
+            "key": "stepRecapitulatif",
+            "components": [
+                {
+                    "type": "htmlelement",
+                    "tag": "div",
+                    "key": "htmlRecapitulatifFinal",
+                    "content": "<div id=\"recapitulatif-container\" class=\"mt-4 mb-4\"></div>\n<script>\n  setTimeout(() => {\n    const container = document.getElementById('recapitulatif-container');\n    if (!container || !window.formioInstance) return;\n    const data = window.formioInstance._data;\n    let html = '<div class=\"card shadow-sm border-success\">';\n    html += '<div class=\"card-header bg-success text-white\"><h4 class=\"mb-0\"><i class=\"fa fa-list-alt me-2\"></i>Récapitulatif de votre démarche</h4></div>';\n    html += '<div class=\"card-body bg-light\"><div class=\"row\">';\n    html += '<div class=\"col-sm-6 mb-3\"><strong>Nom : </strong>' + (data.nom || '-') + '</div>';\n    html += '<div class=\"col-sm-6 mb-3\"><strong>Prénoms : </strong>' + (data.prenom || '-') + '</div>';\n    html += '<div class=\"col-sm-6 mb-3\"><strong>Email : </strong>' + (data.email || '-') + '</div>';\n    html += '<div class=\"col-sm-6 mb-3\"><strong>Téléphone : </strong>' + (data.telephone || '-') + '</div>';\n    html += '<div class=\"col-sm-12 mb-3\"><strong>Catégorie d\\'acteur : </strong><span class=\"badge bg-primary fs-6\">' + (data.categorieActeur || '-') + '</span></div>';\n    html += '</div></div></div>';\n    container.innerHTML = html;\n  }, 500);\n</script>"
+                },
+                {
+                    "type": "checkbox",
+                    "key": "luEtApprouve",
+                    "label": "Je certifie sur l'honneur l'exactitude des informations fournies et m'engage à me rendre disponible pour la formation si je suis sélectionné(e).",
+                    "validateOn": "blur",
+                    "validate": {
+                        "required": true
+                    },
+                    "customClass": "form-check-premium fw-bold text-success fs-5 p-3 rounded bg-white shadow-sm border border-success",
+                    "errors": {
+                        "required": "Vous devez certifier l'exactitude des informations pour valider votre demande."
+                    }
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "publishToRabbitMQ",
+            "type": "rabbitmq",
+            "topic": "submissions.topic",
+            "payload": "{{ submission.data }}"
+        }
+    ]
+}

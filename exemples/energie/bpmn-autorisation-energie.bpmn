@@ -1,0 +1,1088 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.44.0">
+  <message id="Msg_DossierSoumis" name="Msg_DossierSoumis" />
+  <message id="Msg_DossierResoumis" name="Msg_DossierResoumis" />
+  <message id="Msg_PaiementEffectue" name="Msg_PaiementEffectue" />
+  <message id="Msg_DecisionInstruction" name="Msg_DecisionInstruction" />
+  <message id="Msg_AutorisationDispo" name="Msg_AutorisationDispo" />
+  <collaboration id="Collab_InfraPetroliere">
+    <participant id="Participant_Citizen" name="CITIZEN" processRef="Process_Citizen" />
+    <participant id="Participant_Middleware" name="MIDDLEWARE" processRef="Process_Middleware" />
+    <messageFlow id="MF_DossierSoumis" name="Dossier soumis" sourceRef="Activity_0j881lu" targetRef="CATCH_DOSSIER_SOUMIS" />
+    <messageFlow id="MF_DossierResoumis" name="Dossier resoumis" sourceRef="THROW_DossierResoumis" targetRef="Activity_08aj04b" />
+    <messageFlow id="MF_PaiementEffectue" name="Paiement effectué" sourceRef="Activity_1qr33v4" targetRef="Activity_1ccv5ed" />
+    <messageFlow id="MF_DecisionInstruction" name="Décision instruction" sourceRef="Activity_0ud8pn0" targetRef="Activity_0rwsj8q" />
+    <messageFlow id="MF_DecisionRejet" name="Décision rejet" sourceRef="THROW_DECISION_REJET" targetRef="CATCH_DECISION_CITIZEN" />
+    <messageFlow id="MF_AutorisationDispo" name="Autorisation disponible" sourceRef="THROW_AUTORISATION" targetRef="CATCH_AUTORISATION_CITIZEN" />
+    <messageFlow id="Flow_0nv3qqb" sourceRef="THROW_DECISION_PAIEMENT" targetRef="Activity_0rwsj8q" />
+    <messageFlow id="Flow_0wbgto2" sourceRef="THROW_DECISION_REJET" targetRef="Activity_0rwsj8q" />
+  </collaboration>
+  <process id="Process_Citizen" name="Demande autorisation infrastructure pétrolière — Portail" isExecutable="true" camunda:historyTimeToLive="180">
+    <userTask id="UT_CORRECTION" name="Correction du dossier" camunda:formKey="infra_petroliere_depot">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdOrder" value="3" />
+          <camunda:property name="stepName" value="Correction dossier" />
+          <camunda:property name="gnspdFormKey" value="infra_petroliere_depot" />
+          <camunda:property name="isResubmission" value="true" />
+          <camunda:property name="executionType" value="PORTAIL" />
+          <camunda:property name="gnspdTaskIsVisible" value="true" />
+          <camunda:property name="gnspdTaskLabel" value="Corriger mon dossier" />
+          <camunda:property name="gnspdTaskStatus" value="PendingPortal" />
+          <camunda:property name="gnspdTaskOrder" value="3" />
+          <camunda:property name="gnspdTaskKind" value="citizen" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_C_XOR_Correction</incoming>
+      <outgoing>SF_C_Correction_Throw</outgoing>
+    </userTask>
+    <intermediateThrowEvent id="THROW_DossierResoumis" name="Envoi dossier resoumis">
+      <incoming>SF_C_Correction_Throw</incoming>
+      <outgoing>SF_C_CorrectionLoop</outgoing>
+      <messageEventDefinition id="MED_ThrowDossierResoumis" messageRef="Msg_DossierResoumis" />
+    </intermediateThrowEvent>
+    <userTask id="UT_ATTENTE_RETRAIT" name="Attente de disponibilité de l&#39;autorisation" camunda:formKey="infra_petroliere_attente_retrait">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdOrder" value="5" />
+          <camunda:property name="stepName" value="Attente retrait autorisation" />
+          <camunda:property name="gnspdTaskIsVisible" value="true" />
+          <camunda:property name="gnspdTaskLabel" value="Autorisation en cours de préparation" />
+          <camunda:property name="gnspdTaskStatus" value="PendingCompletion" />
+          <camunda:property name="gnspdTaskOrder" value="5" />
+          <camunda:property name="gnspdTaskKind" value="citizen" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_C_Paiement_Attente</incoming>
+      <outgoing>SF_C_Attente_CatchAutorisation</outgoing>
+    </userTask>
+    <intermediateCatchEvent id="CATCH_AUTORISATION_CITIZEN" name="Autorisation disponible">
+      <incoming>MF_AutorisationDispo</incoming>
+      <outgoing>SF_C_CatchAutorisation_End</outgoing>
+      <messageEventDefinition id="MED_CatchAutorisation" messageRef="Msg_AutorisationDispo" />
+    </intermediateCatchEvent>
+    <endEvent id="END_SUCCES" name="Autorisation obtenue — Succès">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdTaskIsVisible" value="true" />
+          <camunda:property name="gnspdTaskLabel" value="Autorisation délivrée" />
+          <camunda:property name="gnspdTaskStatus" value="Completed" />
+          <camunda:property name="gnspdTaskOrder" value="99" />
+          <camunda:property name="gnspdTaskKind" value="citizen" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_C_CatchAutorisation_End</incoming>
+    </endEvent>
+    <endEvent id="END_REJET" name="Demande rejetée définitivement">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdTaskIsVisible" value="true" />
+          <camunda:property name="gnspdTaskLabel" value="Demande rejetée" />
+          <camunda:property name="gnspdTaskStatus" value="Rejected" />
+          <camunda:property name="gnspdTaskOrder" value="98" />
+          <camunda:property name="gnspdTaskKind" value="citizen" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_C_XOR_Rejet</incoming>
+      <terminateEventDefinition id="TED_Rejet" />
+    </endEvent>
+    <sequenceFlow id="SF_C_Start_Depot" sourceRef="START_PORTAIL" targetRef="Activity_0j881lu" />
+    <sequenceFlow id="SF_C_CorrectionLoop" sourceRef="THROW_DossierResoumis" targetRef="GW_C_JoinAttente" />
+    <sequenceFlow id="SF_C_JoinAttente_Task" sourceRef="GW_C_JoinAttente" targetRef="UT_ATTENTE_INSTRUCTION" />
+    <sequenceFlow id="SF_C_Attente_Catch" sourceRef="UT_ATTENTE_INSTRUCTION" targetRef="Activity_0rwsj8q" />
+    <sequenceFlow id="SF_C_XOR_Correction" name="Correction requise" sourceRef="XOR_DECISION_CITIZEN" targetRef="UT_CORRECTION">
+      <conditionExpression xsi:type="tFormalExpression">${decisionInstruction == 'CORRECTION'}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SF_C_XOR_Paiement" name="Paiement requis" sourceRef="XOR_DECISION_CITIZEN" targetRef="UT_PAIEMENT">
+      <conditionExpression xsi:type="tFormalExpression">${decisionInstruction == 'APPROVED'}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SF_C_XOR_Rejet" name="Rejet définitif (défaut)" sourceRef="XOR_DECISION_CITIZEN" targetRef="END_REJET" />
+    <sequenceFlow id="SF_C_Correction_Throw" sourceRef="UT_CORRECTION" targetRef="THROW_DossierResoumis" />
+    <sequenceFlow id="SF_C_Paiement_Throw" sourceRef="UT_PAIEMENT" targetRef="Activity_1qr33v4" />
+    <sequenceFlow id="SF_C_Paiement_Attente" sourceRef="Activity_1qr33v4" targetRef="UT_ATTENTE_RETRAIT" />
+    <sequenceFlow id="SF_C_Attente_CatchAutorisation" sourceRef="UT_ATTENTE_RETRAIT" targetRef="CATCH_AUTORISATION_CITIZEN" />
+    <sequenceFlow id="SF_C_CatchAutorisation_End" sourceRef="CATCH_AUTORISATION_CITIZEN" targetRef="END_SUCCES" />
+    <sequenceFlow id="Flow_04u9w3u" sourceRef="Activity_0j881lu" targetRef="GW_C_JoinAttente" />
+    <sendTask id="Activity_1qr33v4" name="Envoi confirmation paiement" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
+      <extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTargetElementType">bpmn:ReceiveTask</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+          <camunda:inputParameter name="gnspdMessageRef">Message_2qtcshb</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageDestination">peer_xflow</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessage">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </extensionElements>
+      <incoming>SF_C_Paiement_Throw</incoming>
+      <outgoing>SF_C_Paiement_Attente</outgoing>
+    </sendTask>
+    <startEvent id="START_PORTAIL" name="Soumission initiale — Portail" camunda:formKey="">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdStepName" value="Demande d&#39;autorisation infrastructure pétrolière" />
+          <camunda:property name="gnspdExecution" value="PORTAIL" />
+          <camunda:property name="gnspdTaskIsVisible" value="true" />
+          <camunda:property name="gnspdTaskLabel" value="Démarrer la demande" />
+          <camunda:property name="gnspdTaskStatus" value="PendingPortal" />
+          <camunda:property name="gnspdTaskOrder" value="1" />
+          <camunda:property name="gnspdTaskKind" value="citizen" />
+          <camunda:property name="gnspdPaymentAmount" value="0" />
+        </camunda:properties>
+      </extensionElements>
+      <outgoing>SF_C_Start_Depot</outgoing>
+    </startEvent>
+    <sendTask id="Activity_0j881lu" name="Envoi dossier soumis" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
+      <extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdMessageRef" />
+          <camunda:inputParameter name="gnspdMessageDestination" />
+          <camunda:inputParameter name="gnspdMessage" />
+          <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+          <camunda:inputParameter name="gnspdTargetElementType">bpmn:StartEvent</camunda:inputParameter>
+        </camunda:inputOutput>
+      </extensionElements>
+      <incoming>SF_C_Start_Depot</incoming>
+      <outgoing>Flow_04u9w3u</outgoing>
+    </sendTask>
+    <userTask id="UT_ATTENTE_INSTRUCTION" name="Attente de la décision d&#39;instruction" camunda:formKey="infra_petroliere_attente">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdOrder" value="2" />
+          <camunda:property name="stepName" value="Attente instruction" />
+          <camunda:property name="gnspdTaskIsVisible" value="true" />
+          <camunda:property name="gnspdTaskLabel" value="Dossier en cours d&#39;instruction" />
+          <camunda:property name="gnspdTaskStatus" value="PendingBackOffice" />
+          <camunda:property name="gnspdTaskOrder" value="2" />
+          <camunda:property name="gnspdTaskKind" value="citizen" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_C_JoinAttente_Task</incoming>
+      <outgoing>SF_C_Attente_Catch</outgoing>
+    </userTask>
+    <exclusiveGateway id="GW_C_JoinAttente" name="Attente instruction">
+      <incoming>SF_C_CorrectionLoop</incoming>
+      <incoming>Flow_04u9w3u</incoming>
+      <outgoing>SF_C_JoinAttente_Task</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="Flow_1cbvgxf" sourceRef="Activity_0rwsj8q" targetRef="XOR_DECISION_CITIZEN" />
+    <receiveTask id="Activity_0rwsj8q" name="Décision reçue">
+      <incoming>SF_C_Attente_Catch</incoming>
+      <outgoing>Flow_1cbvgxf</outgoing>
+    </receiveTask>
+    <exclusiveGateway id="XOR_DECISION_CITIZEN" name="Décision reçue ?" default="SF_C_XOR_Rejet">
+      <incoming>Flow_1cbvgxf</incoming>
+      <outgoing>SF_C_XOR_Correction</outgoing>
+      <outgoing>SF_C_XOR_Paiement</outgoing>
+      <outgoing>SF_C_XOR_Rejet</outgoing>
+    </exclusiveGateway>
+    <userTask id="UT_PAIEMENT" name="Paiement de la redevance en ligne" camunda:formKey="infra_petroliere_paiement">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdOrder" value="4" />
+          <camunda:property name="stepName" value="Paiement en ligne" />
+          <camunda:property name="gnspdFormKey" value="infra_petroliere_paiement" />
+          <camunda:property name="isResubmission" value="false" />
+          <camunda:property name="executionType" value="PORTAIL" />
+          <camunda:property name="gnspdHandlerType" value="tarification" />
+          <camunda:property name="gnspdTaskIsVisible" value="true" />
+          <camunda:property name="gnspdTaskLabel" value="Payer la redevance" />
+          <camunda:property name="gnspdTaskStatus" value="PendingPayment" />
+          <camunda:property name="gnspdTaskOrder" value="4" />
+          <camunda:property name="gnspdTaskKind" value="citizen" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_C_XOR_Paiement</incoming>
+      <outgoing>SF_C_Paiement_Throw</outgoing>
+    </userTask>
+  </process>
+  <process id="Process_Middleware" name="Traitement — Direction des Hydrocarbures" isExecutable="true" camunda:historyTimeToLive="180">
+    <exclusiveGateway id="GW_MW_JoinConformite" name="Nouveau dossier / Resoumission">
+      <incoming>SF_MW_CatchSoumis_Recap</incoming>
+      <incoming>Flow_0du34ur</incoming>
+      <outgoing>SF_MW_Join_Recap</outgoing>
+    </exclusiveGateway>
+    <serviceTask id="ST_GENERATION_RECAP" name="Génération du récapitulatif dossier" camunda:type="external" camunda:topic="flow-generate-template">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdTaskIsVisible" value="false" />
+          <camunda:property name="gnspdTaskLabel" value="Génération récap" />
+          <camunda:property name="gnspdTaskStatus" value="Pending" />
+          <camunda:property name="gnspdTaskOrder" value="1" />
+          <camunda:property name="gnspdTaskKind" value="system" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_MW_Join_Recap</incoming>
+      <outgoing>SF_MW_Recap_SubAR</outgoing>
+    </serviceTask>
+    <serviceTask id="ST_ALERTE_ADMIN" name="Alerte admin — Email Direction des Hydrocarbures" camunda:type="external" camunda:topic="flow-notify">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdNotifySendEmail" value="true" />
+          <camunda:property name="gnspdNotifyEmail" value="${ADMIN_DH_EMAIL}" />
+          <camunda:property name="gnspdNotifyTemplateEmail" value="TPL_IP_ALERTE_ADMIN" />
+          <camunda:property name="gnspdNotifyContentEmail" value="{&#34;reference&#34;:&#34;@RECORD_ID&#34;,&#34;demandeur&#34;:&#34;@E0_NOM_COMPLET&#34;,&#34;ficheJointe&#34;:true}" />
+          <camunda:property name="gnspdTaskIsVisible" value="false" />
+          <camunda:property name="gnspdTaskLabel" value="Alerte admin DH" />
+          <camunda:property name="gnspdTaskStatus" value="Pending" />
+          <camunda:property name="gnspdTaskOrder" value="2" />
+          <camunda:property name="gnspdTaskKind" value="system" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_MW_SubAR_AlerteAdmin</incoming>
+      <outgoing>SF_MW_Alerte_Conformite</outgoing>
+    </serviceTask>
+    <userTask id="UT_CONFORMITE" name="Étude de conformité du dossier" camunda:formKey="infra_petroliere_conformite">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdOrder" value="3" />
+          <camunda:property name="stepName" value="Étude de conformité" />
+          <camunda:property name="gnspdTaskIsVisible" value="true" />
+          <camunda:property name="gnspdTaskLabel" value="Étudier le dossier" />
+          <camunda:property name="gnspdTaskStatus" value="Review" />
+          <camunda:property name="gnspdTaskOrder" value="3" />
+          <camunda:property name="gnspdTaskKind" value="backoffice" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_MW_Alerte_Conformite</incoming>
+      <outgoing>SF_MW_Conformite_XOR</outgoing>
+    </userTask>
+    <userTask id="UT_TELECHARGEMENT" name="Téléchargement du dossier complet" camunda:formKey="infra_petroliere_telechargement">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdOrder" value="4" />
+          <camunda:property name="stepName" value="Téléchargement dossier" />
+          <camunda:property name="gnspdHandlerType" value="download_files" />
+          <camunda:property name="gnspdTaskIsVisible" value="true" />
+          <camunda:property name="gnspdTaskLabel" value="Télécharger le dossier" />
+          <camunda:property name="gnspdTaskStatus" value="PendingBackOffice" />
+          <camunda:property name="gnspdTaskOrder" value="4" />
+          <camunda:property name="gnspdTaskKind" value="backoffice" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_MW_XOR_Conforme</incoming>
+      <outgoing>SF_MW_Telechargement_Decision</outgoing>
+    </userTask>
+    <userTask id="UT_DECISION_INSTRUCTION" name="Décision d&#39;instruction — Validation finale" camunda:formKey="infra_petroliere_decision">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdOrder" value="5" />
+          <camunda:property name="stepName" value="Décision d&#39;instruction" />
+          <camunda:property name="gnspdTaskIsVisible" value="true" />
+          <camunda:property name="gnspdTaskLabel" value="Rendre la décision" />
+          <camunda:property name="gnspdTaskStatus" value="PendingBackOffice" />
+          <camunda:property name="gnspdTaskOrder" value="5" />
+          <camunda:property name="gnspdTaskKind" value="backoffice" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_MW_Telechargement_Decision</incoming>
+      <outgoing>SF_MW_Decision_XOR2</outgoing>
+    </userTask>
+    <exclusiveGateway id="XOR_DECISION_FINALE" name="Décision finale ?" default="SF_MW_XOR2_Rejet">
+      <incoming>SF_MW_Decision_XOR2</incoming>
+      <outgoing>SF_MW_XOR2_Rejet</outgoing>
+      <outgoing>SF_MW_XOR2_Paiement</outgoing>
+    </exclusiveGateway>
+    <subProcess id="SP_NOTIF_REJET" name="Notification multicanal — Rejet définitif">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdTaskIsVisible" value="false" />
+          <camunda:property name="gnspdTaskKind" value="system" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_MW_XOR2_Rejet</incoming>
+      <outgoing>SF_MW_SubRejet_Throw</outgoing>
+      <startEvent id="SP_REJET_Start" />
+      <parallelGateway id="AND_SPLIT_REJET" name="Diffusion rejet">
+        <incoming>SF_REJET_Start_Split</incoming>
+        <outgoing>SF_REJET_Email</outgoing>
+        <outgoing>SF_REJET_SMS</outgoing>
+        <outgoing>SF_REJET_Portail</outgoing>
+      </parallelGateway>
+      <serviceTask id="ST_REJET_EMAIL" name="Email — Rejet définitif" camunda:type="external" camunda:topic="flow-notify">
+        <extensionElements>
+          <camunda:properties>
+            <camunda:property name="gnspdNotifySendEmail" value="true" />
+            <camunda:property name="gnspdNotifyEmail" value="@USER_EMAIL" />
+            <camunda:property name="gnspdNotifyTemplateEmail" value="TPL_IP_REJET_EMAIL" />
+            <camunda:property name="gnspdNotifyContentEmail" value="{&#34;nom&#34;:&#34;@E0_NOM_COMPLET&#34;,&#34;reference&#34;:&#34;@RECORD_ID&#34;,&#34;motif&#34;:&#34;${motifRejet}&#34;}" />
+            <camunda:property name="gnspdTaskIsVisible" value="false" />
+            <camunda:property name="gnspdTaskKind" value="system" />
+          </camunda:properties>
+        </extensionElements>
+        <incoming>SF_REJET_Email</incoming>
+        <outgoing>SF_REJET_Email_Join</outgoing>
+      </serviceTask>
+      <serviceTask id="ST_REJET_SMS" name="SMS — Rejet définitif" camunda:type="external" camunda:topic="flow-notify">
+        <extensionElements>
+          <camunda:properties>
+            <camunda:property name="gnspdNotifySendSMS" value="true" />
+            <camunda:property name="gnspdNotifyPhone" value="@USER_PHONE" />
+            <camunda:property name="gnspdNotifyTemplateSMS" value="TPL_IP_REJET_SMS" />
+            <camunda:property name="gnspdNotifyContentSMS" value="{&#34;nom&#34;:&#34;@E0_NOM_COMPLET&#34;,&#34;reference&#34;:&#34;@RECORD_ID&#34;}" />
+            <camunda:property name="gnspdTaskIsVisible" value="false" />
+            <camunda:property name="gnspdTaskKind" value="system" />
+          </camunda:properties>
+        </extensionElements>
+        <incoming>SF_REJET_SMS</incoming>
+        <outgoing>SF_REJET_SMS_Join</outgoing>
+      </serviceTask>
+      <serviceTask id="ST_REJET_PORTAIL" name="Portail — Notification rejet" camunda:type="external" camunda:topic="flow-notify">
+        <extensionElements>
+          <camunda:properties>
+            <camunda:property name="gnspdNotifyInApp" value="true" />
+            <camunda:property name="gnspdNotifyTemplateInApp" value="TPL_IP_REJET_PORTAIL" />
+            <camunda:property name="gnspdNotifyContentInApp" value="{&#34;message&#34;:&#34;Votre dossier @RECORD_ID a été rejeté.&#34;,&#34;statut&#34;:&#34;Rejeté&#34;}" />
+            <camunda:property name="gnspdTaskIsVisible" value="false" />
+            <camunda:property name="gnspdTaskKind" value="system" />
+          </camunda:properties>
+        </extensionElements>
+        <incoming>SF_REJET_Portail</incoming>
+        <outgoing>SF_REJET_Portail_Join</outgoing>
+      </serviceTask>
+      <parallelGateway id="AND_JOIN_REJET" name="Synchronisation rejet">
+        <incoming>SF_REJET_Email_Join</incoming>
+        <incoming>SF_REJET_SMS_Join</incoming>
+        <incoming>SF_REJET_Portail_Join</incoming>
+        <outgoing>SF_REJET_Join_End</outgoing>
+      </parallelGateway>
+      <endEvent id="SP_REJET_End" />
+      <sequenceFlow id="SF_REJET_Start_Split" sourceRef="SP_REJET_Start" targetRef="AND_SPLIT_REJET" />
+      <sequenceFlow id="SF_REJET_Email" sourceRef="AND_SPLIT_REJET" targetRef="ST_REJET_EMAIL" />
+      <sequenceFlow id="SF_REJET_SMS" sourceRef="AND_SPLIT_REJET" targetRef="ST_REJET_SMS" />
+      <sequenceFlow id="SF_REJET_Portail" sourceRef="AND_SPLIT_REJET" targetRef="ST_REJET_PORTAIL" />
+      <sequenceFlow id="SF_REJET_Email_Join" sourceRef="ST_REJET_EMAIL" targetRef="AND_JOIN_REJET" />
+      <sequenceFlow id="SF_REJET_SMS_Join" sourceRef="ST_REJET_SMS" targetRef="AND_JOIN_REJET" />
+      <sequenceFlow id="SF_REJET_Portail_Join" sourceRef="ST_REJET_PORTAIL" targetRef="AND_JOIN_REJET" />
+      <sequenceFlow id="SF_REJET_Join_End" sourceRef="AND_JOIN_REJET" targetRef="SP_REJET_End" />
+    </subProcess>
+    <subProcess id="SP_NOTIF_APPROBATION" name="Notification multicanal — Paiement requis">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdTaskIsVisible" value="false" />
+          <camunda:property name="gnspdTaskKind" value="system" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_MW_XOR2_Paiement</incoming>
+      <outgoing>SF_MW_SubAppro_ThrowPaiement</outgoing>
+      <startEvent id="SP_APPRO_Start" />
+      <parallelGateway id="AND_SPLIT_APPRO" name="Diffusion approbation">
+        <incoming>SF_APPRO_Start_Split</incoming>
+        <outgoing>SF_APPRO_Email</outgoing>
+        <outgoing>SF_APPRO_SMS</outgoing>
+        <outgoing>SF_APPRO_Portail</outgoing>
+      </parallelGateway>
+      <serviceTask id="ST_APPRO_EMAIL" name="Email — Paiement requis" camunda:type="external" camunda:topic="flow-notify">
+        <extensionElements>
+          <camunda:properties>
+            <camunda:property name="gnspdNotifySendEmail" value="true" />
+            <camunda:property name="gnspdNotifyEmail" value="@USER_EMAIL" />
+            <camunda:property name="gnspdNotifyTemplateEmail" value="TPL_IP_APPRO_EMAIL" />
+            <camunda:property name="gnspdNotifyContentEmail" value="{&#34;nom&#34;:&#34;@E0_NOM_COMPLET&#34;,&#34;reference&#34;:&#34;@RECORD_ID&#34;,&#34;montant&#34;:&#34;${montantRedevance}&#34;}" />
+            <camunda:property name="gnspdTaskIsVisible" value="false" />
+            <camunda:property name="gnspdTaskKind" value="system" />
+          </camunda:properties>
+        </extensionElements>
+        <incoming>SF_APPRO_Email</incoming>
+        <outgoing>SF_APPRO_Email_Join</outgoing>
+      </serviceTask>
+      <serviceTask id="ST_APPRO_SMS" name="SMS — Paiement requis" camunda:type="external" camunda:topic="flow-notify">
+        <extensionElements>
+          <camunda:properties>
+            <camunda:property name="gnspdNotifySendSMS" value="true" />
+            <camunda:property name="gnspdNotifyPhone" value="@USER_PHONE" />
+            <camunda:property name="gnspdNotifyTemplateSMS" value="TPL_IP_APPRO_SMS" />
+            <camunda:property name="gnspdNotifyContentSMS" value="{&#34;nom&#34;:&#34;@E0_NOM_COMPLET&#34;,&#34;reference&#34;:&#34;@RECORD_ID&#34;}" />
+            <camunda:property name="gnspdTaskIsVisible" value="false" />
+            <camunda:property name="gnspdTaskKind" value="system" />
+          </camunda:properties>
+        </extensionElements>
+        <incoming>SF_APPRO_SMS</incoming>
+        <outgoing>SF_APPRO_SMS_Join</outgoing>
+      </serviceTask>
+      <serviceTask id="ST_APPRO_PORTAIL" name="Portail — Notification approbation" camunda:type="external" camunda:topic="flow-notify">
+        <extensionElements>
+          <camunda:properties>
+            <camunda:property name="gnspdNotifyInApp" value="true" />
+            <camunda:property name="gnspdNotifyTemplateInApp" value="TPL_IP_APPRO_PORTAIL" />
+            <camunda:property name="gnspdNotifyContentInApp" value="{&#34;message&#34;:&#34;Votre dossier @RECORD_ID est approuvé. Veuillez procéder au paiement.&#34;,&#34;statut&#34;:&#34;Paiement requis&#34;}" />
+            <camunda:property name="gnspdTaskIsVisible" value="false" />
+            <camunda:property name="gnspdTaskKind" value="system" />
+          </camunda:properties>
+        </extensionElements>
+        <incoming>SF_APPRO_Portail</incoming>
+        <outgoing>SF_APPRO_Portail_Join</outgoing>
+      </serviceTask>
+      <parallelGateway id="AND_JOIN_APPRO" name="Synchronisation approbation">
+        <incoming>SF_APPRO_Email_Join</incoming>
+        <incoming>SF_APPRO_SMS_Join</incoming>
+        <incoming>SF_APPRO_Portail_Join</incoming>
+        <outgoing>SF_APPRO_Join_End</outgoing>
+      </parallelGateway>
+      <endEvent id="SP_APPRO_End" />
+      <sequenceFlow id="SF_APPRO_Start_Split" sourceRef="SP_APPRO_Start" targetRef="AND_SPLIT_APPRO" />
+      <sequenceFlow id="SF_APPRO_Email" sourceRef="AND_SPLIT_APPRO" targetRef="ST_APPRO_EMAIL" />
+      <sequenceFlow id="SF_APPRO_SMS" sourceRef="AND_SPLIT_APPRO" targetRef="ST_APPRO_SMS" />
+      <sequenceFlow id="SF_APPRO_Portail" sourceRef="AND_SPLIT_APPRO" targetRef="ST_APPRO_PORTAIL" />
+      <sequenceFlow id="SF_APPRO_Email_Join" sourceRef="ST_APPRO_EMAIL" targetRef="AND_JOIN_APPRO" />
+      <sequenceFlow id="SF_APPRO_SMS_Join" sourceRef="ST_APPRO_SMS" targetRef="AND_JOIN_APPRO" />
+      <sequenceFlow id="SF_APPRO_Portail_Join" sourceRef="ST_APPRO_PORTAIL" targetRef="AND_JOIN_APPRO" />
+      <sequenceFlow id="SF_APPRO_Join_End" sourceRef="AND_JOIN_APPRO" targetRef="SP_APPRO_End" />
+    </subProcess>
+    <intermediateThrowEvent id="THROW_DECISION_PAIEMENT" name="Envoi décision paiement requis vers Citizen">
+      <incoming>SF_MW_SubAppro_ThrowPaiement</incoming>
+      <outgoing>SF_MW_ThrowPay_CatchPaiement</outgoing>
+      <messageEventDefinition id="MED_ThrowDecisionPaiement" messageRef="Msg_DecisionInstruction" />
+    </intermediateThrowEvent>
+    <intermediateThrowEvent id="THROW_AUTORISATION" name="Envoi notification autorisation disponible">
+      <incoming>SF_MW_SubRetrait_ThrowAutorisation</incoming>
+      <outgoing>SF_MW_ThrowAutorisation_End</outgoing>
+      <messageEventDefinition id="MED_ThrowAutorisation" messageRef="Msg_AutorisationDispo" />
+    </intermediateThrowEvent>
+    <endEvent id="END_SUCCES_MW" name="Autorisation délivrée — Clôture">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdTaskIsVisible" value="true" />
+          <camunda:property name="gnspdTaskLabel" value="Autorisation délivrée" />
+          <camunda:property name="gnspdTaskStatus" value="Completed" />
+          <camunda:property name="gnspdTaskOrder" value="99" />
+          <camunda:property name="gnspdTaskKind" value="system" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_MW_ThrowAutorisation_End</incoming>
+    </endEvent>
+    <startEvent id="CATCH_DOSSIER_SOUMIS" name="Réception dossier soumis" camunda:modelerTemplate="tg.gouv.gnspd.startEvent" camunda:type="external" camunda:topic="flow-start">
+      <extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdStepName">Début</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdDescription" />
+          <camunda:inputParameter name="gnspdPriority" />
+          <camunda:inputParameter name="gnspdExecution">PORTAIL</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdPaymentAmount">0</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCalculationOperator">ADDITION</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCalculationVar1" />
+          <camunda:inputParameter name="gnspdCalculationVar2" />
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </extensionElements>
+      <outgoing>SF_MW_CatchSoumis_Recap</outgoing>
+    </startEvent>
+    <subProcess id="SP_NOTIF_RETRAIT" name="Notification multicanal — Autorisation disponible">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdTaskIsVisible" value="false" />
+          <camunda:property name="gnspdTaskKind" value="system" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>Flow_0aneag2</incoming>
+      <outgoing>SF_MW_SubRetrait_ThrowAutorisation</outgoing>
+      <startEvent id="SP_RETRAIT_Start" />
+      <parallelGateway id="AND_SPLIT_RETRAIT" name="Diffusion retrait">
+        <incoming>SF_RETRAIT_Start_Split</incoming>
+        <outgoing>SF_RETRAIT_Email</outgoing>
+        <outgoing>SF_RETRAIT_SMS</outgoing>
+        <outgoing>SF_RETRAIT_Portail</outgoing>
+      </parallelGateway>
+      <serviceTask id="ST_RETRAIT_EMAIL" name="Email — Autorisation disponible" camunda:type="external" camunda:topic="flow-notify">
+        <extensionElements>
+          <camunda:properties>
+            <camunda:property name="gnspdNotifySendEmail" value="true" />
+            <camunda:property name="gnspdNotifyEmail" value="@USER_EMAIL" />
+            <camunda:property name="gnspdNotifyTemplateEmail" value="TPL_IP_RETRAIT_EMAIL" />
+            <camunda:property name="gnspdNotifyContentEmail" value="{&#34;nom&#34;:&#34;@E0_NOM_COMPLET&#34;,&#34;reference&#34;:&#34;@RECORD_ID&#34;}" />
+            <camunda:property name="gnspdTaskIsVisible" value="false" />
+            <camunda:property name="gnspdTaskKind" value="system" />
+          </camunda:properties>
+        </extensionElements>
+        <incoming>SF_RETRAIT_Email</incoming>
+        <outgoing>SF_RETRAIT_Email_Join</outgoing>
+      </serviceTask>
+      <serviceTask id="ST_RETRAIT_SMS" name="SMS — Autorisation disponible" camunda:type="external" camunda:topic="flow-notify">
+        <extensionElements>
+          <camunda:properties>
+            <camunda:property name="gnspdNotifySendSMS" value="true" />
+            <camunda:property name="gnspdNotifyPhone" value="@USER_PHONE" />
+            <camunda:property name="gnspdNotifyTemplateSMS" value="TPL_IP_RETRAIT_SMS" />
+            <camunda:property name="gnspdNotifyContentSMS" value="{&#34;nom&#34;:&#34;@E0_NOM_COMPLET&#34;,&#34;reference&#34;:&#34;@RECORD_ID&#34;}" />
+            <camunda:property name="gnspdTaskIsVisible" value="false" />
+            <camunda:property name="gnspdTaskKind" value="system" />
+          </camunda:properties>
+        </extensionElements>
+        <incoming>SF_RETRAIT_SMS</incoming>
+        <outgoing>SF_RETRAIT_SMS_Join</outgoing>
+      </serviceTask>
+      <serviceTask id="ST_RETRAIT_PORTAIL" name="Portail — Autorisation prête à retirer" camunda:type="external" camunda:topic="flow-notify">
+        <extensionElements>
+          <camunda:properties>
+            <camunda:property name="gnspdNotifyInApp" value="true" />
+            <camunda:property name="gnspdNotifyTemplateInApp" value="TPL_IP_RETRAIT_PORTAIL" />
+            <camunda:property name="gnspdNotifyContentInApp" value="{&#34;message&#34;:&#34;Votre autorisation @RECORD_ID est disponible.&#34;,&#34;statut&#34;:&#34;Disponible&#34;}" />
+            <camunda:property name="gnspdTaskIsVisible" value="false" />
+            <camunda:property name="gnspdTaskKind" value="system" />
+          </camunda:properties>
+        </extensionElements>
+        <incoming>SF_RETRAIT_Portail</incoming>
+        <outgoing>SF_RETRAIT_Portail_Join</outgoing>
+      </serviceTask>
+      <parallelGateway id="AND_JOIN_RETRAIT" name="Synchronisation retrait">
+        <incoming>SF_RETRAIT_Email_Join</incoming>
+        <incoming>SF_RETRAIT_SMS_Join</incoming>
+        <incoming>SF_RETRAIT_Portail_Join</incoming>
+        <outgoing>SF_RETRAIT_Join_End</outgoing>
+      </parallelGateway>
+      <endEvent id="SP_RETRAIT_End" />
+      <sequenceFlow id="SF_RETRAIT_Start_Split" sourceRef="SP_RETRAIT_Start" targetRef="AND_SPLIT_RETRAIT" />
+      <sequenceFlow id="SF_RETRAIT_Email" sourceRef="AND_SPLIT_RETRAIT" targetRef="ST_RETRAIT_EMAIL" />
+      <sequenceFlow id="SF_RETRAIT_SMS" sourceRef="AND_SPLIT_RETRAIT" targetRef="ST_RETRAIT_SMS" />
+      <sequenceFlow id="SF_RETRAIT_Portail" sourceRef="AND_SPLIT_RETRAIT" targetRef="ST_RETRAIT_PORTAIL" />
+      <sequenceFlow id="SF_RETRAIT_Email_Join" sourceRef="ST_RETRAIT_EMAIL" targetRef="AND_JOIN_RETRAIT" />
+      <sequenceFlow id="SF_RETRAIT_SMS_Join" sourceRef="ST_RETRAIT_SMS" targetRef="AND_JOIN_RETRAIT" />
+      <sequenceFlow id="SF_RETRAIT_Portail_Join" sourceRef="ST_RETRAIT_PORTAIL" targetRef="AND_JOIN_RETRAIT" />
+      <sequenceFlow id="SF_RETRAIT_Join_End" sourceRef="AND_JOIN_RETRAIT" targetRef="SP_RETRAIT_End" />
+    </subProcess>
+    <sequenceFlow id="SF_MW_CatchSoumis_Recap" sourceRef="CATCH_DOSSIER_SOUMIS" targetRef="GW_MW_JoinConformite" />
+    <sequenceFlow id="SF_MW_Join_Recap" sourceRef="GW_MW_JoinConformite" targetRef="ST_GENERATION_RECAP" />
+    <sequenceFlow id="SF_MW_Recap_SubAR" sourceRef="ST_GENERATION_RECAP" targetRef="SP_NOTIF_AR" />
+    <sequenceFlow id="SF_MW_SubAR_AlerteAdmin" sourceRef="SP_NOTIF_AR" targetRef="ST_ALERTE_ADMIN" />
+    <sequenceFlow id="SF_MW_Alerte_Conformite" sourceRef="ST_ALERTE_ADMIN" targetRef="UT_CONFORMITE" />
+    <sequenceFlow id="SF_MW_Conformite_XOR" sourceRef="UT_CONFORMITE" targetRef="XOR_CONFORME" />
+    <sequenceFlow id="SF_MW_XOR_Correction" name="NON — Corrections requises" sourceRef="XOR_CONFORME" targetRef="SP_NOTIF_CORRECTION" />
+    <sequenceFlow id="SF_MW_XOR_Conforme" name="OUI — Conforme" sourceRef="XOR_CONFORME" targetRef="UT_TELECHARGEMENT" />
+    <sequenceFlow id="SF_MW_SubCorr_Throw" sourceRef="SP_NOTIF_CORRECTION" targetRef="Activity_0ud8pn0" />
+    <sequenceFlow id="SF_MW_SubRejet_Throw" sourceRef="SP_NOTIF_REJET" targetRef="THROW_DECISION_REJET" />
+    <sequenceFlow id="SF_MW_Rejet_End" sourceRef="THROW_DECISION_REJET" targetRef="END_REJET_MW" />
+    <sequenceFlow id="SF_MW_Telechargement_Decision" sourceRef="UT_TELECHARGEMENT" targetRef="UT_DECISION_INSTRUCTION" />
+    <sequenceFlow id="SF_MW_Decision_XOR2" sourceRef="UT_DECISION_INSTRUCTION" targetRef="XOR_DECISION_FINALE" />
+    <sequenceFlow id="SF_MW_XOR2_Rejet" name="Rejet définitif (défaut)" sourceRef="XOR_DECISION_FINALE" targetRef="SP_NOTIF_REJET" />
+    <sequenceFlow id="SF_MW_XOR2_Paiement" name="Approuvé — Paiement requis" sourceRef="XOR_DECISION_FINALE" targetRef="SP_NOTIF_APPROBATION">
+      <conditionExpression xsi:type="tFormalExpression">${decisionFinale == 'APPROVED'}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SF_MW_SubAppro_ThrowPaiement" sourceRef="SP_NOTIF_APPROBATION" targetRef="THROW_DECISION_PAIEMENT" />
+    <sequenceFlow id="SF_MW_ThrowPay_CatchPaiement" sourceRef="THROW_DECISION_PAIEMENT" targetRef="Activity_1ccv5ed" />
+    <sequenceFlow id="SF_MW_SubRetrait_ThrowAutorisation" sourceRef="SP_NOTIF_RETRAIT" targetRef="THROW_AUTORISATION" />
+    <sequenceFlow id="SF_MW_ThrowAutorisation_End" sourceRef="THROW_AUTORISATION" targetRef="END_SUCCES_MW" />
+    <intermediateThrowEvent id="THROW_DECISION_REJET" name="Envoi décision rejet vers Citizen">
+      <incoming>SF_MW_SubRejet_Throw</incoming>
+      <outgoing>SF_MW_Rejet_End</outgoing>
+      <messageEventDefinition id="MED_ThrowDecisionRejet" messageRef="Msg_DecisionInstruction" />
+    </intermediateThrowEvent>
+    <endEvent id="END_REJET_MW" name="Dossier rejeté — Clôture">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdTaskIsVisible" value="true" />
+          <camunda:property name="gnspdTaskLabel" value="Dossier rejeté" />
+          <camunda:property name="gnspdTaskStatus" value="Rejected" />
+          <camunda:property name="gnspdTaskOrder" value="98" />
+          <camunda:property name="gnspdTaskKind" value="system" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_MW_Rejet_End</incoming>
+      <terminateEventDefinition id="TED_MW_Rejet" />
+    </endEvent>
+    <exclusiveGateway id="XOR_CONFORME" name="Dossier conforme ?">
+      <incoming>SF_MW_Conformite_XOR</incoming>
+      <outgoing>SF_MW_XOR_Correction</outgoing>
+      <outgoing>SF_MW_XOR_Conforme</outgoing>
+    </exclusiveGateway>
+    <serviceTask id="SP_NOTIF_AR" name="Notification multicanal — Accusé de réception" camunda:modelerTemplate="tg.gouv.gnspd.sendNotification" camunda:type="external" camunda:topic="flow-notify">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdTaskIsVisible" value="false" />
+          <camunda:property name="gnspdTaskKind" value="system" />
+        </camunda:properties>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdNotifyInApp">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyTemplateInApp" />
+          <camunda:inputParameter name="gnspdNotifyContentInApp" />
+          <camunda:inputParameter name="gnspdNotifySendEmail">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyEmail" />
+          <camunda:inputParameter name="gnspdNotifySendSMS">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyPhone" />
+          <camunda:inputParameter name="gnspdNotifyTemplateSMS" />
+          <camunda:inputParameter name="gnspdNotifyAttachment" />
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+          <camunda:inputParameter name="gnspdNotifyContentSMS" />
+          <camunda:inputParameter name="gnspdNotifyTemplateEmail" />
+          <camunda:inputParameter name="gnspdNotifyContentEmail" />
+        </camunda:inputOutput>
+      </extensionElements>
+      <incoming>SF_MW_Recap_SubAR</incoming>
+      <outgoing>SF_MW_SubAR_AlerteAdmin</outgoing>
+    </serviceTask>
+    <receiveTask id="Activity_1ccv5ed" name="Réception confirmation paiement" messageRef="Message_2qtcshb">
+      <incoming>SF_MW_ThrowPay_CatchPaiement</incoming>
+      <outgoing>Flow_0aneag2</outgoing>
+    </receiveTask>
+    <sequenceFlow id="Flow_0aneag2" sourceRef="Activity_1ccv5ed" targetRef="SP_NOTIF_RETRAIT" />
+    <serviceTask id="SP_NOTIF_CORRECTION" name="Notification multicanal — Demande de correction">
+      <extensionElements>
+        <camunda:properties>
+          <camunda:property name="gnspdTaskIsVisible" value="false" />
+          <camunda:property name="gnspdTaskKind" value="system" />
+        </camunda:properties>
+      </extensionElements>
+      <incoming>SF_MW_XOR_Correction</incoming>
+      <outgoing>SF_MW_SubCorr_Throw</outgoing>
+    </serviceTask>
+    <sequenceFlow id="Flow_0du34ur" sourceRef="Activity_08aj04b" targetRef="GW_MW_JoinConformite" />
+    <receiveTask id="Activity_08aj04b" name="Réception dossier resoumis">
+      <incoming>Flow_0tc78t0</incoming>
+      <outgoing>Flow_0du34ur</outgoing>
+    </receiveTask>
+    <sequenceFlow id="Flow_0tc78t0" sourceRef="Activity_0ud8pn0" targetRef="Activity_08aj04b" />
+    <sendTask id="Activity_0ud8pn0" name="Envoi décision correction vers Citizen">
+      <incoming>SF_MW_SubCorr_Throw</incoming>
+      <outgoing>Flow_0tc78t0</outgoing>
+    </sendTask>
+  </process>
+  <message id="Message_2qtcshb" name="Message_2qtcshb" />
+  <bpmndi:BPMNDiagram id="Diagram_InfraPetroliere">
+    <bpmndi:BPMNPlane id="Plane_InfraPetroliere" bpmnElement="Collab_InfraPetroliere">
+      <bpmndi:BPMNShape id="S_Citizen" bpmnElement="Participant_Citizen" isHorizontal="true">
+        <dc:Bounds x="120" y="80" width="2600" height="820" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_UT_Correction" bpmnElement="UT_CORRECTION">
+        <dc:Bounds x="1200" y="640" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_THROW_Resoumis" bpmnElement="THROW_DossierResoumis">
+        <dc:Bounds x="1412" y="662" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1458" y="666" width="70" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_UT_Retrait" bpmnElement="UT_ATTENTE_RETRAIT">
+        <dc:Bounds x="1530" y="270" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_CATCH_Autorisation" bpmnElement="CATCH_AUTORISATION_CITIZEN">
+        <dc:Bounds x="1742" y="292" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1729" y="254.5" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_END_SUCCES" bpmnElement="END_SUCCES">
+        <dc:Bounds x="1862" y="292" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1849" y="328" width="62" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_END_REJET" bpmnElement="END_REJET">
+        <dc:Bounds x="1302" y="422" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1276" y="458" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dklfyt_di" bpmnElement="Activity_1qr33v4">
+        <dc:Bounds x="1270" y="260" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_START" bpmnElement="START_PORTAIL">
+        <dc:Bounds x="172" y="412" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="150" y="448" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00w9m6r_di" bpmnElement="Activity_0j881lu">
+        <dc:Bounds x="360" y="400" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_UT_Attente" bpmnElement="UT_ATTENTE_INSTRUCTION">
+        <dc:Bounds x="620" y="400" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_GW_JoinAttente" bpmnElement="GW_C_JoinAttente" isMarkerVisible="true">
+        <dc:Bounds x="515" y="415" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="496" y="465" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_08admu2_di" bpmnElement="Activity_0rwsj8q">
+        <dc:Bounds x="880" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_XOR_Decision" bpmnElement="XOR_DECISION_CITIZEN" isMarkerVisible="true">
+        <dc:Bounds x="1045" y="415" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1079" y="503" width="82" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_UT_Paiement" bpmnElement="UT_PAIEMENT">
+        <dc:Bounds x="1000" y="260" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="E_Start_GwJoin" bpmnElement="SF_C_Start_Depot">
+        <di:waypoint x="208" y="430" />
+        <di:waypoint x="360" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_CorrectionLoop" bpmnElement="SF_C_CorrectionLoop">
+        <di:waypoint x="1430" y="662" />
+        <di:waypoint x="1430" y="380" />
+        <di:waypoint x="540" y="380" />
+        <di:waypoint x="540" y="415" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1050" y="223" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_JoinAttente_Task" bpmnElement="SF_C_JoinAttente_Task">
+        <di:waypoint x="565" y="440" />
+        <di:waypoint x="620" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Attente_Catch" bpmnElement="SF_C_Attente_Catch">
+        <di:waypoint x="760" y="440" />
+        <di:waypoint x="880" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_XOR_Correction" bpmnElement="SF_C_XOR_Correction">
+        <di:waypoint x="1070" y="465" />
+        <di:waypoint x="1070" y="680" />
+        <di:waypoint x="1200" y="680" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1075" y="560" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_XOR_Paiement" bpmnElement="SF_C_XOR_Paiement">
+        <di:waypoint x="1070" y="415" />
+        <di:waypoint x="1070" y="340" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1083" y="315" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_XOR_Rejet" bpmnElement="SF_C_XOR_Rejet">
+        <di:waypoint x="1095" y="440" />
+        <di:waypoint x="1302" y="440" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1206" y="406" width="67" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Correction_Throw" bpmnElement="SF_C_Correction_Throw">
+        <di:waypoint x="1340" y="680" />
+        <di:waypoint x="1412" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Paiement_Throw" bpmnElement="SF_C_Paiement_Throw">
+        <di:waypoint x="1140" y="300" />
+        <di:waypoint x="1270" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Paiement_Attente" bpmnElement="SF_C_Paiement_Attente">
+        <di:waypoint x="1340" y="260" />
+        <di:waypoint x="1340" y="220" />
+        <di:waypoint x="1600" y="220" />
+        <di:waypoint x="1600" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Attente_CatchAuto" bpmnElement="SF_C_Attente_CatchAutorisation">
+        <di:waypoint x="1670" y="310" />
+        <di:waypoint x="1742" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_CatchAuto_End" bpmnElement="SF_C_CatchAutorisation_End">
+        <di:waypoint x="1778" y="310" />
+        <di:waypoint x="1862" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04u9w3u_di" bpmnElement="Flow_04u9w3u">
+        <di:waypoint x="460" y="440" />
+        <di:waypoint x="515" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cbvgxf_di" bpmnElement="Flow_1cbvgxf">
+        <di:waypoint x="980" y="440" />
+        <di:waypoint x="1045" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="S_Middleware" bpmnElement="Participant_Middleware" isHorizontal="true">
+        <dc:Bounds x="120" y="980" width="2600" height="860" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_GW_JoinConf" bpmnElement="GW_MW_JoinConformite" isMarkerVisible="true">
+        <dc:Bounds x="275" y="1415" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="1378" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_ST_Recap" bpmnElement="ST_GENERATION_RECAP">
+        <dc:Bounds x="400" y="1400" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_ST_Alerte" bpmnElement="ST_ALERTE_ADMIN">
+        <dc:Bounds x="860" y="1400" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_UT_Conformite" bpmnElement="UT_CONFORMITE">
+        <dc:Bounds x="1080" y="1400" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_UT_Telecharge" bpmnElement="UT_TELECHARGEMENT">
+        <dc:Bounds x="1510" y="1400" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_UT_Decision" bpmnElement="UT_DECISION_INSTRUCTION">
+        <dc:Bounds x="1730" y="1400" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_XOR_Finale" bpmnElement="XOR_DECISION_FINALE" isMarkerVisible="true">
+        <dc:Bounds x="1945" y="1415" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2004.5" y="1433" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hchf22_di" bpmnElement="SP_NOTIF_CORRECTION">
+        <dc:Bounds x="1270" y="1610" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1vi6akv_di" bpmnElement="Activity_08aj04b">
+        <dc:Bounds x="750" y="1610" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_006g7xn_di" bpmnElement="Activity_0ud8pn0">
+        <dc:Bounds x="1020" y="1610" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_SP_Rejet" bpmnElement="SP_NOTIF_REJET">
+        <dc:Bounds x="1870" y="1610" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_SP_Appro" bpmnElement="SP_NOTIF_APPROBATION">
+        <dc:Bounds x="2070" y="1270" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_THROW_Pay" bpmnElement="THROW_DECISION_PAIEMENT">
+        <dc:Bounds x="2302" y="1292" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2279" y="1328" width="82" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_THROW_Autorisation" bpmnElement="THROW_AUTORISATION">
+        <dc:Bounds x="2032" y="1082" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2007" y="1118" width="87" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_END_SUCCES_MW" bpmnElement="END_SUCCES_MW">
+        <dc:Bounds x="1912" y="1082" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1899" y="1118" width="62" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0xmlhbg_di" bpmnElement="CATCH_DOSSIER_SOUMIS">
+        <dc:Bounds x="172" y="1422" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="146" y="1458" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_SP_Retrait" bpmnElement="SP_NOTIF_RETRAIT">
+        <dc:Bounds x="2130" y="1060" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_THROW_Decision_Rejet" bpmnElement="THROW_DECISION_REJET">
+        <dc:Bounds x="1852" y="1742" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1919" y="1736" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_END_REJET_MW" bpmnElement="END_REJET_MW">
+        <dc:Bounds x="1712" y="1742" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1687" y="1705" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1uikczs_di" bpmnElement="XOR_CONFORME" isMarkerVisible="true">
+        <dc:Bounds x="1295" y="1415" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1276" y="1378" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1sc403a_di" bpmnElement="SP_NOTIF_AR">
+        <dc:Bounds x="650" y="1400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1tuklxh_di" bpmnElement="Activity_1ccv5ed">
+        <dc:Bounds x="2370" y="1130" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="E_MW_Start_Join" bpmnElement="SF_MW_CatchSoumis_Recap">
+        <di:waypoint x="208" y="1440" />
+        <di:waypoint x="275" y="1440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Join_Recap" bpmnElement="SF_MW_Join_Recap">
+        <di:waypoint x="325" y="1440" />
+        <di:waypoint x="400" y="1440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Recap_SubAR" bpmnElement="SF_MW_Recap_SubAR">
+        <di:waypoint x="540" y="1440" />
+        <di:waypoint x="650" y="1440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_SubAR_Alerte" bpmnElement="SF_MW_SubAR_AlerteAdmin">
+        <di:waypoint x="750" y="1440" />
+        <di:waypoint x="860" y="1440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Alerte_Conf" bpmnElement="SF_MW_Alerte_Conformite">
+        <di:waypoint x="1000" y="1440" />
+        <di:waypoint x="1080" y="1440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Conf_XOR" bpmnElement="SF_MW_Conformite_XOR">
+        <di:waypoint x="1220" y="1440" />
+        <di:waypoint x="1295" y="1440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_XOR_Correction_MW" bpmnElement="SF_MW_XOR_Correction">
+        <di:waypoint x="1320" y="1465" />
+        <di:waypoint x="1320" y="1610" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1312" y="1539" width="60" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_XOR_Conforme" bpmnElement="SF_MW_XOR_Conforme">
+        <di:waypoint x="1345" y="1440" />
+        <di:waypoint x="1510" y="1440" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1394" y="1420" width="85" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_SubCorr_Throw" bpmnElement="SF_MW_SubCorr_Throw">
+        <di:waypoint x="1270" y="1650" />
+        <di:waypoint x="1120" y="1650" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_SubRejet_Throw" bpmnElement="SF_MW_SubRejet_Throw">
+        <di:waypoint x="1950" y="1690" />
+        <di:waypoint x="1950" y="1760" />
+        <di:waypoint x="1888" y="1760" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Throw_RejetEnd" bpmnElement="SF_MW_Rejet_End">
+        <di:waypoint x="1852" y="1760" />
+        <di:waypoint x="1748" y="1760" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Telecharge_Decision" bpmnElement="SF_MW_Telechargement_Decision">
+        <di:waypoint x="1650" y="1440" />
+        <di:waypoint x="1730" y="1440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_Decision_XOR2" bpmnElement="SF_MW_Decision_XOR2">
+        <di:waypoint x="1870" y="1440" />
+        <di:waypoint x="1945" y="1440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_XOR2_Rejet" bpmnElement="SF_MW_XOR2_Rejet">
+        <di:waypoint x="1970" y="1465" />
+        <di:waypoint x="1970" y="1610" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1985" y="1528" width="67" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_XOR2_Paiement" bpmnElement="SF_MW_XOR2_Paiement">
+        <di:waypoint x="1970" y="1410" />
+        <di:waypoint x="1970" y="1310" />
+        <di:waypoint x="2070" y="1310" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1978" y="1352" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_SubAppro_ThrowPay" bpmnElement="SF_MW_SubAppro_ThrowPaiement">
+        <di:waypoint x="2230" y="1310" />
+        <di:waypoint x="2302" y="1310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_ThrowPay_CatchPay" bpmnElement="SF_MW_ThrowPay_CatchPaiement">
+        <di:waypoint x="2320" y="1292" />
+        <di:waypoint x="2320" y="1235" />
+        <di:waypoint x="2420" y="1235" />
+        <di:waypoint x="2420" y="1210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_SubRetrait_ThrowAuto" bpmnElement="SF_MW_SubRetrait_ThrowAutorisation">
+        <di:waypoint x="2130" y="1100" />
+        <di:waypoint x="2068" y="1100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_ThrowAuto_End" bpmnElement="SF_MW_ThrowAutorisation_End">
+        <di:waypoint x="2032" y="1100" />
+        <di:waypoint x="1948" y="1100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0aneag2_di" bpmnElement="Flow_0aneag2">
+        <di:waypoint x="2370" y="1170" />
+        <di:waypoint x="2330" y="1170" />
+        <di:waypoint x="2330" y="1120" />
+        <di:waypoint x="2290" y="1120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0du34ur_di" bpmnElement="Flow_0du34ur">
+        <di:waypoint x="750" y="1650" />
+        <di:waypoint x="300" y="1650" />
+        <di:waypoint x="300" y="1465" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tc78t0_di" bpmnElement="Flow_0tc78t0">
+        <di:waypoint x="1020" y="1650" />
+        <di:waypoint x="850" y="1650" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_MF_DossierSoumis" bpmnElement="MF_DossierSoumis">
+        <di:waypoint x="410" y="480" />
+        <di:waypoint x="410" y="930" />
+        <di:waypoint x="190" y="930" />
+        <di:waypoint x="190" y="1422" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="267" y="912" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_MF_DossierResoumis" bpmnElement="MF_DossierResoumis">
+        <di:waypoint x="1430" y="698" />
+        <di:waypoint x="1430" y="920" />
+        <di:waypoint x="810" y="920" />
+        <di:waypoint x="810" y="1610" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1086" y="902" width="85" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_MF_Paiement" bpmnElement="MF_PaiementEffectue">
+        <di:waypoint x="1370" y="290" />
+        <di:waypoint x="1470" y="290" />
+        <di:waypoint x="1470" y="940" />
+        <di:waypoint x="2560" y="940" />
+        <di:waypoint x="2560" y="1170" />
+        <di:waypoint x="2470" y="1170" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1980" y="922" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_MF_DecisionInstruction" bpmnElement="MF_DecisionInstruction">
+        <di:waypoint x="1060" y="1610" />
+        <di:waypoint x="1060" y="960" />
+        <di:waypoint x="950" y="960" />
+        <di:waypoint x="950" y="480" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="982" y="942" width="51" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_MF_AutorisationDispo" bpmnElement="MF_AutorisationDispo">
+        <di:waypoint x="2050" y="1082" />
+        <di:waypoint x="2050" y="840" />
+        <di:waypoint x="1760" y="840" />
+        <di:waypoint x="1760" y="328" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1869" y="822" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nv3qqb_di" bpmnElement="Flow_0nv3qqb">
+        <di:waypoint x="2338" y="1310" />
+        <di:waypoint x="2460" y="1310" />
+        <di:waypoint x="2460" y="160" />
+        <di:waypoint x="930" y="160" />
+        <di:waypoint x="930" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wbgto2_di" bpmnElement="Flow_0wbgto2">
+        <di:waypoint x="1870" y="1742" />
+        <di:waypoint x="1870" y="1100" />
+        <di:waypoint x="900" y="1100" />
+        <di:waypoint x="900" y="480" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram>
+    <bpmndi:BPMNPlane bpmnElement="SP_NOTIF_REJET" />
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram>
+    <bpmndi:BPMNPlane bpmnElement="SP_NOTIF_APPROBATION" />
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram>
+    <bpmndi:BPMNPlane bpmnElement="SP_NOTIF_RETRAIT" />
+  </bpmndi:BPMNDiagram>
+</definitions>

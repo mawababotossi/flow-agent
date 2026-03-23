@@ -1,0 +1,276 @@
+{
+  "title": "Orientation voyageur",
+  "breadcrumbClickable": true,
+  "buttonSettings": {
+    "previous": false,
+    "cancel": false,
+    "next": false
+  },
+  "navigateOnEnter": false,
+  "saveOnEnter": false,
+  "scrollToTop": false,
+  "collapsible": false,
+  "key": "OrientationVoyageur",
+  "type": "panel",
+  "label": "Page 1",
+  "input": false,
+  "tableView": false,
+  "breadcrumb": "none",
+  "components": [
+    {
+      "label": "Avez-vous déjà un compte ?",
+      "optionsLabelPosition": "right",
+      "inline": true,
+      "hidden": true,
+      "values": [
+        {
+          "label": "Je suis un nouveau voyageur",
+          "value": "nouveau"
+        },
+        {
+          "label": "J'ai déjà un compte",
+          "value": "existant"
+        }
+      ],
+      "validate": {
+        "required": true,
+        "customMessage": "Veuillez indiquer si vous avez déjà un compte",
+        "onlyAvailableItems": false
+      },
+      "key": "statutCompte",
+      "type": "radio",
+      "input": true,
+      "defaultValue": null,
+      "validateOn": "change",
+      "dataSrc": "values",
+      "authenticate": false,
+      "ignoreCache": false,
+      "template": "<span>{{ item.label }}</span>",
+      "inputType": "radio",
+      "data": {
+        "url": ""
+      },
+      "fieldSet": false
+    },
+    {
+      "label": "Header",
+      "tag": "span",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "<div class=\"souhait-container\">\n  <h1 class=\"souhait-title\">Que souhaitez-vous faire ?</h1>\n  <p class=\"souhait-subtitle\">Veuillez choisir une option ci-dessous pour continuer</p>\n</div>\n\n<style>\n  .souhait-container {\n    text-align: center;\n    margin-bottom: 40px;\n    padding: 0 15px;\n    box-sizing: border-box;\n  }\n  \n  .souhait-title {\n    color: #006A4F;\n    margin: 0;\n    font-weight: 700;\n    font-size: 52px;\n    font-family: 'Poppins', sans-serif;\n    line-height: 1.2;\n  }\n  \n  .souhait-subtitle {\n    color: #6B7280;\n    margin: 16px 0 0 0;\n    font-size: 18px;\n    font-family: 'Poppins', sans-serif;\n    line-height: 1.5;\n  }\n  \n  @media (max-width: 992px) {\n    .souhait-title {\n      font-size: 40px;\n    }\n    \n    .souhait-subtitle {\n      font-size: 16px;\n    }\n  }\n  \n  @media (max-width: 576px) {\n    .souhait-container {\n      margin-bottom: 24px;\n    }\n    \n    .souhait-title {\n      font-size: 28px;\n    }\n    \n    .souhait-subtitle {\n      font-size: 14px;\n      padding: 0 10px;\n    }\n  }\n</style>",
+      "key": "headerOrientation",
+      "type": "htmlelement",
+      "input": false,
+      "defaultValue": null,
+      "persistent": false,
+      "validateOn": "change"
+    },
+    {
+      "label": "Columns",
+      "columns": [
+        {
+          "components": [],
+          "width": 1
+        },
+        {
+          "components": [
+            {
+              "label": "Card Venir",
+              "tag": "section",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div class=\"info-card\">\n  <h2 class=\"info-card-title\">Venir au Togo</h2>\n  <div class=\"info-card-img\">\n    <img src=\"https://i.postimg.cc/VvHHJ7M4/image.png\" alt=\"Venir au Togo\">\n  </div>\n  <p class=\"info-card-description\">Enregistrez-vous pour entrer au Togo. Un visa peut être requis selon votre nationalité et le motif de voyage.</p>\n</div>",
+              "key": "cardVenir",
+              "type": "htmlelement",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "Venir au Togo",
+              "action": "custom",
+              "showValidations": false,
+              "rightIcon": "fa fa-arrow-right",
+              "customClass": "btn-card-action",
+              "key": "venirAuTogo",
+              "attributes": {
+                "style": "margin-top:-85px;position:relative;z-index:10"
+              },
+              "type": "button",
+              "custom": "data.choixAction = 'venir';\ndata.form1 = null;\ndata.form2 = null;\ndata.form3 = null;\ndata.form4 = null;\ninstance.root.setPage(1);",
+              "input": true,
+              "defaultValue": null,
+              "persistent": false,
+              "dataGridLabel": true,
+              "validateOn": "change",
+              "size": "md",
+              "leftIcon": "",
+              "block": false,
+              "disableOnInvalid": false,
+              "theme": "primary"
+            }
+          ],
+          "width": 5
+        },
+        {
+          "components": [
+            {
+              "label": "Card Sortir",
+              "tag": "section",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<div class=\"info-card\">\n  <h2 class=\"info-card-title\">Sortir du Togo</h2>\n  <div class=\"info-card-img\">\n    <img src=\"https://i.postimg.cc/SjmSTxRH/image.png\" alt=\"Sortir du Togo\">\n  </div>\n  <p class=\"info-card-description\">Enregistrez-vous pour quitter le Togo. L'enregistrement est requis pour tous les voyageurs quittant le territoire, il ne nécessite pas de visa.</p>\n</div>",
+              "key": "cardSortir",
+              "type": "htmlelement",
+              "input": false,
+              "defaultValue": null,
+              "persistent": false,
+              "validateOn": "change"
+            },
+            {
+              "label": "Sortir du Togo",
+              "action": "custom",
+              "showValidations": false,
+              "rightIcon": "fa fa-arrow-right",
+              "customClass": "btn-card-action",
+              "key": "sortirDuTogo1",
+              "attributes": {
+                "style": "margin-top:-85px;position:relative;z-index:10"
+              },
+              "type": "button",
+              "custom": "data.choixAction = 'sortir';\ninstance.root.setPage(1);",
+              "input": true,
+              "defaultValue": null,
+              "persistent": false,
+              "dataGridLabel": true,
+              "validateOn": "change",
+              "size": "md",
+              "leftIcon": "",
+              "block": false,
+              "disableOnInvalid": false,
+              "theme": "primary"
+            }
+          ],
+          "width": 5
+        },
+        {
+          "components": [],
+          "width": 1
+        }
+      ],
+      "key": "columns21",
+      "attributes": {
+        "style": "background:#F9F7F4;border-radius:12px;padding:50px 20px;margin-top:10px"
+      },
+      "type": "columns",
+      "input": false,
+      "defaultValue": null,
+      "persistent": false,
+      "clearOnHide": false,
+      "validateOn": "change",
+      "autoAdjust": false
+    },
+    {
+      "label": "Choice",
+      "key": "choixAction",
+      "type": "hidden",
+      "input": true,
+      "defaultValue": null,
+      "validateOn": "change",
+      "inputType": "hidden"
+    },
+    {
+      "label": "Styles Cards",
+      "tag": "style",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": ".info-card\n{display:flex;\nflex-direction:column;\nalign-items:center;justify-content:flex-start;\nbackground:#FFFFFF;\nborder:1px solid #E5E7EB;border-radius:16px;padding:40px 30px 30px 30px;width:100%;  \nwidth: 400px;\n  max-height: 460px;\n  cursor:pointer;transition:all 0.25s ease;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin:0 auto;box-sizing:border-box;position:relative;padding-bottom:90px}.info-card:hover{border-color:#006A4F;box-shadow:0 4px 16px rgba(0,106,79,0.12);transform:translateY(-2px)}\n  .info-card-title{font-size:22px;font-weight:600;color:#1E2939;margin:0 0 30px 0;font-family:'Poppins',sans-serif;text-align:center}\n  .info-card-img{margin-bottom:30px;display:flex;align-items:center;justify-content:center;min-height:150px}.info-card-img img{max-width:180px;height:auto}\n  .info-card-description{font-size:14px;color:#6B7280;line-height:1.7;font-family:'Poppins',sans-serif;max-width:350px;text-align:center;margin:0 0 20px 0;flex-grow:1}.btn-card-action .btn{background-color:#006A4F!important;border-radius:8px!important;border:none!important;color:#fff!important;display:block;margin:20px auto 0 auto;position:relative;z-index:2;max-width:220px;padding:14px 32px!important;font-size:15px!important;font-weight:600!important;font-family:'Poppins',sans-serif!important;cursor:pointer;transition:background 0.2s ease}.btn-card-action .btn:hover{background-color:#005540!important}\n  @media(max-width:992px){.info-card{max-width:100%;padding:30px 25px 80px 25px;min-height:380px}.info-card-img img{max-width:150px}.info-card-title{font-size:20px;margin-bottom:25px}.info-card-img{margin-bottom:25px;min-height:130px}.info-card-description{font-size:13px}.btn-card-action .btn{margin:15px auto 0 auto;padding:12px 28px!important;font-size:14px!important}}\n  @media(max-width:576px){\n  .info-card{padding:25px 20px 75px 20px;\n  min-height:360px;\n  margin-top: 20px}\n  .info-card-img img{max-width:130px}\n  .btn-card-action \n  .btn{\n  max-width:200px;padding:12px 24px!important;margin:15px auto 0 auto;}}",
+      "key": "stylesCards",
+      "type": "htmlelement",
+      "input": false,
+      "defaultValue": null,
+      "persistent": false,
+      "validateOn": "change"
+    }
+  ],
+  "properties": {
+    "hideBreadcrumb": "true"
+  },
+  "id": "ez5a4ko",
+  "placeholder": "",
+  "prefix": "",
+  "customClass": "",
+  "suffix": "",
+  "multiple": false,
+  "defaultValue": null,
+  "protected": false,
+  "unique": false,
+  "persistent": false,
+  "hidden": false,
+  "clearOnHide": false,
+  "refreshOn": "",
+  "redrawOn": "",
+  "modalEdit": false,
+  "dataGridLabel": false,
+  "labelPosition": "top",
+  "description": "",
+  "errorLabel": "",
+  "tooltip": "",
+  "hideLabel": false,
+  "tabindex": "",
+  "disabled": false,
+  "autofocus": false,
+  "dbIndex": false,
+  "customDefaultValue": "",
+  "calculateValue": "",
+  "calculateServer": false,
+  "widget": null,
+  "attributes": {},
+  "validateOn": "change",
+  "validate": {
+    "required": false,
+    "custom": "",
+    "customPrivate": false,
+    "strictDateValidation": false,
+    "multiple": false,
+    "unique": false
+  },
+  "conditional": {
+    "show": null,
+    "when": null,
+    "eq": ""
+  },
+  "overlay": {
+    "style": "",
+    "left": "",
+    "top": "",
+    "width": "",
+    "height": ""
+  },
+  "allowCalculateOverride": false,
+  "encrypted": false,
+  "showCharCount": false,
+  "showWordCount": false,
+  "allowMultipleMasks": false,
+  "addons": [],
+  "tree": false,
+  "lazyLoad": false,
+  "theme": "default"
+}

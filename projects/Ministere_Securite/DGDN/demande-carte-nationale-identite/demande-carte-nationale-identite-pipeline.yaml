@@ -1,0 +1,808 @@
+# Pipeline TO-BE enrichi — Demande de Carte Nationale d'Identité (CNI)
+# Service PAYANT — Montant variable : 4 000 / 8 000 / 20 000 FCFA selon le type de demande
+# Ministère de la Sécurité et de la Protection Civile / Direction Générale de la Documentation Nationale (DGDN)
+# Architecture : XPortal (Citoyen) ↔ Kafka ↔ XFlow (Back-Office CD + DGDN)
+#
+# ENRICHISSEMENT : chaque étape métier est augmentée d'un bloc `bpmn`
+# qui mappe directement vers les templates GNSPD.
+# Ce fichier est l'input structuré du générateur BPMN IA.
+
+# ─────────────────────────────────────────────
+# MÉTADONNÉES DU SERVICE
+# ─────────────────────────────────────────────
+service:
+  id: SRV-DGDN-2026-001
+  code: CNI
+  name: "Demande de Carte Nationale d'Identité (CNI)"
+  ministry: "Ministère de la Sécurité et de la Protection Civile"
+  direction: DGDN
+  payment: required              # none | required | conditional
+  payment_amount: variable       # 4000 (1ère/renouvellement) | 8000 (duplicata) | 20000 (urgence)
+  payment_amount_default: 4000   # montant par défaut (1ère demande / renouvellement)
+  correction_loop:
+    enabled: true
+    max_retries: 3
+    timeout: P15D                # ISO 8601 duration — 15 jours
+  odoo_integration: true
+  third_party_apis: false
+  rdv_required: true             # Spécifique CNI — rendez-vous biométrique obligatoire
+
+# ─────────────────────────────────────────────
+# MESSAGES KAFKA INTER-POOLS
+# ─────────────────────────────────────────────
+kafka_messages:
+  - id: MSG_CNI_START
+    name: MSG_CNI_START
+    direction: XPortal → XFlow
+    trigger: "Soumission initiale avec paiement confirmé"
+    target_element: bpmn:StartEvent
+    payload: "données formulaire + pièces justificatives + créneau RDV souhaité"
+
+  - id: MSG_CNI_PAY_ORDER
+    name: MSG_CNI_PAY_ORDER
+    direction: XFlow → XPortal
+    trigger: "XFlow commande le paiement après AR envoyé"
+    target_element: bpmn:ReceiveTask
+
+  - id: MSG_CNI_PAY_CALLBACK
+    name: MSG_CNI_PAY_CALLBACK
+    direction: Externe → XFlow
+    trigger: "Callback de la plateforme de paiement e-Gov"
+    target_element: bpmn:IntermediateCatchEvent
+
+  - id: MSG_CNI_PAY_CONFIRM
+    name: MSG_CNI_PAY_CONFIRM
+    direction: XFlow → XPortal
+    trigger: "Paiement validé — XFlow confirme au portail"
+    target_element: bpmn:ReceiveTask
+
+  - id: MSG_CNI_RETURN
+    name: MSG_CNI_RETURN
+    direction: XFlow → XPortal
+    trigger: "Tout retour XFlow (correction | rdv_confirme | dispo | rejete)"
+    target_element: bpmn:ReceiveTask
+    payload_action_field: action   # gateway XPortal route sur this.data.Activity_P_Receive.result.data.action
+
+  - id: MSG_CNI_RESUB
+    name: MSG_CNI_RESUB
+    direction: XPortal → XFlow
+    trigger: "Resoumission du citoyen après correction"
+    target_element: bpmn:ReceiveTask
+
+# ─────────────────────────────────────────────
+# POOL XPORTAL — Machine à états (côté citoyen)
+# ─────────────────────────────────────────────
+xportal:
+  process_id: Process_Portal
+  process_name: CNI_Portal_v1
+  description: >
+    Machine à états pilotée par les messages XFlow.
+    Le citoyen soumet, paie, puis attend. La ReceiveTask centrale
+    route via gateway sur le champ action :
+    correction → formulaire correction → resub → wait
+    rdv_confirme → affichage info RDV → wait
+    dispo | rejete → fin.
+
+  steps:
+
+    - step: P0
+      name: "Initialisation du portail"
+      actor: Système
+      bpmn:
+        - template: tg.gouv.gnspd.startEvent
+          bpmn_type: bpmn:StartEvent
+          bpmn_id: Event_P_Start
+          label: "Soumission de la demande de CNI"
+          params:
+            gnspdStepName: "Début"
+            gnspdDescription: "Soumission de la demande de Carte Nationale d'Identité"
+            gnspdPriority: "10"
+            gnspdExecution: PORTAIL
+            gnspdPaymentAmount: "4000"
+            gnspdCalculationOperator: ADDITION
+            gnspdCalculationVar1: ""
+            gnspdCalculationVar2: ""
+            gnspdTaskIsVisible: "true"
+            gnspdTaskLabel: ""
+            gnspdTaskStatus: Pending
+            gnspdTaskOrder: ""
+            gnspdTaskKind: citizen
+            gnspdCost: ""
+            development: "{}"
+            sandbox: "{}"
+            preproduction: "{}"
+            production: "{}"
+
+    - step: P1
+      name: "Envoi immédiat au back-office (avant paiement)"
+      actor: Système
+      bpmn:
+        - template: tg.gouv.gnspd.sendMessage
+          bpmn_type: bpmn:SendTask
+          bpmn_id: Activity_P_SendBO
+          label: "Envoi du dossier au back-office"
+          params:
+            gnspdKafkaTopic: bpmn.commands
+            gnspdTargetElementType: "bpmn:StartEvent"
+            gnspdMessageRef: MSG_CNI_START
+            gnspdMessageDestination: "peer-xflow-service-public-sandbox"
+            gnspdMessage: "$this.data.Event_P_Start.parameters"
+            gnspdTaskIsVisible: "false"
+            gnspdTaskLabel: ""
+            gnspdTaskStatus: Pending
+            gnspdTaskOrder: ""
+            gnspdTaskKind: citizen
+            gnspdCostVariable: ""
+            gnspdCostTotal: ""
+            gnspdCostUnitaire: ""
+
+    - step: P2a
+      name: "Attente de l'ordre de paiement de XFlow"
+      actor: Système
+      bpmn:
+        - template: tg.gouv.gnspd.receiveTask
+          bpmn_type: bpmn:ReceiveTask
+          bpmn_id: Activity_P_RcvPayOrder
+          label: "Attendre l'ordre de paiement"
+          message_ref: MSG_CNI_PAY_ORDER
+          params:
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: citizen
+
+    - step: P2b
+      name: "Paiement sur la plateforme e-Gov externe"
+      actor: Citoyen
+      system: "Plateforme e-Gov externe"
+      description: >
+        Le citoyen est redirigé vers la plateforme de paiement e-Gov externe
+        (Flooz / TMoney / Visa / Mastercard). Le paiement ne se fait ni dans
+        XPortal ni dans XFlow. Montant variable selon le type de demande.
+      bpmn:
+        - template: tg.gouv.gnspd.userTask
+          bpmn_type: bpmn:UserTask
+          bpmn_id: Activity_P_Payment
+          label: "Paiement des frais — Plateforme externe"
+          params:
+            gnspdTaskIsVisible: "true"
+            gnspdTaskLabel: "Paiement des frais"
+            gnspdTaskStatus: PendingPayment
+            gnspdTaskOrder: "1"
+            gnspdTaskKind: citizen
+
+    - step: P2c
+      name: "Attente de confirmation du paiement"
+      actor: Système
+      bpmn:
+        - template: tg.gouv.gnspd.receiveTask
+          bpmn_type: bpmn:ReceiveTask
+          bpmn_id: Activity_P_RcvPayConfirm
+          label: "Attendre confirmation de paiement"
+          message_ref: MSG_CNI_PAY_CONFIRM
+          params:
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: citizen
+
+    - step: P_WAIT
+      name: "Attente du retour XFlow"
+      actor: Système
+      description: >
+        Point d'attente central unique. Reçoit tous les retours XFlow via MSG_CNI_RETURN.
+        La gateway en sortie route selon result.data.action.
+      bpmn:
+        - template: tg.gouv.gnspd.receiveTask
+          bpmn_type: bpmn:ReceiveTask
+          bpmn_id: Activity_P_Receive
+          label: "Attendre le retour XFlow"
+          message_ref: MSG_CNI_RETURN
+          params:
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: citizen
+
+      gateway_out:
+        bpmn_id: Gateway_P_Action
+        type: bpmn:ExclusiveGateway
+        label: "Quelle action ?"
+        routes:
+          - condition: "this.data.Activity_P_Receive.result.data.action == 'correction'"
+            target: Activity_P_Correction
+          - condition: "this.data.Activity_P_Receive.result.data.action == 'rdv_confirme'"
+            target: Activity_P_RdvInfo
+          - condition: "this.data.Activity_P_Receive.result.data.action == 'dispo' || this.data.Activity_P_Receive.result.data.action == 'rejete'"
+            target: Event_P_End
+
+    - step: P3a
+      name: "Affichage des informations de rendez-vous"
+      actor: Citoyen
+      system: XPortal
+      description: >
+        XFlow a confirmé le créneau RDV biométrique.
+        Le portail affiche le lieu, la date et l'heure au citoyen.
+        Après lecture, le dossier repasse en attente du prochain message XFlow.
+      bpmn:
+        - template: tg.gouv.gnspd.userTask
+          bpmn_type: bpmn:UserTask
+          bpmn_id: Activity_P_RdvInfo
+          label: "Rendez-vous biométrique confirmé"
+          params:
+            gnspdTaskIsVisible: "true"
+            gnspdTaskLabel: "Rendez-vous biométrique confirmé"
+            gnspdTaskStatus: PendingPortal
+            gnspdTaskOrder: "2"
+            gnspdTaskKind: citizen
+
+    - step: P3b
+      name: "Correction du dossier"
+      actor: Citoyen
+      system: XPortal
+      retry:
+        max: 3
+        timeout: P15D
+      bpmn:
+        - template: tg.gouv.gnspd.userTask
+          bpmn_type: bpmn:UserTask
+          bpmn_id: Activity_P_Correction
+          label: "Correction du dossier"
+          params:
+            gnspdHandlerType: publish_submission
+            gnspdSubmissionData: "$(this.data.Activity_P_Correction && this.data.Activity_P_Correction.result ? this.data.Activity_P_Correction.result : this.data.Event_P_Start.parameters.submissionData.data)"
+            gnspdTaskIsVisible: "true"
+            gnspdTaskLabel: "Correction du dossier"
+            gnspdTaskStatus: Pending
+            gnspdTaskOrder: "2"
+            gnspdTaskKind: citizen
+
+        - template: tg.gouv.gnspd.sendMessage
+          bpmn_type: bpmn:SendTask
+          bpmn_id: Activity_P_SendResub
+          label: "Envoi de la resoumission"
+          params:
+            gnspdKafkaTopic: bpmn.commands
+            gnspdTargetElementType: "bpmn:ReceiveTask"
+            gnspdMessageRef: MSG_CNI_RESUB
+            gnspdMessageDestination: "peer-xflow-service-public-sandbox"
+            gnspdMessage: "$this.data.Activity_P_Correction.result"
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: citizen
+
+    - step: P_END
+      name: "Fin du processus portail"
+      actor: Système
+      bpmn:
+        - template: tg.gouv.gnspd.endEvent
+          bpmn_type: bpmn:EndEvent
+          bpmn_id: Event_P_End
+          label: "Fin"
+
+# ─────────────────────────────────────────────
+# POOL XFLOW — Orchestration back-office
+# ─────────────────────────────────────────────
+xflow:
+  process_id: Process_Xflow
+  process_name: CNI_Xflow_v1
+  version_tag: "1.0"
+  history_ttl: "180"
+  description: >
+    Orchestration métier complète :
+    accusé de réception → paiement → vérification conformité →
+    confirmation RDV → capture biométrique → validation superviseur CD →
+    transmission DGDN → production DGDN → notification disponibilité →
+    archivage GED Odoo.
+    Branche de rejet disponible à tout niveau de décision.
+
+  steps:
+
+    - step: X0
+      name: "Réception du dossier"
+      actor: Système
+      bpmn:
+        - template: tg.gouv.gnspd.startEvent
+          bpmn_type: bpmn:StartEvent
+          bpmn_id: Event_X_Start
+          label: "Réception de la demande CNI"
+          message_ref: MSG_CNI_START
+          params:
+            gnspdStepName: "Réception"
+            gnspdDescription: "Réception de la demande de Carte Nationale d'Identité"
+            gnspdPriority: "10"
+            gnspdExecution: PORTAIL
+            gnspdPaymentAmount: "4000"
+            gnspdCalculationOperator: ADDITION
+            gnspdCalculationVar1: ""
+            gnspdCalculationVar2: ""
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskOrder: ""
+            gnspdTaskKind: system
+            development: "{}"
+            sandbox: "{}"
+            preproduction: "{}"
+            production: "{}"
+
+        - template: tg.gouv.gnspd.stepNotification
+          bpmn_type: bpmn:ServiceTask
+          bpmn_id: Activity_X_StepSubmitted
+          label: "Marquer dossier soumis"
+          params:
+            gnspdStatus: Submited
+            gnspdIsPortal: "false"
+            gnspdStepOrder: "1"
+            gnspdTaskIsVisible: "false"
+            gnspdTaskLabel: "Soumission"
+            gnspdTaskStatus: Submitted
+            gnspdTaskOrder: "1"
+            gnspdTaskKind: system
+
+        - template: tg.gouv.gnspd.sendNotification
+          bpmn_type: bpmn:ServiceTask
+          bpmn_id: Activity_X_NotifAR
+          label: "Accusé de réception SMS/Email"
+          params:
+            gnspdNotifySendEmail: "true"
+            gnspdNotifyEmail: "$this.data.Event_X_Start.parameters.submissionData.email"
+            gnspdNotifyTemplateEmail: "[ID template email AR — à renseigner]"
+            gnspdNotifyContentEmail: '{"record_id": this.data.xref}'
+            gnspdNotifySendSMS: "true"
+            gnspdNotifyPhone: "$this.data.Event_X_Start.parameters.submissionData.telephone"
+            gnspdNotifyTemplateSMS: "[ID template SMS AR — à renseigner]"
+            gnspdNotifyContentSMS: '{"record_id": this.data.xref}'
+            gnspdNotifyInApp: "true"
+            gnspdNotifyTemplateInApp: "[ID template in-app AR — à renseigner]"
+            gnspdNotifyContentInApp: '{"record_id": this.data.xref}'
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: system
+
+        - template: tg.gouv.gnspd.sendMessage
+          bpmn_type: bpmn:SendTask
+          bpmn_id: Activity_X_SendPayOrder
+          label: "Envoyer l'ordre de paiement au portail"
+          params:
+            gnspdKafkaTopic: bpmn.commands
+            gnspdTargetElementType: "bpmn:ReceiveTask"
+            gnspdMessageRef: MSG_CNI_PAY_ORDER
+            gnspdMessageDestination: "ch-portail-service-public-sandbox"
+            gnspdMessage: '{"montant": this.data.Event_X_Start.parameters.submissionData.montantPaiement}'
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: system
+
+        # Attente du callback de la plateforme de paiement e-Gov
+        - template: tg.gouv.gnspd.intermediateCatchEvent
+          bpmn_type: bpmn:IntermediateCatchEvent
+          bpmn_id: Event_X_PayCallback
+          label: "Attendre callback paiement"
+          message_ref: MSG_CNI_PAY_CALLBACK
+
+        - template: tg.gouv.gnspd.sendMessage
+          bpmn_type: bpmn:SendTask
+          bpmn_id: Activity_X_SendPayConfirm
+          label: "Confirmer le paiement au portail"
+          params:
+            gnspdKafkaTopic: bpmn.commands
+            gnspdTargetElementType: "bpmn:ReceiveTask"
+            gnspdMessageRef: MSG_CNI_PAY_CONFIRM
+            gnspdMessageDestination: "ch-portail-service-public-sandbox"
+            gnspdMessage: '{"statut": "confirme"}'
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: system
+
+    - step: X1
+      name: "Vérification de conformité du dossier"
+      actor: "Agent de réception CD"
+      system: XFlow
+      sla: "48h"
+      inputs:
+        - "Dossier complet (formulaire + pièces jointes)"
+        - "Preuve de paiement"
+        - "Créneau RDV souhaité"
+      output: "Décision de conformité (conforme / correction / rejet)"
+      bpmn:
+        - template: tg.gouv.gnspd.userTask
+          bpmn_type: bpmn:UserTask
+          bpmn_id: Activity_X_Conformite
+          label: "Vérification de conformité (Agent CD)"
+          params:
+            gnspdTaskDescription: "Vérifier la conformité du dossier de demande de CNI"
+            gnspdHandlerType: publish_submission
+            gnspdSubmissionData: "$this.data.Event_X_Start.parameters.submissionData"
+            gnspdAttachments: >
+              {
+                "acteDeNaissance": this.data.Event_X_Start.parameters.submissionData.acteDeNaissance ?? null,
+                "ancienneCni": this.data.Event_X_Start.parameters.submissionData.ancienneCni ?? null,
+                "declarationPerte": this.data.Event_X_Start.parameters.submissionData.declarationPerte ?? null
+              }
+            gnspdTaskIsVisible: "false"
+            gnspdTaskLabel: "Vérification de conformité"
+            gnspdTaskStatus: PendingBackOffice
+            gnspdTaskOrder: "1"
+            gnspdTaskKind: backoffice
+
+      gateway_out:
+        bpmn_id: Gateway_X_Conformite
+        type: bpmn:ExclusiveGateway
+        label: "Décision conformité"
+        routes:
+          - label: Conforme
+            condition: "this.data.Activity_X_Conformite.result.submissionData.decision == 'conforme'"
+            target: Activity_X_ConfirmRdv
+          - label: Correction
+            condition: "this.data.Activity_X_Conformite.result.submissionData.decision == 'correction'"
+            target: Activity_X_StepCorrection
+          - label: Rejet
+            condition: "this.data.Activity_X_Conformite.result.submissionData.decision == 'rejet'"
+            target: Activity_X_StepRejet
+
+    - step: X1a
+      name: "Demande de correction au citoyen"
+      actor: Système
+      bpmn:
+        - template: tg.gouv.gnspd.stepNotification
+          bpmn_type: bpmn:ServiceTask
+          bpmn_id: Activity_X_StepCorrection
+          label: "Mettre en correction"
+          params:
+            gnspdStatus: PendingUser
+            gnspdIsPortal: "true"
+            gnspdStepOrder: "1"
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: PendingPortal
+            gnspdTaskKind: system
+
+        - template: tg.gouv.gnspd.sendNotification
+          bpmn_type: bpmn:ServiceTask
+          bpmn_id: Activity_X_NotifCorrection
+          label: "Notifier correction SMS/Email"
+          params:
+            gnspdNotifySendEmail: "true"
+            gnspdNotifyEmail: "$this.data.Event_X_Start.parameters.submissionData.email"
+            gnspdNotifyTemplateEmail: "[ID template email correction — à renseigner]"
+            gnspdNotifyContentEmail: '{"record_id": this.data.xref, "motif": this.data.Activity_X_Conformite.result.submissionData.motifCorrection}'
+            gnspdNotifySendSMS: "true"
+            gnspdNotifyPhone: "$this.data.Event_X_Start.parameters.submissionData.telephone"
+            gnspdNotifyTemplateSMS: "[ID template SMS correction — à renseigner]"
+            gnspdNotifyContentSMS: '{"record_id": this.data.xref}'
+            gnspdNotifyInApp: "true"
+            gnspdNotifyTemplateInApp: "[ID template in-app correction — à renseigner]"
+            gnspdNotifyContentInApp: '{"record_id": this.data.xref}'
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: system
+
+        - template: tg.gouv.gnspd.sendMessage
+          bpmn_type: bpmn:SendTask
+          bpmn_id: Activity_X_SendCorrection
+          label: "Envoyer demande de correction au portail"
+          params:
+            gnspdKafkaTopic: bpmn.commands
+            gnspdTargetElementType: "bpmn:ReceiveTask"
+            gnspdMessageRef: MSG_CNI_RETURN
+            gnspdMessageDestination: "ch-portail-service-public-sandbox"
+            gnspdMessage: '{"action": "correction", "motif": this.data.Activity_X_Conformite.result.submissionData.motifCorrection}'
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: system
+
+        - template: tg.gouv.gnspd.receiveTask
+          bpmn_type: bpmn:ReceiveTask
+          bpmn_id: Activity_X_WaitResub
+          label: "Attendre resoumission"
+          message_ref: MSG_CNI_RESUB
+          params:
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: PendingPortal
+            gnspdTaskKind: system
+      # Après resoumission → retour à Activity_X_Conformite
+
+    - step: X2
+      name: "Confirmation du rendez-vous biométrique"
+      actor: "Agent de réception CD"
+      system: XFlow
+      sla: "24h"
+      inputs:
+        - "Dossier validé conforme"
+        - "Créneau RDV souhaité par le citoyen"
+      output: "RDV biométrique confirmé (lieu, date, heure) + notification citoyen"
+      bpmn:
+        - template: tg.gouv.gnspd.userTask
+          bpmn_type: bpmn:UserTask
+          bpmn_id: Activity_X_ConfirmRdv
+          label: "Confirmer le rendez-vous biométrique"
+          params:
+            gnspdTaskDescription: "Confirmer ou reprogrammer le créneau de capture biométrique"
+            gnspdHandlerType: publish_submission
+            gnspdSubmissionData: "$this.data.Event_X_Start.parameters.submissionData"
+            gnspdTaskIsVisible: "false"
+            gnspdTaskLabel: "Confirmation RDV biométrique"
+            gnspdTaskStatus: PendingBackOffice
+            gnspdTaskOrder: "2"
+            gnspdTaskKind: backoffice
+
+        - template: tg.gouv.gnspd.sendNotification
+          bpmn_type: bpmn:ServiceTask
+          bpmn_id: Activity_X_NotifRdv
+          label: "Notifier le RDV confirmé — SMS/Email"
+          params:
+            gnspdNotifySendEmail: "true"
+            gnspdNotifyEmail: "$this.data.Event_X_Start.parameters.submissionData.email"
+            gnspdNotifyTemplateEmail: "[ID template email RDV — à renseigner]"
+            gnspdNotifyContentEmail: '{"record_id": this.data.xref, "rdv": this.data.Activity_X_ConfirmRdv.result.submissionData}'
+            gnspdNotifySendSMS: "true"
+            gnspdNotifyPhone: "$this.data.Event_X_Start.parameters.submissionData.telephone"
+            gnspdNotifyTemplateSMS: "[ID template SMS RDV — à renseigner]"
+            gnspdNotifyContentSMS: '{"record_id": this.data.xref, "date": this.data.Activity_X_ConfirmRdv.result.submissionData.dateRdv}'
+            gnspdNotifyInApp: "true"
+            gnspdNotifyTemplateInApp: "[ID template in-app RDV — à renseigner]"
+            gnspdNotifyContentInApp: '{"record_id": this.data.xref}'
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: system
+
+        - template: tg.gouv.gnspd.sendMessage
+          bpmn_type: bpmn:SendTask
+          bpmn_id: Activity_X_SendRdvConfirm
+          label: "Envoyer confirmation RDV au portail"
+          params:
+            gnspdKafkaTopic: bpmn.commands
+            gnspdTargetElementType: "bpmn:ReceiveTask"
+            gnspdMessageRef: MSG_CNI_RETURN
+            gnspdMessageDestination: "ch-portail-service-public-sandbox"
+            gnspdMessage: '{"action": "rdv_confirme", "rdv": this.data.Activity_X_ConfirmRdv.result.submissionData}'
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: system
+
+    - step: X3
+      name: "Enregistrement de la capture biométrique"
+      actor: "Opérateur biométrique CD"
+      system: XFlow
+      description: >
+        Le citoyen s'est présenté au CD pour la capture biométrique.
+        L'opérateur enregistre la réalisation de la capture dans XFlow.
+      inputs:
+        - "Présence physique du citoyen au CD"
+        - "Données biométriques capturées (photo, empreintes, signature)"
+      output: "Capture biométrique enregistrée dans XFlow"
+      bpmn:
+        - template: tg.gouv.gnspd.userTask
+          bpmn_type: bpmn:UserTask
+          bpmn_id: Activity_X_Biometrique
+          label: "Enregistrement capture biométrique (Opérateur CD)"
+          params:
+            gnspdTaskDescription: "Confirmer la capture biométrique du citoyen et valider les données biographiques"
+            gnspdHandlerType: publish_submission
+            gnspdSubmissionData: "$this.data.Event_X_Start.parameters.submissionData"
+            gnspdTaskIsVisible: "false"
+            gnspdTaskLabel: "Capture biométrique"
+            gnspdTaskStatus: PendingBackOffice
+            gnspdTaskOrder: "3"
+            gnspdTaskKind: backoffice
+
+    - step: X4
+      name: "Validation superviseur CD"
+      actor: "Superviseur CD"
+      system: XFlow
+      sla: "4h"
+      inputs:
+        - "Dossier complet + capture biométrique enregistrée"
+      output: "Décision finale (valider / correction biométrique / rejet)"
+      bpmn:
+        - template: tg.gouv.gnspd.userTask
+          bpmn_type: bpmn:UserTask
+          bpmn_id: Activity_X_Superviseur
+          label: "Validation superviseur CD"
+          params:
+            gnspdTaskDescription: "Valider le dossier complet avant transmission à la DGDN"
+            gnspdHandlerType: publish_submission
+            gnspdSubmissionData: "$this.data.Event_X_Start.parameters.submissionData"
+            gnspdTaskIsVisible: "false"
+            gnspdTaskLabel: "Validation superviseur"
+            gnspdTaskStatus: Review
+            gnspdTaskOrder: "4"
+            gnspdTaskKind: backoffice
+
+      gateway_out:
+        bpmn_id: Gateway_X_Superviseur
+        type: bpmn:ExclusiveGateway
+        label: "Décision superviseur"
+        routes:
+          - label: Validé
+            condition: "this.data.Activity_X_Superviseur.result.submissionData.decision == 'valide'"
+            target: Activity_X_TransmissionDGDN
+          - label: "Correction biométrique"
+            condition: "this.data.Activity_X_Superviseur.result.submissionData.decision == 'correction'"
+            target: Activity_X_Biometrique
+          - label: Rejeté
+            condition: "this.data.Activity_X_Superviseur.result.submissionData.decision == 'rejete'"
+            target: Activity_X_StepRejet
+
+    - step: X5
+      name: "Transmission à la DGDN"
+      actor: Système
+      system: XFlow
+      output: "Dossier transmis à la DGDN pour personnalisation"
+      bpmn:
+        - template: tg.gouv.gnspd.serviceTask
+          bpmn_type: bpmn:ServiceTask
+          bpmn_id: Activity_X_TransmissionDGDN
+          label: "Transmission du lot à la DGDN"
+          params:
+            gnspdTaskDescription: "Transmission du dossier biométrique à la DGDN pour personnalisation"
+            gnspdTaskIsVisible: "false"
+            gnspdTaskLabel: "Transmission DGDN"
+            gnspdTaskStatus: Pending
+            gnspdTaskOrder: "5"
+            gnspdTaskKind: system
+
+    - step: X6
+      name: "Production à la DGDN"
+      actor: "Agent DGDN"
+      system: XFlow
+      sla: "P30D (standard) / P2D (urgence)"
+      description: >
+        La DGDN personnalise et imprime la CNI sur sa chaîne sécurisée.
+        L'agent DGDN marque la production comme terminée dans XFlow
+        lorsque la carte est prête et retournée au CD.
+      output: "CNI produite et disponible au CD"
+      bpmn:
+        - template: tg.gouv.gnspd.userTask
+          bpmn_type: bpmn:UserTask
+          bpmn_id: Activity_X_ProductionDGDN
+          label: "Marquer production CNI terminée (Agent DGDN)"
+          params:
+            gnspdTaskDescription: "Confirmer la production et le retour de la CNI au Centre de Documentation"
+            gnspdHandlerType: publish_submission
+            gnspdSubmissionData: "$this.data.Event_X_Start.parameters.submissionData"
+            gnspdTaskIsVisible: "false"
+            gnspdTaskLabel: "Production DGDN"
+            gnspdTaskStatus: PendingBackOffice
+            gnspdTaskOrder: "6"
+            gnspdTaskKind: backoffice
+
+    - step: X7
+      name: "Archivage GED Odoo"
+      actor: Système
+      system: XFlow
+      output: "Dossier archivé dans la GED Odoo"
+      bpmn:
+        - template: tg.gouv.gnspd.odoo
+          bpmn_type: bpmn:ServiceTask
+          bpmn_id: Activity_X_OdooArchive
+          label: "Archivage dans la GED Odoo"
+          params:
+            gnspdOdooMethod: create
+            gnspdOdooModel: ged.document
+            gnspdOdooAction: create
+            gnspdOdooArgs: >
+              {
+                "from_portal": "true",
+                "folder_number": this.data.xref,
+                "nom": this.data.Event_X_Start.parameters.submissionData.nom,
+                "prenom": this.data.Event_X_Start.parameters.submissionData.prenom,
+                "typedemande": this.data.Event_X_Start.parameters.submissionData.typedemande,
+                "numeroCni": this.data.Activity_X_ProductionDGDN.result.submissionData.numeroCni ?? null
+              }
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: system
+
+    - step: X8
+      name: "Notification de disponibilité et clôture"
+      actor: Système
+      system: XFlow
+      output: "Citoyen notifié que la CNI est prête au retrait + dossier clôturé"
+      bpmn:
+        - template: tg.gouv.gnspd.stepNotification
+          bpmn_type: bpmn:ServiceTask
+          bpmn_id: Activity_X_StepCompleted
+          label: "Marquer CNI disponible"
+          params:
+            gnspdStatus: Success
+            gnspdIsPortal: "true"
+            gnspdStepOrder: "1"
+            gnspdTaskIsVisible: "true"
+            gnspdTaskLabel: "CNI disponible"
+            gnspdTaskStatus: PendingCompletion
+            gnspdTaskOrder: "3"
+            gnspdTaskKind: system
+
+        - template: tg.gouv.gnspd.sendNotification
+          bpmn_type: bpmn:ServiceTask
+          bpmn_id: Activity_X_NotifDispo
+          label: "Notifier disponibilité CNI — SMS/Email"
+          params:
+            gnspdNotifySendEmail: "true"
+            gnspdNotifyEmail: "$this.data.Event_X_Start.parameters.submissionData.email"
+            gnspdNotifyTemplateEmail: "[ID template email disponibilité — à renseigner]"
+            gnspdNotifyContentEmail: '{"record_id": this.data.xref, "centre": this.data.Event_X_Start.parameters.submissionData.centreDocumentation}'
+            gnspdNotifySendSMS: "true"
+            gnspdNotifyPhone: "$this.data.Event_X_Start.parameters.submissionData.telephone"
+            gnspdNotifyTemplateSMS: "[ID template SMS disponibilité — à renseigner]"
+            gnspdNotifyContentSMS: '{"record_id": this.data.xref, "centre": this.data.Event_X_Start.parameters.submissionData.centreDocumentation}'
+            gnspdNotifyInApp: "true"
+            gnspdNotifyTemplateInApp: "[ID template in-app disponibilité — à renseigner]"
+            gnspdNotifyContentInApp: '{"record_id": this.data.xref}'
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: system
+
+        - template: tg.gouv.gnspd.sendMessage
+          bpmn_type: bpmn:SendTask
+          bpmn_id: Activity_X_SendDispo
+          label: "Clôturer le portail (dispo)"
+          params:
+            gnspdKafkaTopic: bpmn.commands
+            gnspdTargetElementType: "bpmn:ReceiveTask"
+            gnspdMessageRef: MSG_CNI_RETURN
+            gnspdMessageDestination: "ch-portail-service-public-sandbox"
+            gnspdMessage: '{"action": "dispo"}'
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: system
+
+        - template: tg.gouv.gnspd.endEvent
+          bpmn_type: bpmn:EndEvent
+          bpmn_id: Event_X_End
+          label: "Fin"
+
+    # ── Branche de rejet ──
+
+    - step: X_REJET
+      name: "Rejet du dossier"
+      actor: Système
+      system: XFlow
+      bpmn:
+        - template: tg.gouv.gnspd.stepNotification
+          bpmn_type: bpmn:ServiceTask
+          bpmn_id: Activity_X_StepRejet
+          label: "Marquer dossier rejeté"
+          params:
+            gnspdStatus: Fail
+            gnspdIsPortal: "true"
+            gnspdStepOrder: "1"
+            gnspdTaskIsVisible: "true"
+            gnspdTaskLabel: "Dossier rejeté"
+            gnspdTaskStatus: Rejected
+            gnspdTaskOrder: "2"
+            gnspdTaskKind: system
+
+        - template: tg.gouv.gnspd.sendNotification
+          bpmn_type: bpmn:ServiceTask
+          bpmn_id: Activity_X_NotifRejet
+          label: "Notifier rejet SMS/Email"
+          params:
+            gnspdNotifySendEmail: "true"
+            gnspdNotifyEmail: "$this.data.Event_X_Start.parameters.submissionData.email"
+            gnspdNotifyTemplateEmail: "[ID template email rejet — à renseigner]"
+            gnspdNotifyContentEmail: '{"record_id": this.data.xref, "motif": this.data.Activity_X_Conformite.result.submissionData.motifRejet}'
+            gnspdNotifySendSMS: "true"
+            gnspdNotifyPhone: "$this.data.Event_X_Start.parameters.submissionData.telephone"
+            gnspdNotifyTemplateSMS: "[ID template SMS rejet — à renseigner]"
+            gnspdNotifyContentSMS: '{"record_id": this.data.xref}'
+            gnspdNotifyInApp: "false"
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: system
+
+        - template: tg.gouv.gnspd.sendMessage
+          bpmn_type: bpmn:SendTask
+          bpmn_id: Activity_X_SendRejet
+          label: "Signaler le rejet au portail"
+          params:
+            gnspdKafkaTopic: bpmn.commands
+            gnspdTargetElementType: "bpmn:ReceiveTask"
+            gnspdMessageRef: MSG_CNI_RETURN
+            gnspdMessageDestination: "ch-portail-service-public-sandbox"
+            gnspdMessage: '{"action": "rejete"}'
+            gnspdTaskIsVisible: "false"
+            gnspdTaskStatus: Pending
+            gnspdTaskKind: system
+
+        - template: tg.gouv.gnspd.endEvent
+          bpmn_type: bpmn:EndEvent
+          bpmn_id: Event_X_EndRejet
+          label: "Fin — Rejet"

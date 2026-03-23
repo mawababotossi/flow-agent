@@ -1,0 +1,89 @@
+Rubrique,Détail
+,,
+IDENTIFICATION DU SERVICE,,
+Nom du service,Demande d'extrait d'acte de mariage (première délivrance et duplicata)
+Organisme,Ministère de la Justice / Direction des Affaires Civiles et du Sceau (DACS) — Centre d'État Civil de Lomé et mairies des préfectures
+Direction,Direction des Affaires Civiles et du Sceau (DACS)
+Rôle de la direction,"Superviser la tenue des registres d'état civil (naissances, mariages, décès) sur l'ensemble du territoire togolais ; garantir l'authenticité et l'intégrité des actes civils."
+,,
+CONTEXTE ET BASE LÉGALE,,
+Description du service,"L'extrait d'acte de mariage est un document officiel attestant de l'union légale entre deux personnes. Il est indispensable pour de nombreuses démarches administratives : demande de passeport, succession, regroupement familial, actes notariés, naturalisations, pensions, etc. La délivrance est assurée par l'officier d'état civil de la commune où le mariage a été célébré."
+Texte réglementaire,"Ordonnance n°78-35 du 7 septembre 1978 portant Code de l'État Civil togolais, modifiée ; Décret d'application n°80-10 du 29 janvier 1980"
+Parties non digitalisables selon la loi,"L'acte de mariage original doit être signé de la main de l'officier d'état civil. La légalisation de signature est une procédure physique. Le mariage lui-même (cérémonie civile) ne peut être célébré qu'en présence physique des parties."
+Signature électronique reconnue,Non — la législation actuelle n'a pas encore reconnu la signature électronique pour les actes d'état civil.
+Documentation officielle existante,Oui — registres d'état civil tenus en deux exemplaires (mairie + tribunal de grande instance)
+Date de création du service,"L'état civil togolais est organisé depuis l'indépendance (1960). Le Code de l'État Civil a été promulgué en 1978 et reste en vigueur, avec des ajustements ponctuels."
+,,
+USAGERS,,
+Public cible,"Tout citoyen togolais ou étranger marié sur le territoire togolais, ou conjoint d'un citoyen togolais, ayant besoin de prouver son union légale. Très souvent sollicité dans le cadre de démarches notariales, consulaires, ou familiales."
+Conditions d'éligibilité,"• Être l'un des époux, ou un descendant direct, ou un représentant légal dûment mandaté
+• Le mariage doit avoir été célébré au Togo et enregistré dans les registres de l'état civil de la commune concernée"
+Volume estimé,"Environ 15 000 extraits d'actes de mariage délivrés par an sur l'ensemble du territoire, dont environ 5 000 à Lomé."
+,,
+PIÈCES JUSTIFICATIVES,,
+Pour la première délivrance,"• Demande écrite (formulaire disponible au guichet ou à rédiger sur papier libre)
+• Copie de la pièce d'identité du demandeur (CNI, passeport ou carte de résident)
+• Indication précise de la date et du lieu du mariage
+• Copie du livret de famille si disponible"
+Pour le duplicata (acte perdu ou détérioré),"• Demande écrite expliquant la perte ou la détérioration
+• Copie de la pièce d'identité
+• Copie du jugement supplétif si l'acte original est introuvable dans les registres
+• 2 photos d'identité (selon la mairie)"
+Coût,"Extrait simple : gratuit dans la plupart des mairies (timbres fiscaux entre 200 et 500 FCFA selon la commune)
+Copie intégrale (avec toutes les mentions) : 1 000 à 2 000 FCFA selon la mairie
+Légalisation de signature : 1 000 FCFA (service du Sceau)
+Paiement : espèces uniquement au guichet"
+,,
+ÉTAPES DU PROCESSUS CÔTÉ CITOYEN,,
+Étape 1,"Se renseigner sur la mairie ou le centre d'état civil compétent (commune où le mariage a été célébré). En cas de mariage à l'étranger, le dossier est traité par le Tribunal de Grande Instance de Lomé."
+Étape 2,"Se rendre physiquement au guichet de la mairie concernée avec les pièces requises. Il n'existe pas de formulaire standardisé en ligne. Le citoyen rédige sa demande sur place ou à la main."
+Étape 3,"L'agent du guichet vérifie l'identité du demandeur et recherche le numéro de l'acte dans le registre. Si l'acte est trouvé, un extrait est rédigé (à la main ou par impression selon l'équipement disponible)."
+Étape 4,"Le document est signé par l'officier d'état civil (ou son délégué), apposé du cachet officiel et remis au demandeur. Délai : de quelques minutes à 2 semaines si le registre est incomplet ou introuvable."
+Étape 5,"En cas d'acte introuvable (registre endommagé ou détruit), le citoyen est orienté vers la procédure judiciaire de reconstitution d'acte (jugement supplétif au TGI), beaucoup plus longue (2 à 6 mois)."
+,,
+ACTIONS INTERNES DES AGENTS,,
+Agent d'accueil / guichet,"Réception de la demande, vérification des pièces, consultation du registre papier pour localiser l'acte."
+Officier d'état civil ou délégué,"Vérification de l'acte original dans le registre, rédaction ou impression de l'extrait, signature et apposition du sceau."
+Agent d'archivage,"Enregistrement de la délivrance dans le registre de sorties, classement de la copie de la demande."
+Responsable DACS (pour les cas complexes),"Arbitrage sur les actes contestés, coordination avec le TGI pour les jugements supplétifs."
+,,
+GOULOTS D'ÉTRANGLEMENT IDENTIFIÉS,,
+Goulot 1,"Registres papier dégradés ou introuvables : dans de nombreuses mairies de préfecture, les registres antérieurs à 1990 sont partiellement détruits, rendant la recherche impossible ou très longue."
+Goulot 2,"Déplacement obligatoire dans la commune d'établissement de l'acte : un citoyen résidant à Lomé dont le mariage a été célébré à Dapaong doit soit se déplacer, soit mandater quelqu'un."
+Goulot 3,"Absence totale d'informatisation dans les petites mairies : recherche entièrement manuelle, très lente pour les actes anciens."
+Goulot 4,"Fréquence des falsifications : sans système de vérification numérique, les faux extraits circulent librement."
+Goulot 5,"Méconnaissance des procédures par les citoyens : beaucoup ne savent pas quelle mairie est compétente ni quelles pièces apporter."
+,,
+OUTILS ACTUELS,,
+Système de gestion,"Registres papier exclusivement dans la majorité des mairies. Quelques mairies de Lomé ont partiellement informatisé les registres récents (à partir de 2010) sur Excel ou un logiciel de gestion de l'état civil (LogiEC, non déployé à l'échelle nationale)."
+Stockage,"Registres originaux en mairie, double en tribunal. Conservation en classeurs, exposés aux risques d'incendie, d'humidité, de termites."
+Base de données centralisée,Non — il n'existe pas de registre national électronique de l'état civil au Togo à ce jour.
+,,
+STATISTIQUES,,
+Demandes par mois (Lomé),Environ 400 à 500 extraits d'actes de mariage
+Demandes par an (national),Estimé à 15 000
+Taux de dossiers posant problème,"Environ 30 % des demandes nécessitent une recherche prolongée (acte difficile à localiser, registre dégradé)"
+Taux de renvoi vers jugement supplétif,Environ 5 à 8 % des demandes
+Nombre d'agents impliqués par mairie,2 à 4 agents (variable selon la taille de la commune)
+Délai moyen de délivrance,"Immédiat à 24h si l'acte est facilement localisable. 1 à 4 semaines si recherche complexe. 2 à 6 mois pour jugement supplétif."
+Périodes de forte activité,"Janvier–mars (rentrées scolaires, besoins de dossiers administratifs) ; juillet–septembre (demandes consulaires, regroupements familiaux)"
+,,
+DOCUMENT DÉLIVRÉ,,
+Nature du document,"Extrait d'acte de mariage : document papier portant les mentions essentielles (identité des époux, date, lieu, numéro d'acte, officier d'état civil, mentions marginales éventuelles)"
+Types de copies,"Extrait avec filiation (mentions réduites) ou copie intégrale (toutes les mentions, y compris marginales)"
+Durée de validité,"Pas de péremption légale, mais certaines administrations exigent un acte de moins de 3 mois."
+,,
+DIFFICULTÉS ET AXES D'AMÉLIORATION,,
+Principales difficultés,"• Absence d'une base numérique centrale des actes d'état civil
+• Dégradation physique des registres anciens
+• Obligation de déplacement dans la commune d'établissement de l'acte
+• Fragilité du système face aux falsifications
+• Manque de personnel et de matériel dans les mairies de préfecture"
+Ce qui pourrait être digitalisé,"• Numérisation des registres existants (scan et indexation)
+• Portail de demande en ligne avec suivi du dossier
+• Paiement en ligne des frais
+• Envoi numérique de l'extrait avec QR code d'authentification
+• Consultation en ligne pour les administrations partenaires (ambassades, notaires)"
+Ce qui reste physique obligatoirement,"• La signature de l'officier d'état civil sur le document original
+• La légalisation de signature (procédure physique)"
+Vision future selon les agents,"Un registre numérique national centralisé permettrait à n'importe quelle mairie de délivrer un extrait d'acte établi dans une autre commune, supprimant l'obligation de déplacement. L'authentification par QR code éliminerait les falsifications."
