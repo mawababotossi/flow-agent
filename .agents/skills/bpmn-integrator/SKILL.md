@@ -14,23 +14,32 @@ Le fichier XML BPMN doit impérativement être nommé :
 
 ---
 
-## Modèles de Référence — LECTURE OBLIGATOIRE AVANT TOUTE GÉNÉRATION
+## Lectures obligatoires avant toute génération
 
-> **⛔ INTERDICTION ABSOLUE** : Ne JAMAIS utiliser les fichiers du dossier `projects/` comme source d'inspiration ou de référence. Les projets en cours peuvent contenir des erreurs, des patterns obsolètes ou être incomplets. Seuls les fichiers listés ci-dessous et le dossier `exemples/` sont des sources de référence autorisées.
+> **⛔ INTERDICTION ABSOLUE** : Ne JAMAIS utiliser les fichiers du dossier `projects/` comme source d'inspiration ou de référence. Seuls les fichiers listés ci-dessous et le dossier `exemples/` sont des sources de référence autorisées.
 >
-> **⚠️ NUANCE** : Les exemples (`exemples/` et modèles ci-dessous) sont des sources d'inspiration et de patterns, mais ne constituent pas une vérité absolue. En cas de doute ou de conflit entre un exemple et les règles architecturales documentées, les règles architecturales prévalent.
+> **⚠️ NUANCE** : Les exemples sont des sources d'inspiration et de patterns validés, mais ne constituent pas une vérité absolue. En cas de conflit entre un exemple et les règles architecturales documentées ici, les règles prévalent.
 
-AVANT TOUTE GÉNÉRATION, l'agent **DOIT IMPÉRATIVEMENT** lire les modèles suivants :
+### Étape 1 — Lectures systématiques (TOUJOURS, pour tout service)
 
-1. **`expert-camunda7-gnspd-1.bpmn`** : Pattern complet avec gestion du paiement côté XFlow, intégration Odoo `search_read` + `create`, boucle de resoumission avec gateway inclusive côté XPortal, notifications tricanales (email + SMS + in-app).
-2. **`expert-camunda7-gnspd-2.bpmn`** : Pattern optimal XPortal — machine à états avec **receiveTask unique multi-entrante** + **gateway action unique** (`paiement_requis` / `correction` / `accepte` / `rejete`). C'est le pattern XPortal recommandé pour tous les nouveaux services.
-3. **`demande-acte-etat-civil-golf3.bpmn`** : Implémentation complète d'une demande d'acte civil avec intégration API RestBuilder (Auth, Prepare, Submit).
-4. **`demande-de-certification-ong.bpmn`** : Workflow d'accréditation avec plusieurs étapes de validation agent et notifications complexes.
-5. **`diplome-cfa.bpmn`** : Gestion de demande de diplôme avec vérification Odoo et génération de documents.
-6. **`demande-passeport.bpmn`** : Processus complexe à haut volume illustrant des flux critiques et des intégrations multiples.
-7. **`expert-odoo-integration.bpmn`** : Intégration Odoo complète — `search_read` pour vérifier l'existence d'un candidat, `create` pour créer un enregistrement, `write` pour mettre à jour un statut. Montre le pattern conditionnel basé sur le résultat Odoo.
-8. **`expert-chaine-documentaire.bpmn`** : Chaîne de production documentaire complète — `generateTemplate` (génération PDF), `generateUrlQrcode` (QR code de vérification), `pdfImage` (apposition QR sur document), `certSign` (signature E-Cert), `stepNotification` (mise à jour état étape portail). Pattern recommandé pour tout service délivrant un document officiel.
-9. **Exemples supplémentaires (CRITIQUE)** : L'agent **DOIT ABSOLUMENT** chercher et consulter d'autres exemples de BPMN validés dans le dossier `exemples/` (ex: `exemples/*/bpmn-*.bpmn`) pour s'imprégner des logiques métiers, de l'orchestration des tâches et de la structure des XML de la version ATD.
+| Fichier | Contenu | Lignes |
+|---------|---------|--------|
+| **`PATTERNS.md`** (même dossier que SKILL.md) | Bibliothèque de wiring XML annoté P1-P8 + scénarios complets (XPortal machine à états, XFlow backbone, chaîne doc, paiement, boucle correction, boundary timer) | ~450 |
+| **`examples/skeleton-dual-pool.bpmn`** | Squelette dual-pool valide à compléter — NE PAS générer de zéro, partir de ce fichier | ~300 |
+
+> **Règle d'or** : Le squelette est le point de départ. L'agent complète les sections TODO de `Process_Xflow` avec les snippets de `PATTERNS.md`. Il ne génère jamais un BPMN entier de zéro.
+
+### Étape 2 — Lectures conditionnelles (selon le SRS)
+
+Lire les fichiers ci-dessous **uniquement si le scénario correspondant est présent dans le SRS** :
+
+| Condition dans le SRS | Fichier à lire | Ce qu'il apporte |
+|----------------------|----------------|-----------------|
+| Service avec **paiement e-Gov** | `expert-camunda7-gnspd-1.bpmn` | Pattern complet XFlow paiement + callback |
+| Service avec **vérification Odoo** complexe (create/write) | `expert-odoo-integration.bpmn` | Odoo search_read + create + write avec gestion d'erreurs |
+| Service avec **génération de document officiel** ou **orchestration inter-pools avancée** | `diplome_cfa_correct.bpmn` | Chaîne documentaire complète (generateTemplate → QR → pdfImage → certSign) + référence P1-P8 en XML opérationnel |
+| Service avec **intégration API REST tierce** (non-Odoo) | `demande-acte-etat-civil-golf3.bpmn` | Pattern RestBuilder Auth + Prepare + Submit |
+| Service avec **> 5 étapes XFlow** ou **validations multiples** | `demande-passeport.bpmn` | Flux complexe multi-étapes à haut volume |
 
 ---
 
@@ -46,6 +55,44 @@ L'architecture ATD repose sur deux moteurs BPMN distincts communiquant de maniè
 [XPortal] sendTask → Kafka (peer-xflow) → [XFlow] startEvent
 [XFlow]   sendTask → Kafka (ch-portail) → [XPortal] receiveTask
 ```
+
+---
+
+## Patterns d'orchestration inter-pools (OBLIGATOIRE)
+
+Ces 8 patterns garantissent qu'aucun jeton BPMN ne se perd. Ils sont tirés du modèle de référence `diplome_cfa_correct.bpmn` et doivent être appliqués systématiquement.
+
+### P1. Symétrie des gateways entre pools
+Toute décision de routage conditionnel (ex: duplicata oui/non) doit être **répliquée en miroir** dans les deux pools. Chaque pool lit la même donnée source et prend sa propre décision. Aucun pool ne dépend de l'autre pour son routage.
+
+### P2. ReceiveTask multi-entrante comme point de convergence (jamais d'ExclusiveGateway merge)
+Lorsque plusieurs chemins doivent converger (ex: après paiement, après correction, chemin direct), utiliser **un seul ReceiveTask** (ou ServiceTask/UserTask) avec plusieurs `<bpmn:incoming>`. Cela évite la duplication de logique et garantit un seul point d'attente avant la gateway de décision. **Ne jamais utiliser un ExclusiveGateway comme simple point de merge** (N entrées → 1 sortie) : le validateur exige au moins 2 flux sortants avec conditions sur tout ExclusiveGateway. Les ExclusiveGateway servent uniquement à la **divergence** (1 entrée → N sorties conditionnelles).
+
+### P3. Notification PUIS SendMessage (jamais l'inverse)
+Côté XFlow, toujours enchaîner :
+1. **ServiceTask `flow-notify`** (notification email/SMS/in-app au citoyen)
+2. **SendTask `flow-send-message`** (message Kafka vers XPortal)
+
+Le citoyen est informé **avant** que l'état de son dossier ne change sur le portail. Ne jamais inverser cet ordre.
+
+### P4. Noeud de rejet unique (DRY)
+Tous les chemins de rejet (non-inscrit, rejet agent, non-paiement, dépassement de tentatives) convergent vers **un seul ServiceTask de notification de rejet** avec plusieurs `<bpmn:incoming>`. Un seul template, une seule logique.
+
+### P5. Vérification système AVANT instruction agent
+Toute vérification automatisable (Odoo `search_read`, API REST) s'exécute **avant** la userTask agent. L'agent reçoit des données pré-vérifiées et ne fait que valider.
+
+### P6. Boucle de correction avec re-vérification
+La boucle de correction revient à la **vérification système** (Odoo/API), pas directement à l'agent. Flux :
+```
+Agent "nonConforme" → Notify → SendMessage XPortal → ReceiveTask resoumission
+→ Retour à vérification Odoo → Gateway inscrit? → SendMessage → UserTask agent
+```
+
+### P7. Terminaison explicite de chaque branche
+Chaque chemin alternatif se termine par un **EndEvent explicite**. Aucun jeton ne reste en suspens. Vérifier que le nombre de EndEvents couvre tous les cas (succès, rejet, non-paiement, non-inscrit, etc.).
+
+### P8. Appariement SendTask/ReceiveTask
+Chaque SendTask inter-pool a un ReceiveTask (ou StartEvent) correspondant dans l'autre pool. **Aucun message orphelin**. Avant de finaliser le XML, vérifier que chaque `messageRef` apparaît exactement dans un SendTask ET un ReceiveTask/StartEvent.
 
 ---
 
@@ -740,13 +787,30 @@ Exécute une requête HTTP avec une configuration JSON libre. Topic : `flow-http
 
 Met à jour le statut d'une étape visible côté portail. Topic : `flow-step-notification`.
 
+> **⛔ VALEURS AUTORISÉES pour `gnspdStatus` (liste exhaustive et définitive — toute autre valeur est rejetée à l'exécution) :**
+> `Pending` | `PendingPeer` | `PendingPayment` | `PendingUser` | `PendingBackOffice` | `Success` | `Fail` | `WaitingForControls` | `SavedAsDraft` | `Submited` | `Terminated`
+>
+> **⚠️ PIÈGES FRÉQUENTS** — Ces valeurs sont INVALIDES : `Submitted` (double `t`), `Processing`, `Completed`, `InProgress`, `Done`, `Approved`, `Rejected`.
+>
+> **Mapping recommandé selon le contexte :**
+>
+> | Moment dans le processus | Valeur à utiliser |
+> |---|---|
+> | Dossier reçu par XFlow (démarrage) | `Submited` *(un seul `t` — typo du framework)* |
+> | En attente d'action du citoyen (paiement, correction) | `PendingUser` |
+> | En cours d'instruction back-office | `PendingBackOffice` |
+> | Document généré / service rendu avec succès | `Success` |
+> | Dossier rejeté | `Fail` |
+> | Clôturé / annulé | `Terminated` |
+
 ```xml
 <bpmn:serviceTask ... camunda:modelerTemplate="tg.gouv.gnspd.stepNotification"
   camunda:type="external" camunda:topic="flow-step-notification">
   <bpmn:extensionElements>
     <camunda:inputOutput>
       <camunda:inputParameter name="gnspdStatus">Success</camunda:inputParameter>
-      <!-- Statuts : Pending, PendingPeer, PendingPayment, PendingUser, PendingBackOffice, Success, Fail, WaitingForControls, SavedAsDraft, Submited, Terminated -->
+      <!-- VALEURS AUTORISÉES : Pending, PendingPeer, PendingPayment, PendingUser, PendingBackOffice, Success, Fail, WaitingForControls, SavedAsDraft, Submited, Terminated -->
+      <!-- INVALIDES (rejetées à l'exécution) : Submitted, Processing, Completed, InProgress, Done -->
       <camunda:inputParameter name="gnspdIsPortal">true</camunda:inputParameter>
       <camunda:inputParameter name="gnspdStepOrder">1</camunda:inputParameter>
       <camunda:inputParameter name="gnspdPassData" />
@@ -868,6 +932,7 @@ userTask(agent) → generateTemplate → generateUrlQrcode → pdfImage(QR sur d
 | Boucle correction sans limite | Instance bloquée indéfiniment | Compteur + condition de sortie |
 | Namespace `zeebe:` | Incompatible Camunda 7 | Supprimer, utiliser uniquement `camunda:` |
 | `$this.data.` dans les `conditionExpression` | Erreur de validation P-Studio | Utiliser `this.data.` (sans `$`) dans les conditions. Le préfixe `$` est réservé aux `camunda:inputParameter` |
+| ExclusiveGateway utilisé comme simple merge (N entrées → 1 sortie) | Erreur validation : « ExclusiveGateway doit avoir au moins 2 flux sortants » et « sans conditions ni flux par défaut » | Ne jamais utiliser d'ExclusiveGateway pour la convergence. Connecter les flux entrants directement sur la tâche cible (une tâche BPMN accepte plusieurs `<bpmn:incoming>`) |
 | `flowPortail` pour les tâches citoyen XPortal | Pattern legacy (3 usages vs 34 pour userTask) | Utiliser `userTask` avec `gnspdHandlerType` et `camunda:formKey` |
 | Paiement orchestré par XPortal seul | XPortal ne peut pas recevoir le callback e-Gov | Adopter le pattern `demande-passeport` : XFlow orchestre via `intermediateCatchEvent` |
 

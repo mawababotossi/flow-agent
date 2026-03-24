@@ -63,6 +63,9 @@ Pour assurer un livrable de niveau Premium, l'agent doit impérativement respect
 ### Processus (XFlow)
 - **Matrice des Acteurs** : Vérifier que chaque acteur a un rôle défini et des accès systèmes cohérents.
 - **Pipeline Workflow** : Vérifier que le pipeline YAML est respecté et que les sorties de chaque étape sont claires.
+- **Matrice des échanges inter-pools (OBLIGATOIRE)** : La section 3.3 du SRS DOIT inclure la matrice complète des messages Kafka échangés entre XPortal et XFlow. Chaque SendTask doit avoir un ReceiveTask correspondant (pattern P8). Documenter les points de convergence (ReceiveTask multi-entrantes, pattern P2) et les terminaisons explicites de chaque branche (pattern P7).
+- **Ordre Notification/Message** : Vérifier que le SRS documente l'enchaînement Notification PUIS SendMessage (pattern P3) pour chaque communication XFlow → XPortal.
+- **Vérification avant instruction** : Vérifier que les vérifications automatiques (Odoo, API) sont positionnées AVANT l'instruction agent (pattern P5).
 
 
 Lorsqu'on vous demande de corriger un SRS :

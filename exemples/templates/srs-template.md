@@ -41,8 +41,20 @@
 ## Table des matières
 
 1. [Identification du service](#1-identification-du-service)
+   - 1.1. [Description fonctionnelle](#11-description-fonctionnelle)
+   - 1.2. [Fiche d'identité du service](#12-fiche-didentité-du-service)
+   - 1.3. [Acteurs et intervenants](#13-acteurs-et-intervenants)
 2. [Design du formulaire Form.io](#2-design-du-formulaire-formio)
+   - 2.1. [Structure du formulaire](#21-structure-du-formulaire)
+   - 2.2. [Détail des champs](#22-détail-des-champs)
+   - 2.3. [Actions du formulaire (P-Studio)](#23-actions-du-formulaire-p-studio)
+   - 2.4. [Configuration des environnements](#24-configuration-des-environnements)
+   - 2.5. [Inventaire des formulaires userTask](#25-inventaire-des-formulaires-usertask)
 3. [Le processus BPMN 2.0](#3-le-processus-bpmn-20)
+   - 3.1. [Vue d'ensemble du processus TO-BE](#31-vue-densemble-du-processus-to-be)
+   - 3.2. [Étapes détaillées du processus](#32-étapes-détaillées-du-processus)
+   - 3.3. [Matrice des échanges inter-pools (Kafka)](#33-matrice-des-échanges-inter-pools-kafka)
+   - 3.4. [Flux d'escalade temporelle](#34-flux-descalade-temporelle)
 4. [Règles métiers](#4-règles-métiers)
 5. [Intégration avec des systèmes tiers](#5-intégration-avec-des-systèmes-tiers)
 6. [Notifications automatiques](#6-notifications-automatiques)
@@ -320,7 +332,48 @@ Le processus complet est modélisé sur P-Studio (Camunda Web Modeler). Le diagr
 | B09 | Notification correction | Send task : envoi d'une notification de correction au portail avec la liste précise des erreurs ou pièces manquantes. L'usager dispose d'un délai pour corriger. | Système | < 15 min | → Attente resoumission → B05 |
 | B10 | Notification acceptation | Send task : envoi de la notification d'acceptation au portail. L'usager est informé que [document/décision] est en cours d'édition / disponible. | Système | < 5 min | → FIN (succès) |
 
-### 3.3. Flux d'escalade temporelle
+### 3.3. Matrice des échanges inter-pools (Kafka)
+
+<!-- IA: Cette sous-section est OBLIGATOIRE. Elle recense tous les messages Kafka échangés entre XPortal et XFlow. Chaque SendTask doit avoir un ReceiveTask correspondant. Vérifier qu'aucun message n'est orphelin. Les patterns P1-P8 du TO-BE doivent être reflétés ici. -->
+
+Tous les échanges asynchrones entre les deux pools sont listés ci-dessous. Chaque message correspond à un couple SendTask/ReceiveTask (ou StartEvent) appariés.
+
+#### XPortal → XFlow
+
+| # | Message Kafka (`messageRef`) | Émetteur (SendTask) | Récepteur (ReceiveTask/StartEvent) | Payload | Condition |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `MSG_[SERVICE]_START` | Soumission initiale | StartEvent XFlow | Données formulaire complet | Toujours |
+| 2 | `MSG_[SERVICE]_RESUB` | Resoumission correction | ReceiveTask resoumission | Données corrigées | Si correction |
+
+#### XFlow → XPortal
+
+| # | Message Kafka (`messageRef`) | Émetteur (SendTask) | Récepteur (ReceiveTask) | Payload | Condition |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `MSG_[SERVICE]_PAY_REQ` | Demande paiement | ReceiveTask paiement | Signal paiement | Si payant |
+| 2 | `MSG_[SERVICE]_PAY_CONFIRM` | Confirmation paiement | ReceiveTask confirmation | Résultat paiement | Si payant |
+| 3 | `MSG_[SERVICE]_VERIFY` | Notification vérification | ReceiveTask vérification | Résultat agent | Toujours |
+| 4 | `MSG_[SERVICE]_CORRECT` | Notification correction | ReceiveTask correction | Motif correction | Si non conforme |
+| 5 | `MSG_[SERVICE]_FINAL` | Notification finale | ReceiveTask finale | Résultat final | Si conforme |
+
+#### Points de convergence
+
+<!-- IA: Identifier ici les ReceiveTask multi-entrantes (pattern P2). Ce sont les noeuds qui reçoivent des jetons de plusieurs chemins différents. -->
+
+| ReceiveTask (convergence) | Pool | Entrées | Description |
+| --- | --- | --- | --- |
+| [Nom du ReceiveTask] | PORTAL | [Chemin 1, Chemin 2, Chemin 3] | [Point de convergence avant la gateway de décision] |
+
+#### Terminaisons du processus
+
+<!-- IA: Lister tous les EndEvents des deux pools (pattern P7). Chaque branche alternative doit se terminer explicitement. -->
+
+| EndEvent | Pool | Condition | Notification associée |
+| --- | --- | --- | --- |
+| Fin succès | PORTAL | Dossier accepté | Notification finale + document disponible |
+| Fin rejet | PORTAL | Dossier rejeté | Notification de rejet |
+| [Autres EndEvents] | [Pool] | [Condition] | [Notification] |
+
+### 3.4. Flux d'escalade temporelle
 
 <!-- IA: Liste toutes les escalades temporelles configurées dans Xflow. Il y en a au moins 4 types standards : dépassement SLA agent, délai correction citoyen, délai paiement (si applicable), indisponibilité Xflow. -->
 

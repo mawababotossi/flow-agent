@@ -2,6 +2,39 @@
 description: Digitaliser un service public - cartographie as-is, to-be, formulaire Form.io (JSON) et processus BPMN (XML)
 ---
 
+<!-- ══════════════════════════════════════════════════════════════════
+     NAVIGATION RAPIDE — Table des étapes, livrables et gates
+     Grep: STEP:0.5, STEP:1, GATE:1, etc.
+     ══════════════════════════════════════════════════════════════════ -->
+
+<!--
+| Étape      | Livrables                                      | Lectures obligatoires                                              | Gate suivante |
+|------------|-------------------------------------------------|--------------------------------------------------------------------|---------------|
+| STEP:0.5   | *-pipeline.yaml                                 | —                                                                  | —             |
+| STEP:1     | (recueil oral/doc)                              | —                                                                  | —             |
+| STEP:2     | *-as-is.md                                      | —                                                                  | —             |
+| STEP:3     | *-to-be.md                                      | documentation/guide-transformation-asis-tobe.md                    | GATE:1        |
+| GATE:1     | ✋ Validation périmètre (AS-IS + TO-BE + Pipeline) |                                                                 |               |
+| STEP:4     | srs-*.md                                        | exemples/templates/srs-template.md, exemples/*/srs-*.md           | GATE:2        |
+| GATE:2     | ✋ Validation SRS                                |                                                                    |               |
+| STEP:5     | formio-*.json (principal)                       | exemples/templates/template-premium-stepintro.json,                | —             |
+|            |                                                 | Guide_Integration_Formulaires_PStudio_v1.md,                       |               |
+|            |                                                 | guide-validation-formio.md, exemples/*/formio-*.json               |               |
+| STEP:5a    | formio-correction-*.json, formio-paiement-*.json| exemples/templates/template-paiement.json                          | —             |
+| STEP:5b    | formio-instruction-*.json (+ autres userTasks)  | SRS §3.2                                                           | GATE:3a       |
+| GATE:3a    | ✋ Validation Form.io                            |                                                                    |               |
+| STEP:6     | bpmn-*.bpmn                                     | .agents/skills/bpmn-integrator/SKILL.md,                           | GATE:3b       |
+|            |                                                 | documentation/bpmn-gnspd-documentation.md,                         |               |
+|            |                                                 | documentation/guide-agent-ia-modelisateur.md,                      |               |
+|            |                                                 | exemples/*/bpmn-*.bpmn                                             |               |
+| GATE:3b    | ✋ Validation BPMN                               |                                                                    |               |
+| STEP:6.5   | (audit cohérence inter-livrables)               | Tous les livrables produits                                        | —             |
+| STEP:7     | *-tests.md, *-manuel.md                         | —                                                                  | —             |
+| STEP:8     | (personnalisation)                              | —                                                                  | —             |
+| STEP:8.5   | *-pv-recette.md                                 | —                                                                  | —             |
+| STEP:9     | (checklist finale)                              | Tous les livrables                                                 | —             |
+-->
+
 # Workflow : Digitalisation d'un Service Public
 
 Ce workflow guide la production complète de 4 livrables organisés selon une structure hiérarchique administrative :
@@ -47,7 +80,7 @@ Le processus suit une **RÈGLE D'OR DE DÉRIVATION** :
 
 ---
 
-## Étape 0.5 — Modélisation du Pipeline YAML (MANDATOIRE)
+## <!-- STEP:0.5 --> Étape 0.5 — Modélisation du Pipeline YAML (MANDATOIRE)
 
 Avant de produire tout livrable industriel (BPMN, SRS, Form.io), il est **obligatoire** de formaliser le processus cible sous forme d'un pipeline YAML. Cette étape sert de "contrat de service" entre l'analyste et l'utilisateur.
 
@@ -83,9 +116,40 @@ pipeline:
 - Les sous-étapes d'une étape N sont numérotées `Na`, `Nb`, `Nc` (ex: `3a` = boucle de correction de l'étape 3).
 - Les étapes nécessitant une présence physique obligatoire portent le suffixe `— PHYSIQUE` dans leur nom.
 
+### Fichier STATUS.md (OBLIGATOIRE)
+
+Dès la création du dossier projet, l'agent **DOIT** créer un fichier `STATUS.md` à la racine du dossier service (`projects/[ministère]/[direction]/[service]/STATUS.md`). Ce fichier est mis à jour **à chaque changement d'étape ou de gate**.
+
+```markdown
+# Status — [Nom du Service]
+
+| Champ | Valeur |
+|-------|--------|
+| **Étape courante** | STEP:X / GATE:X — description |
+| **Dernière étape complétée** | STEP:X |
+| **Prochaine étape** | STEP:X — après condition |
+| **Date de mise à jour** | AAAA-MM-JJ |
+
+## Livrables produits
+
+| Livrable | Fichier | Statut |
+|----------|---------|--------|
+| Pipeline YAML | `*-pipeline.yaml` | Produit / En attente / Non commencé |
+| ... | ... | ... |
+
+## Blocages / Notes
+- (notes libres)
+```
+
+**Règles de mise à jour** :
+- Créer le fichier dès l'étape 0.5 (en même temps que le pipeline YAML).
+- Mettre à jour le statut à chaque passage de gate ou complétion d'étape.
+- Ajouter chaque livrable produit au tableau au fur et à mesure.
+- Consigner les blocages ou décisions importantes dans la section Notes.
+
 ---
 
-## Étape 1 — Recueil d'informations complémentaire
+## <!-- STEP:1 --> Étape 1 — Recueil d'informations complémentaire
 
 Demander à l'utilisateur (ou extraire depuis les documents disponibles) :
 
@@ -101,7 +165,7 @@ Demander à l'utilisateur (ou extraire depuis les documents disponibles) :
 
 ---
 
-## Étape 2 — Cartographie AS-IS (processus actuel)
+## <!-- STEP:2 --> Étape 2 — Cartographie AS-IS (processus actuel)
 
 Produire un document Markdown décrivant le processus tel qu'il est aujourd'hui.
 
@@ -151,7 +215,11 @@ Produire un document Markdown décrivant le processus tel qu'il est aujourd'hui.
 
 ---
 
-## Étape 3 — Cartographie TO-BE (processus cible)
+## <!-- STEP:3 --> Étape 3 — Cartographie TO-BE (processus cible)
+
+<!-- reads_before:
+  - documentation/guide-transformation-asis-tobe.md   # AVA + 10 Règles d'Or ATD
+-->
 
 > **RÈGLE MANDATOIRE (STOP AVANT DE CONTINUER) ✋** :
 > Avant de concevoir le TO-BE, l'agent **DOIT OBLIGATOIREMENT** lire (outil `Read`) et appliquer strictement les principes du guide `documentation/guide-transformation-asis-tobe.md`. Le TO-BE n'est pas une simple copie numérique, il doit intégrer l'Analyse de la Valeur Ajoutée (AVA), les 10 Règles d'Or ATD (Zéro papier, e-ID automatique, paiement en ligne, BPMN asynchrone, notifications) et le Design Thinking. Produisez un TO-BE qui résout activement les frictions de l'AS-IS.
@@ -242,6 +310,34 @@ Exemple :
    - Obligation légale : [référence loi/décret].
    - Durée : 1 jour (rendez-vous)
 
+## Patterns d'orchestration inter-pools (OBLIGATOIRE)
+
+Le TO-BE doit explicitement décrire les patterns d'interaction entre XPortal et XFlow. Ces patterns garantissent qu'aucun jeton BPMN ne se perd et que le flux est cohérent.
+
+### P1. Symétrie des gateways
+Toute décision de routage conditionnel (ex: duplicata oui/non) doit être **répliquée en miroir** dans les deux pools. Chaque pool prend sa propre décision de routage en lisant la même donnée source. Aucun pool ne dépend de l'autre pour savoir quel chemin emprunter.
+
+### P2. Point de convergence unique (ReceiveTask multi-entrante, jamais d'ExclusiveGateway merge)
+Lorsque plusieurs chemins (ex: après paiement, après correction, chemin direct) doivent converger vers la même suite du processus, utiliser un **seul ReceiveTask** (ou ServiceTask/UserTask) avec plusieurs `<bpmn:incoming>`. Cela évite la duplication de logique et garantit un seul point d'attente. **Ne jamais utiliser un ExclusiveGateway comme simple point de merge** (N entrées → 1 sortie) : le validateur exige au moins 2 flux sortants avec conditions. Les ExclusiveGateway servent uniquement à la **divergence** (1 entrée → N sorties conditionnelles).
+
+### P3. Notification PUIS SendMessage (jamais l'inverse)
+Côté XFlow, toujours envoyer la **notification citoyen** (ServiceTask `flow-notify`) AVANT le **message Kafka** (SendTask `flow-send-message`) vers XPortal. Le citoyen doit être informé avant que l'état de son dossier ne change sur le portail.
+
+### P4. Noeud de rejet unique (DRY)
+Tous les chemins de rejet (non-inscrit, rejet agent, non-paiement, etc.) doivent converger vers un **seul ServiceTask de notification de rejet** avec plusieurs entrées. Un seul template, une seule logique, pas de duplication.
+
+### P5. Vérification système AVANT instruction agent
+Toute vérification automatisable (Odoo, API tierce) doit s'exécuter **avant** la userTask agent. L'agent reçoit des données pré-vérifiées et ne fait que valider — il ne cherche pas manuellement.
+
+### P6. Boucle de correction avec re-vérification
+La boucle de correction doit revenir à la **vérification système** (Odoo/API), pas directement à l'agent. Les données corrigées sont re-vérifiées automatiquement avant de repasser par l'instruction agent.
+
+### P7. Terminaison explicite de chaque branche
+Chaque chemin alternatif du processus doit se terminer par un **EndEvent explicite**. Aucun jeton ne doit rester en suspens. Lister dans le TO-BE tous les EndEvents et leur condition.
+
+### P8. Appariement SendTask/ReceiveTask
+Chaque SendTask inter-pool doit avoir un ReceiveTask (ou StartEvent) correspondant dans l'autre pool. Aucun message orphelin. Le TO-BE doit lister tous les échanges Kafka entre les deux pools.
+
 ## Gains Attendus
 - Réduction du délai de traitement de 70%
 - Réduction maximale des déplacements physiques (zéro si 100% digital, minimum légal si service hybride)
@@ -252,7 +348,7 @@ Exemple :
 
 ---
 
-## GATE 1 — Validation du périmètre ✋
+## <!-- GATE:1 --> GATE 1 — Validation du périmètre ✋
 
 > **STOP OBLIGATOIRE** : Avant de produire les livrables techniques, soumettre la cartographie AS-IS, la cartographie TO-BE et le pipeline YAML à l'utilisateur pour validation.
 > L'agent ne doit **JAMAIS** passer aux étapes suivantes sans accord explicite de l'utilisateur sur le périmètre fonctionnel.
@@ -261,7 +357,12 @@ Exemple :
 
 ---
 
-## Étape 4 — Dossier SRS (Spécifications)
+## <!-- STEP:4 --> Étape 4 — Dossier SRS (Spécifications)
+
+<!-- reads_before:
+  - exemples/templates/srs-template.md                # Template officiel SRS (structure 9 sections)
+  - exemples/*/srs-*.md                               # Exemples SRS validés (glob)
+-->
 
 Produire un document Markdown structuré **en suivant impérativement le template officiel** `exemples/templates/srs-template.md`. Sauvegarder dans `projects/[ministere]/[direction]/[service]/srs-[nom-service].md`.
 
@@ -324,7 +425,7 @@ Produire un document Markdown structuré **en suivant impérativement le templat
 
 ---
 
-## GATE 2 — Validation des spécifications ✋
+## <!-- GATE:2 --> GATE 2 — Validation des spécifications ✋
 
 > **STOP OBLIGATOIRE** : Soumettre le SRS complet à l'utilisateur pour validation avant de produire le JSON et le BPMN.
 > Vérifier en particulier : la matrice des champs, les règles de gestion, et l'algorithme Calculate Costs.
@@ -333,7 +434,14 @@ Produire un document Markdown structuré **en suivant impérativement le templat
 
 ---
 
-## Étape 5 — Formulaire Form.io (JSON P-Studio)
+## <!-- STEP:5 --> Étape 5 — Formulaire Form.io (JSON P-Studio)
+
+<!-- reads_before:
+  - exemples/templates/template-premium-stepintro.json # Template stepIntro premium (Landing Page)
+  - documentation/Guide_Integration_Formulaires_PStudio_v1.md  # Guide P-Studio complet (Récapitulatif Intelligent inclus)
+  - documentation/guide-validation-formio.md           # Référentiel validation Form.io
+  - exemples/*/formio-*.json                           # Exemples formulaires validés (glob)
+-->
 
 Produire le schéma JSON du formulaire. Sauvegarder dans `projects/[ministere]/[direction]/[service]/formio-[nom-service].json`.
 
@@ -450,7 +558,13 @@ Produire le schéma JSON du formulaire. Sauvegarder dans `projects/[ministere]/[
 
 ---
 
-## Étape 5a — Formulaires intermédiaires (conditionnels)
+## <!-- STEP:5a --> Étape 5a — Formulaires intermédiaires (conditionnels)
+
+<!-- reads_before:
+  - exemples/templates/template-paiement.json          # Template formulaire paiement (Calculate Costs)
+  - exemples/*/formio-paiement-*.json                  # Exemples formulaires paiement (glob)
+  - exemples/*/formio-correction-*.json                # Exemples formulaires correction (glob, si disponibles)
+-->
 
 En plus du formulaire principal, certains services nécessitent des **formulaires intermédiaires** autonomes, pilotés par XFlow via Kafka. Il existe deux types de formulaires intermédiaires, chacun avec sa propre structure :
 
@@ -518,7 +632,12 @@ En plus du formulaire principal, certains services nécessitent des **formulaire
 
 ---
 
-## Étape 5b — Formulaires des userTasks (instruction agent, téléchargement, etc.)
+## <!-- STEP:5b --> Étape 5b — Formulaires des userTasks (instruction agent, téléchargement, etc.)
+
+<!-- reads_before:
+  - [SRS produit à l'étape 4] §3.2                    # Tableaux BPMN (lanes PORTAL + XFLOW) pour identifier les userTasks
+  - exemples/*/formio-instruction-*.json               # Exemples formulaires instruction agent (glob, si disponibles)
+-->
 
 Chaque `userTask` identifiée dans le SRS (section 3.2, Lanes PORTAL et XFLOW) qui nécessite un formulaire **DOIT** avoir son propre fichier JSON Form.io. L'agent DOIT parcourir le SRS pour identifier toutes les `userTask` et produire un formulaire pour chacune.
 
@@ -547,7 +666,14 @@ Chaque `userTask` identifiée dans le SRS (section 3.2, Lanes PORTAL et XFLOW) q
 
 ---
 
-## Étape 6 — Processus BPMN (XML)
+## <!-- STEP:6 --> Étape 6 — Processus BPMN (XML)
+
+<!-- reads_before:
+  - .agents/skills/bpmn-integrator/SKILL.md            # Skill BPMN complet (templates GNSPD, patterns, anti-patterns)
+  - documentation/bpmn-gnspd-documentation.md          # Documentation technique GNSPD
+  - documentation/guide-agent-ia-modelisateur.md       # Guide opérationnel modélisation BPMN
+  - exemples/*/bpmn-*.bpmn                             # Exemples BPMN validés (glob)
+-->
 
 Produire le fichier BPMN 2.0 compatible Camunda Platform 7 (GNSPD). Sauvegarder dans `projects/[ministere]/[direction]/[service]/bpmn-[nom-service].bpmn`.
 
@@ -689,7 +815,7 @@ Ce pattern garantit que **XFlow reste le maître du flux de paiement** : il reç
 
 ---
 
-## GATE 3a — Validation des formulaires Form.io ✋
+## <!-- GATE:3a --> GATE 3a — Validation des formulaires Form.io ✋
 
 > **STOP OBLIGATOIRE** : Soumettre le(s) formulaire(s) JSON à l'utilisateur pour validation technique **avant** de lancer la génération du BPMN.
 > Vérifier la conformité P-Studio du JSON principal et des formulaires intermédiaires (correction, paiement si applicable).
@@ -698,7 +824,7 @@ Ce pattern garantit que **XFlow reste le maître du flux de paiement** : il reç
 
 ---
 
-## GATE 3b — Validation du processus BPMN ✋
+## <!-- GATE:3b --> GATE 3b — Validation du processus BPMN ✋
 
 > **STOP OBLIGATOIRE** : Soumettre le fichier BPMN à l'utilisateur pour validation technique.
 > Vérifier la validité du BPMN (structure, messages Kafka, templates GNSPD, gateways, BPMNDiagram) avant de passer aux livrables d'accompagnement.
@@ -707,7 +833,7 @@ Ce pattern garantit que **XFlow reste le maître du flux de paiement** : il reç
 
 ---
 
-## Étape 6.5 — Audit de cohérence inter-livrables
+## <!-- STEP:6.5 --> Étape 6.5 — Audit de cohérence inter-livrables
 
 Avant de passer aux livrables d'accompagnement, l'agent **DOIT** vérifier la cohérence croisée entre tous les livrables produits :
 
@@ -737,7 +863,7 @@ Avant de passer aux livrables d'accompagnement, l'agent **DOIT** vérifier la co
 
 ---
 
-## Étape 7 — Plan de Tests et Manuel Utilisateur
+## <!-- STEP:7 --> Étape 7 — Plan de Tests et Manuel Utilisateur
 
 ### Plan de Tests (`[nom-service]-tests.md`)
 - Scénarios de tests nominaux (cas où tout se passe bien).
@@ -761,7 +887,7 @@ Avant de passer aux livrables d'accompagnement, l'agent **DOIT** vérifier la co
 
 ---
 
-## Étape 8 — Personnalisation et adaptation
+## <!-- STEP:8 --> Étape 8 — Personnalisation et adaptation
 
 Après avoir généré les livrables techniques avec les templates ci-dessus, adapter :
 
@@ -783,7 +909,7 @@ Après avoir généré les livrables techniques avec les templates ci-dessus, ad
 
 ---
 
-## Étape 8.5 — PV de Recette (`[nom-service]-pv-recette.md`)
+## <!-- STEP:8.5 --> Étape 8.5 — PV de Recette (`[nom-service]-pv-recette.md`)
 
 Produire le procès-verbal de recette fonctionnelle qui formalise la validation du service.
 
@@ -797,7 +923,7 @@ Produire le procès-verbal de recette fonctionnelle qui formalise la validation 
 
 ---
 
-## Étape 9 — Contrôle qualité des livrables (Checklist finale)
+## <!-- STEP:9 --> Étape 9 — Contrôle qualité des livrables (Checklist finale)
 
 Avant de livrer, vérifier chaque livrable :
 
@@ -859,6 +985,7 @@ Avant de livrer, vérifier chaque livrable :
 - [ ] Toutes les conditions de séquenceFlow sont en JavaScript (`language="javascript"` — vérifier l'orthographe, sans faute de frappe).
 - [ ] **Toute gateway de décision agent possède au minimum 3 sorties : Approuvé, Correction, Rejeté.** Une gateway à 2 sorties sans chemin de rejet crée un deadlock systématique.
 - [ ] Chaque gateway exclusive a une condition par sortie ; aucun chemin ne peut rester sans condition satisfaite (pas de deadlock possible).
+- [ ] **Aucun ExclusiveGateway n'est utilisé comme simple point de merge** (N entrées → 1 sortie). Pour la convergence, connecter les flux directement sur la tâche cible via plusieurs `<bpmn:incoming>`. Les ExclusiveGateway servent uniquement à la divergence (1 entrée → N sorties avec conditions).
 
 **Paiement (pattern demande-passeport obligatoire)**
 
@@ -899,6 +1026,7 @@ Avant de livrer, vérifier chaque livrable :
 | Messages nommés par UUID auto (`Message_35c51dc`) | Impossible à maintenir | Noms fonctionnels `MSG_SERVICE_ACTION` |
 | BPMNDiagram vide ou incomplet | Diagramme inutilisable dans Camunda Modeler | Coordonnées DI pour tous les éléments |
 | Boucle correction sans limite | Instance bloquée indéfiniment | Compteur + condition de sortie |
+| ExclusiveGateway utilisé comme simple merge (N entrées → 1 sortie) | Erreur validation : « ExclusiveGateway doit avoir au moins 2 flux sortants » | Ne jamais utiliser d'ExclusiveGateway pour la convergence. Connecter les flux entrants directement sur la tâche cible (une tâche accepte plusieurs `<bpmn:incoming>`) |
 | Namespace `zeebe:` présent | Incompatible Camunda Platform 7 | Supprimer, utiliser uniquement `camunda:` |
 | `$this.data.` dans les `conditionExpression` | Erreur de validation P-Studio | Toujours utiliser `this.data.` (sans préfixe `$`) dans les expressions de condition des `sequenceFlow`. Le préfixe `$` est réservé aux `inputParameter` (ex: `gnspdMessage`, `gnspdSubmissionData`) |
 

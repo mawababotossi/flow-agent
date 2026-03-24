@@ -1,605 +1,89 @@
-# Pipeline TO-BE enrichi — Demande de Casier Judiciaire (Bulletin n°3)
-# Service PAYANT — 2 000 FCFA (montant fixe)
-# Ministère de la Justice / Direction des Affaires Civiles et du Sceau (DACS)
-# Architecture : XPortal (Citoyen) ↔ Kafka ↔ XFlow (Back-Office)
-#
-# ENRICHISSEMENT : chaque étape métier est augmentée d'un bloc `bpmn`
-# qui mappe directement vers les templates GNSPD (templates_extraction_odoo.json).
-# Ce fichier est l'input structuré du générateur BPMN IA.
+pipeline:
+  - step: 1
+    name: "Soumission de la demande en ligne"
+    actor: "Citoyen"
+    system: "XPortal"
+    action: "Le citoyen remplit le formulaire de demande de casier judiciaire (identité pré-remplie via e-ID), uploade sa pièce d'identité et son acte de naissance, puis soumet le dossier."
+    inputs:
+      - "Pièce d'identité nationale ou passeport (scan/photo)"
+      - "Acte de naissance (scan/photo)"
+      - "Motif de la demande (emploi, concours, visa, autre)"
+    output: "Dossier soumis — accusé de réception automatique (email + SMS)"
 
-# ─────────────────────────────────────────────
-# MÉTADONNÉES DU SERVICE
-# ─────────────────────────────────────────────
-service:
-  id: SRV-DACS-2026-001
-  code: CJ
-  name: "Demande de Casier Judiciaire — Bulletin n°3"
-  ministry: Ministère de la Justice
-  direction: DACS
-  payment: required              # none | required | conditional
-  payment_amount: 2000           # F CFA — montant fixe
-  correction_loop:
-    enabled: true
-    max_retries: 3
-    timeout: P15D                # ISO 8601 duration — 15 jours
-  odoo_integration: true
-  third_party_apis: false
+  - step: 2
+    name: "Transmission au back-office"
+    actor: "Système"
+    system: "XPortal → XFlow (Kafka)"
+    action: "XPortal envoie le dossier au moteur XFlow via Kafka. XFlow enregistre le dossier et met à jour le statut portail (Soumis)."
+    inputs:
+      - "Données du formulaire"
+      - "Pièces jointes"
+    output: "Dossier enregistré dans XFlow — statut portail 'Soumis'"
 
-# ─────────────────────────────────────────────
-# MESSAGES KAFKA INTER-POOLS
-# Déclarés ici pour générer les <bpmn:message> globaux
-# ─────────────────────────────────────────────
-kafka_messages:
-  - id: MSG_CJ_START
-    name: MSG_CJ_START
-    direction: XPortal → XFlow
-    trigger: "Soumission initiale du formulaire citoyen (après paiement confirmé)"
-    target_element: bpmn:StartEvent
+  - step: 3
+    name: "Paiement des frais de délivrance"
+    actor: "Citoyen"
+    system: "XPortal (redirection e-Gov)"
+    action: "XFlow ordonne le paiement (2 000 FCFA fixe). XPortal redirige le citoyen vers la plateforme de paiement e-Gov externe (Flooz, TMoney, Visa, Mastercard). Le callback e-Gov confirme le paiement à XFlow."
+    inputs:
+      - "Montant : 2 000 FCFA (fixe)"
+    output: "Paiement confirmé — reçu électronique généré"
 
-  - id: MSG_CJ_RETURN
-    name: MSG_CJ_RETURN
-    direction: XFlow → XPortal
-    trigger: "Retour XFlow vers portail (correction | accepte | rejete)"
-    target_element: bpmn:ReceiveTask
-    payload_action_field: action   # gateway XPortal route sur this.data.Activity_P_Receive.result.action
+  - step: 4
+    name: "Instruction du dossier"
+    actor: "Agent instructeur DACS"
+    system: "XFlow"
+    type: "humain"
+    sla: "72h"
+    action: "L'agent instructeur vérifie la conformité des pièces (identité, acte de naissance), consulte le fichier national des condamnations (fichier papier), rédige le bulletin (néant ou mentions) et saisit le résultat dans le formulaire d'instruction."
+    inputs:
+      - "Données du formulaire citoyen"
+      - "Pièces jointes (PI, acte de naissance)"
+      - "Fichier national des condamnations (consultation manuelle)"
+    output: "Décision : Conforme / Non conforme (correction) / Rejeté + bulletin rédigé"
 
-  - id: MSG_CJ_RESUB
-    name: MSG_CJ_RESUB
-    direction: XPortal → XFlow
-    trigger: "Resoumission du citoyen après correction"
-    target_element: bpmn:ReceiveTask
+  - step: 4a
+    name: "Boucle de correction"
+    actor: "Citoyen"
+    system: "XPortal"
+    type: "humain"
+    retry:
+      max: 3
+      timer: "P15D"
+    action: "Si pièces non conformes (identité expirée, acte illisible), l'agent demande une correction. Le citoyen reçoit une notification (SMS + email) avec le motif, corrige via son dossier existant sur le portail, et resoumets. Le dossier repasse à l'instruction."
+    inputs:
+      - "Motif de correction"
+      - "Pièces corrigées"
+    output: "Dossier corrigé resoumis — retour à l'étape 4"
 
-# ─────────────────────────────────────────────
-# POOL XPORTAL — Machine à états (côté citoyen)
-# ─────────────────────────────────────────────
-xportal:
-  process_id: Process_Portal
-  process_name: CJ_Portal_v1
-  description: >
-    Machine à états pilotée par les messages XFlow.
-    Le citoyen soumet, paie, puis attend. Une seule receiveTask centrale
-    route via gateway sur le champ action (correction / accepte / rejete).
+  - step: 5
+    name: "Validation par le chef de service"
+    actor: "Chef de service DACS"
+    system: "XFlow"
+    type: "humain"
+    sla: "24h"
+    action: "Le chef de service contrôle le bulletin rédigé par l'agent instructeur, valide ou rejette. En cas de validation, le bulletin est signé et cacheté manuellement."
+    inputs:
+      - "Bulletin rédigé par l'agent instructeur"
+    output: "Bulletin validé, signé et cacheté — prêt au retrait"
 
-  steps:
+  - step: 6
+    name: "Notification — bulletin prêt"
+    actor: "Système"
+    system: "XFlow"
+    action: "XFlow notifie le citoyen par SMS et email que son bulletin de casier judiciaire est prêt à être retiré. Le statut portail passe à 'Succès'. Le récépissé de retrait est mis à disposition sur le portail."
+    inputs:
+      - "Numéro de dossier"
+      - "Coordonnées citoyen (email, téléphone)"
+    output: "Citoyen notifié — récépissé de retrait disponible"
 
-    - step: P0
-      name: "Initialisation du portail"
-      actor: Système
-      bpmn:
-        - template: tg.gouv.gnspd.startEvent
-          bpmn_type: bpmn:StartEvent
-          bpmn_id: Event_P_Start
-          label: "Soumission de la demande"
-          params:
-            gnspdStepName: "Début"
-            gnspdDescription: "Point d'entrée XPortal — Demande de Casier Judiciaire"
-            gnspdPriority: "10"
-            gnspdExecution: PORTAIL
-            gnspdPaymentAmount: "2000"
-            gnspdTaskIsVisible: "false"
-            gnspdTaskStatus: Pending
-            gnspdTaskKind: citizen
-            development: "{}"
-            sandbox: '{ "ODOO": { "URL": "", "DB": "", "PORT": "", "SECRET_USERNAME": "", "SECRET_PASSWORD": "" } }'
-            preproduction: '{ "ODOO": { "URL": "", "DB": "", "PORT": "", "SECRET_USERNAME": "", "SECRET_PASSWORD": "" } }'
-            production: '{ "ODOO": { "URL": "", "DB": "", "PORT": "", "SECRET_USERNAME": "", "SECRET_PASSWORD": "" } }'
-
-    - step: P1
-      name: "Soumission de la demande en ligne"
-      actor: Citoyen
-      system: XPortal
-      inputs:
-        - "Données e-ID (nom, prénom, date naissance, téléphone, email)"
-        - "Copie de la pièce d'identité nationale ou passeport (PDF/JPEG, max 2 Mo)"
-        - "Copie de l'acte de naissance (PDF/JPEG, max 2 Mo)"
-      output: "Formulaire validé, prêt pour paiement"
-      bpmn:
-        - template: tg.gouv.gnspd.flowPortail
-          bpmn_type: bpmn:ServiceTask
-          bpmn_id: Activity_P_Form
-          label: "Formulaire de demande de casier judiciaire"
-          params:
-            gnspdOrder: "1"
-            stepName: "Soumission de la demande"
-            gnspdFormKey: "[ID formulaire Form.io principal — à renseigner]"
-            isResubmission: "false"
-            executionType: PORTAIL
-            description: "Remplissez le formulaire de demande de casier judiciaire (bulletin n°3)."
-            paymentAmount: "2000"
-            calculatePayment: "false"
-            gnspdTaskIsVisible: "true"
-            gnspdTaskLabel: "Soumission de la demande"
-            gnspdTaskStatus: PendingPortal
-            gnspdTaskOrder: "1"
-            gnspdTaskKind: citizen
-
-    - step: P2
-      name: "Paiement des frais en ligne"
-      actor: Citoyen
-      system: "Plateforme e-Gov externe"
-      description: >
-        Le citoyen est redirigé vers la plateforme de paiement e-Gov externe
-        (Flooz / TMoney / Visa / Mastercard). Le paiement ne se fait ni dans
-        XPortal ni dans XFlow. La confirmation de paiement revient de manière
-        asynchrone vers XPortal.
-      inputs:
-        - "Moyen de paiement (Flooz / TMoney / Visa / Mastercard)"
-      output: "Reçu de paiement électronique + dossier transmis à XFlow"
-      bpmn:
-        - template: tg.gouv.gnspd.userTask
-          bpmn_type: bpmn:UserTask
-          bpmn_id: Activity_P_Payment
-          label: "Paiement des frais (2 000 FCFA) — Plateforme externe"
-          params:
-            gnspdTaskIsVisible: "true"
-            gnspdTaskLabel: "Paiement des frais"
-            gnspdTaskStatus: PendingPayment
-            gnspdTaskKind: citizen
-
-        - template: tg.gouv.gnspd.sendMessage
-          bpmn_type: bpmn:SendTask
-          bpmn_id: Activity_P_SendBO
-          label: "Envoi du dossier au back-office"
-          params:
-            gnspdKafkaTopic: bpmn.commands
-            gnspdTargetElementType: "bpmn:StartEvent"
-            gnspdMessageRef: MSG_CJ_START
-            gnspdMessageDestination: "peer-xflow-service-public-sandbox"
-            gnspdMessage: "$this.data.Event_P_Start.parameters"
-            gnspdTaskIsVisible: "false"
-            gnspdTaskStatus: Pending
-            gnspdTaskKind: citizen
-
-    - step: P_WAIT
-      name: "Attente du retour XFlow"
-      actor: Système
-      description: >
-        Point d'attente central unique. Reçoit tous les retours XFlow via MSG_CJ_RETURN.
-        La gateway en sortie route selon result.action.
-      bpmn:
-        - template: tg.gouv.gnspd.receiveTask
-          bpmn_type: bpmn:ReceiveTask
-          bpmn_id: Activity_P_Receive
-          label: "Attendre le retour XFlow"
-          message_ref: MSG_CJ_RETURN
-          params:
-            gnspdTaskIsVisible: "false"
-            gnspdTaskStatus: Pending
-            gnspdTaskKind: citizen
-
-      gateway_out:
-        bpmn_id: Gateway_P_Action
-        type: bpmn:ExclusiveGateway
-        label: "Quelle action ?"
-        routes:
-          - condition: "this.data.Activity_P_Receive.result.action == 'correction'"
-            target: Activity_P_Correction
-          - condition: "this.data.Activity_P_Receive.result.action == 'accepte' || this.data.Activity_P_Receive.result.action == 'rejete'"
-            target: Event_P_End
-
-    - step: P3a
-      name: "Resoumission après correction"
-      actor: Citoyen
-      system: XPortal
-      retry:
-        max: 3
-        timeout: P15D
-      inputs:
-        - "Motif de correction (transmis par l'agent)"
-        - "Pièces corrigées"
-      output: "Dossier resoumis pour nouvelle vérification"
-      bpmn:
-        - template: tg.gouv.gnspd.flowPortail
-          bpmn_type: bpmn:ServiceTask
-          bpmn_id: Activity_P_Correction
-          label: "Correction du dossier"
-          params:
-            gnspdOrder: "2"
-            stepName: "Correction du dossier"
-            gnspdFormKey: "[ID formulaire Form.io correction — à renseigner]"
-            isResubmission: "true"
-            executionType: PORTAIL
-            description: "Veuillez corriger les éléments demandés par l'agent."
-            gnspdTaskIsVisible: "true"
-            gnspdTaskLabel: "Correction du dossier"
-            gnspdTaskStatus: PendingPortal
-            gnspdTaskOrder: "2"
-            gnspdTaskKind: citizen
-
-        - template: tg.gouv.gnspd.sendMessage
-          bpmn_type: bpmn:SendTask
-          bpmn_id: Activity_P_SendResub
-          label: "Envoi de la resoumission"
-          params:
-            gnspdKafkaTopic: bpmn.commands
-            gnspdTargetElementType: "bpmn:ReceiveTask"
-            gnspdMessageRef: MSG_CJ_RESUB
-            gnspdMessageDestination: "peer-xflow-service-public-sandbox"
-            gnspdMessage: "$this.data.Activity_P_Correction.result"
-            gnspdTaskIsVisible: "false"
-            gnspdTaskStatus: Pending
-            gnspdTaskKind: citizen
-
-    - step: P_END
-      name: "Fin du processus portail"
-      actor: Système
-      bpmn:
-        - template: tg.gouv.gnspd.endEvent
-          bpmn_type: bpmn:EndEvent
-          bpmn_id: Event_P_End
-          label: "Fin"
-
-# ─────────────────────────────────────────────
-# POOL XFLOW — Orchestration back-office
-# ─────────────────────────────────────────────
-xflow:
-  process_id: Process_Xflow
-  process_name: CJ_Xflow_v1
-  version_tag: "1.0"
-  history_ttl: "180"
-  description: >
-    Orchestration métier complète : accusé de réception, vérification de conformité,
-    boucle de correction, instruction agent, validation chef de service,
-    notification de disponibilité, archivage GED Odoo.
-
-  steps:
-
-    - step: X0
-      name: "Réception du dossier"
-      actor: Système
-      bpmn:
-        - template: tg.gouv.gnspd.startEvent
-          bpmn_type: bpmn:StartEvent
-          bpmn_id: Event_X_Start
-          label: "Réception de la demande CJ"
-          message_ref: MSG_CJ_START
-          params:
-            gnspdStepName: "Réception"
-            gnspdDescription: "Réception de la demande de casier judiciaire"
-            gnspdPriority: "10"
-            gnspdExecution: PORTAIL
-            gnspdPaymentAmount: "2000"
-            gnspdTaskIsVisible: "false"
-            gnspdTaskStatus: Pending
-            gnspdTaskKind: system
-            development: "{}"
-            sandbox: "{}"
-            preproduction: "{}"
-            production: "{}"
-
-        - template: tg.gouv.gnspd.stepNotification
-          bpmn_type: bpmn:ServiceTask
-          bpmn_id: Activity_X_StepSubmitted
-          label: "Marquer dossier soumis"
-          params:
-            gnspdStatus: Submited
-            gnspdIsPortal: "false"
-            gnspdStepOrder: "1"
-            gnspdTaskIsVisible: "false"
-            gnspdTaskLabel: "Soumission"
-            gnspdTaskStatus: Submitted
-            gnspdTaskOrder: "1"
-            gnspdTaskKind: system
-
-        - template: tg.gouv.gnspd.sendNotification
-          bpmn_type: bpmn:ServiceTask
-          bpmn_id: Activity_X_NotifAR
-          label: "Accusé de réception SMS/Email"
-          params:
-            gnspdNotifySendEmail: "true"
-            gnspdNotifyEmail: "$this.data.Event_X_Start.parameters.submissionData.email"
-            gnspdNotifyTemplateEmail: "[ID template email AR — à renseigner]"
-            gnspdNotifyContentEmail: '{"record_id": this.data.xref}'
-            gnspdNotifySendSMS: "true"
-            gnspdNotifyPhone: "$this.data.Event_X_Start.parameters.submissionData.telephone"
-            gnspdNotifyTemplateSMS: "[ID template SMS AR — à renseigner]"
-            gnspdNotifyContentSMS: '{"record_id": this.data.xref}'
-            gnspdNotifyInApp: "true"
-            gnspdNotifyTemplateInApp: "[ID template in-app AR — à renseigner]"
-            gnspdNotifyContentInApp: '{"record_id": this.data.xref}'
-            gnspdTaskIsVisible: "false"
-            gnspdTaskStatus: Pending
-            gnspdTaskKind: system
-
-    - step: X1
-      name: "Vérification de conformité du dossier"
-      actor: "Agent de réception DACS"
-      system: XFlow
-      sla: "24h"
-      inputs:
-        - "Dossier complet (formulaire + pièces jointes)"
-        - "Preuve de paiement"
-      output: "Décision de conformité (conforme / correction / rejet)"
-      bpmn:
-        - template: tg.gouv.gnspd.userTask
-          bpmn_type: bpmn:UserTask
-          bpmn_id: Activity_X_Conformite
-          label: "Vérification de conformité (Agent DACS)"
-          params:
-            gnspdTaskIsVisible: "true"
-            gnspdTaskLabel: "Vérification de conformité"
-            gnspdTaskStatus: PendingBackOffice
-            gnspdTaskKind: backoffice
-            gnspdAttachments: >
-              {
-                "pieceIdentite": this.data.Event_X_Start.parameters.submissionData.pieceIdentite ?? null,
-                "acteDeNaissance": this.data.Event_X_Start.parameters.submissionData.acteDeNaissance ?? null
-              }
-
-      gateway_out:
-        bpmn_id: Gateway_X_Conformite
-        type: bpmn:ExclusiveGateway
-        label: "Décision conformité"
-        routes:
-          - label: Conforme
-            condition: "this.data.Activity_X_Conformite.result.submissionData.decision == 'conforme'"
-            target: Activity_X_Instruction
-          - label: Correction
-            condition: "this.data.Activity_X_Conformite.result.submissionData.decision == 'correction'"
-            target: Activity_X_StepCorrection
-          - label: Rejet
-            condition: "this.data.Activity_X_Conformite.result.submissionData.decision == 'rejet'"
-            target: Activity_X_StepRejet
-
-    - step: X1a
-      name: "Demande de correction au citoyen"
-      actor: Système
-      description: "XFlow notifie le portail et attend la resoumission."
-      bpmn:
-        - template: tg.gouv.gnspd.stepNotification
-          bpmn_type: bpmn:ServiceTask
-          bpmn_id: Activity_X_StepCorrection
-          label: "Mettre en correction"
-          params:
-            gnspdStatus: PendingUser
-            gnspdIsPortal: "true"
-            gnspdStepOrder: "1"
-            gnspdTaskIsVisible: "false"
-            gnspdTaskLabel: "Correction"
-            gnspdTaskStatus: PendingPortal
-            gnspdTaskOrder: "1"
-            gnspdTaskKind: system
-
-        - template: tg.gouv.gnspd.sendNotification
-          bpmn_type: bpmn:ServiceTask
-          bpmn_id: Activity_X_NotifCorrection
-          label: "Notifier correction SMS/Email"
-          params:
-            gnspdNotifySendEmail: "true"
-            gnspdNotifyEmail: "$this.data.Event_X_Start.parameters.submissionData.email"
-            gnspdNotifyTemplateEmail: "[ID template email correction — à renseigner]"
-            gnspdNotifyContentEmail: '{"record_id": this.data.xref, "motif": this.data.Activity_X_Conformite.result.submissionData.motifCorrection}'
-            gnspdNotifySendSMS: "true"
-            gnspdNotifyPhone: "$this.data.Event_X_Start.parameters.submissionData.telephone"
-            gnspdNotifyTemplateSMS: "[ID template SMS correction — à renseigner]"
-            gnspdNotifyContentSMS: '{"record_id": this.data.xref}'
-            gnspdNotifyInApp: "true"
-            gnspdNotifyTemplateInApp: "[ID template in-app correction — à renseigner]"
-            gnspdNotifyContentInApp: '{"record_id": this.data.xref}'
-            gnspdTaskIsVisible: "false"
-            gnspdTaskStatus: Pending
-            gnspdTaskKind: system
-
-        - template: tg.gouv.gnspd.sendMessage
-          bpmn_type: bpmn:SendTask
-          bpmn_id: Activity_X_SendCorrection
-          label: "Envoyer demande de correction au portail"
-          params:
-            gnspdKafkaTopic: bpmn.commands
-            gnspdTargetElementType: "bpmn:ReceiveTask"
-            gnspdMessageRef: MSG_CJ_RETURN
-            gnspdMessageDestination: "ch-portail-service-public-sandbox"
-            gnspdMessage: '{"action": "correction", "motif": this.data.Activity_X_Conformite.result.submissionData.motifCorrection}'
-            gnspdTaskIsVisible: "false"
-            gnspdTaskStatus: Pending
-            gnspdTaskKind: system
-
-        - template: tg.gouv.gnspd.receiveTask
-          bpmn_type: bpmn:ReceiveTask
-          bpmn_id: Activity_X_WaitResub
-          label: "Attendre resoumission"
-          message_ref: MSG_CJ_RESUB
-          params:
-            gnspdTaskIsVisible: "false"
-            gnspdTaskStatus: PendingPortal
-            gnspdTaskKind: system
-      # Après resoumission → retour à la vérification de conformité (Activity_X_Conformite)
-
-    - step: X2
-      name: "Instruction du bulletin"
-      actor: "Agent instructeur DACS"
-      system: XFlow
-      sla: "72h"
-      inputs:
-        - "Dossier validé conforme"
-        - "Fichier national des condamnations (papier)"
-      output: "Résultat de l'instruction (néant ou mentions) + bulletin physique signé et cacheté"
-      bpmn:
-        - template: tg.gouv.gnspd.userTask
-          bpmn_type: bpmn:UserTask
-          bpmn_id: Activity_X_Instruction
-          label: "Instruction du bulletin (Agent DACS)"
-          params:
-            gnspdTaskIsVisible: "true"
-            gnspdTaskLabel: "Instruction du bulletin"
-            gnspdTaskStatus: PendingBackOffice
-            gnspdTaskKind: backoffice
-
-    - step: X3
-      name: "Validation chef de service"
-      actor: "Chef de service DACS"
-      system: XFlow
-      sla: "4h"
-      inputs:
-        - "Bulletin instruit (données + résultat consultation)"
-      output: "Décision finale (valider / correction / rejet)"
-      bpmn:
-        - template: tg.gouv.gnspd.userTask
-          bpmn_type: bpmn:UserTask
-          bpmn_id: Activity_X_Chef
-          label: "Validation finale (Chef DACS)"
-          params:
-            gnspdTaskIsVisible: "true"
-            gnspdTaskLabel: "Validation chef de service"
-            gnspdTaskStatus: Review
-            gnspdTaskKind: backoffice
-
-      gateway_out:
-        bpmn_id: Gateway_X_ChefDecision
-        type: bpmn:ExclusiveGateway
-        label: "Décision chef"
-        routes:
-          - label: Validé
-            condition: "this.data.Activity_X_Chef.result.submissionData.decision == 'valide'"
-            target: Activity_X_OdooArchive
-          - label: "Renvoi en correction"
-            condition: "this.data.Activity_X_Chef.result.submissionData.decision == 'correction'"
-            target: Activity_X_Instruction
-          - label: Rejeté
-            condition: "this.data.Activity_X_Chef.result.submissionData.decision == 'rejete'"
-            target: Activity_X_StepRejet
-
-    - step: X4
-      name: "Archivage GED Odoo"
-      actor: Système
-      system: XFlow
-      output: "Dossier archivé dans la GED Odoo"
-      bpmn:
-        - template: tg.gouv.gnspd.odoo
-          bpmn_type: bpmn:ServiceTask
-          bpmn_id: Activity_X_OdooArchive
-          label: "Archivage dans la GED Odoo"
-          params:
-            gnspdOdooMethod: create
-            gnspdOdooModel: ged.document
-            gnspdOdooAction: create
-            gnspdOdooArgs: >
-              {
-                "from_portal": "true",
-                "folder_number": this.data.xref,
-                "nom": this.data.Event_X_Start.parameters.submissionData.nom,
-                "prenom": this.data.Event_X_Start.parameters.submissionData.prenom,
-                "resultat": this.data.Activity_X_Instruction.result.submissionData.resultat
-              }
-            gnspdReportModel: ""
-            gnspdReportData: "{}"
-            gnspdTaskIsVisible: "false"
-            gnspdTaskStatus: Pending
-            gnspdTaskKind: system
-
-    - step: X5
-      name: "Notification de disponibilité et clôture"
-      actor: Système
-      system: XFlow
-      output: "Citoyen notifié que le bulletin est prêt au retrait + dossier clôturé"
-      bpmn:
-        - template: tg.gouv.gnspd.stepNotification
-          bpmn_type: bpmn:ServiceTask
-          bpmn_id: Activity_X_StepCompleted
-          label: "Marquer bulletin disponible"
-          params:
-            gnspdStatus: Success
-            gnspdIsPortal: "true"
-            gnspdStepOrder: "1"
-            gnspdTaskIsVisible: "true"
-            gnspdTaskLabel: "Bulletin disponible"
-            gnspdTaskStatus: PendingCompletion
-            gnspdTaskOrder: "3"
-            gnspdTaskKind: system
-
-        - template: tg.gouv.gnspd.sendNotification
-          bpmn_type: bpmn:ServiceTask
-          bpmn_id: Activity_X_NotifDispo
-          label: "Notifier disponibilité du bulletin — PHYSIQUE"
-          params:
-            gnspdNotifySendEmail: "true"
-            gnspdNotifyEmail: "$this.data.Event_X_Start.parameters.submissionData.email"
-            gnspdNotifyTemplateEmail: "[ID template email disponibilité — à renseigner]"
-            gnspdNotifyContentEmail: '{"record_id": this.data.xref}'
-            gnspdNotifySendSMS: "true"
-            gnspdNotifyPhone: "$this.data.Event_X_Start.parameters.submissionData.telephone"
-            gnspdNotifyTemplateSMS: "[ID template SMS disponibilité — à renseigner]"
-            gnspdNotifyContentSMS: '{"record_id": this.data.xref}'
-            gnspdNotifyInApp: "true"
-            gnspdNotifyTemplateInApp: "[ID template in-app disponibilité — à renseigner]"
-            gnspdNotifyContentInApp: '{"record_id": this.data.xref}'
-            gnspdTaskIsVisible: "false"
-            gnspdTaskStatus: Pending
-            gnspdTaskKind: system
-
-        - template: tg.gouv.gnspd.sendMessage
-          bpmn_type: bpmn:SendTask
-          bpmn_id: Activity_X_SendTermine
-          label: "Clôturer le portail"
-          params:
-            gnspdKafkaTopic: bpmn.commands
-            gnspdTargetElementType: "bpmn:ReceiveTask"
-            gnspdMessageRef: MSG_CJ_RETURN
-            gnspdMessageDestination: "ch-portail-service-public-sandbox"
-            gnspdMessage: '{"action": "accepte"}'
-            gnspdTaskIsVisible: "false"
-            gnspdTaskStatus: Pending
-            gnspdTaskKind: system
-
-        - template: tg.gouv.gnspd.endEvent
-          bpmn_type: bpmn:EndEvent
-          bpmn_id: Event_X_End
-          label: "Fin"
-
-    # ── Branche de rejet ──
-
-    - step: X_REJET
-      name: "Rejet du dossier"
-      actor: Système
-      system: XFlow
-      bpmn:
-        - template: tg.gouv.gnspd.stepNotification
-          bpmn_type: bpmn:ServiceTask
-          bpmn_id: Activity_X_StepRejet
-          label: "Marquer dossier rejeté"
-          params:
-            gnspdStatus: Fail
-            gnspdIsPortal: "true"
-            gnspdStepOrder: "1"
-            gnspdTaskIsVisible: "true"
-            gnspdTaskLabel: "Dossier rejeté"
-            gnspdTaskStatus: Rejected
-            gnspdTaskOrder: "2"
-            gnspdTaskKind: system
-
-        - template: tg.gouv.gnspd.sendNotification
-          bpmn_type: bpmn:ServiceTask
-          bpmn_id: Activity_X_NotifRejet
-          label: "Notifier rejet SMS/Email"
-          params:
-            gnspdNotifySendEmail: "true"
-            gnspdNotifyEmail: "$this.data.Event_X_Start.parameters.submissionData.email"
-            gnspdNotifyTemplateEmail: "[ID template email rejet — à renseigner]"
-            gnspdNotifyContentEmail: '{"record_id": this.data.xref, "motif": this.data.Activity_X_Conformite.result.submissionData.motifRejet}'
-            gnspdNotifySendSMS: "true"
-            gnspdNotifyPhone: "$this.data.Event_X_Start.parameters.submissionData.telephone"
-            gnspdNotifyTemplateSMS: "[ID template SMS rejet — à renseigner]"
-            gnspdNotifyContentSMS: '{"record_id": this.data.xref}'
-            gnspdNotifyInApp: "false"
-            gnspdTaskIsVisible: "false"
-            gnspdTaskStatus: Pending
-            gnspdTaskKind: system
-
-        - template: tg.gouv.gnspd.sendMessage
-          bpmn_type: bpmn:SendTask
-          bpmn_id: Activity_X_SendRejet
-          label: "Signaler le rejet au portail"
-          params:
-            gnspdKafkaTopic: bpmn.commands
-            gnspdTargetElementType: "bpmn:ReceiveTask"
-            gnspdMessageRef: MSG_CJ_RETURN
-            gnspdMessageDestination: "ch-portail-service-public-sandbox"
-            gnspdMessage: '{"action": "rejete"}'
-            gnspdTaskIsVisible: "false"
-            gnspdTaskStatus: Pending
-            gnspdTaskKind: citizen
-
-        - template: tg.gouv.gnspd.endEvent
-          bpmn_type: bpmn:EndEvent
-          bpmn_id: Event_X_EndRejet
-          label: "Fin — Rejet"
+  - step: 7
+    name: "Retrait du bulletin — PHYSIQUE"
+    actor: "Citoyen"
+    system: "Guichet DACS"
+    type: "physique"
+    action: "Le citoyen se présente au guichet de la DACS avec son récépissé (imprimé ou affiché sur téléphone) et sa pièce d'identité originale. L'agent de guichet remet le bulletin signé et cacheté. Obligation légale : le bulletin porte une signature manuscrite et un cachet humide."
+    inputs:
+      - "Récépissé de retrait"
+      - "Pièce d'identité originale"
+    output: "Bulletin de casier judiciaire n°3 remis au citoyen"
