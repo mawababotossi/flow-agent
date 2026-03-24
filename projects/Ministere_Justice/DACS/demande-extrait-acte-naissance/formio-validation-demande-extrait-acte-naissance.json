@@ -1,0 +1,134 @@
+{
+  "title": "Validation Chef de Service — Demande d'extrait d'acte de naissance",
+  "name": "validationDemandeExtraitActeNaissance",
+  "path": "formio-validation-demande-extrait-acte-naissance",
+  "type": "form",
+  "display": "form",
+  "i18n": {
+    "en": {
+      "Validation Chef de Service": "Head of Service Validation",
+      "Soumettre la validation": "Submit validation"
+    }
+  },
+  "config": {
+    "development": {
+      "apiBaseUrl": "https://api.dev.gouv.tg/api/v1/admin",
+      "appName": "Développement",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "sandbox": {
+      "apiBaseUrl": "https://api.sandbox.gouv.tg/api/v1/admin",
+      "appName": "Sandbox",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "preproduction": {
+      "apiBaseUrl": "https://api.preprod.gouv.tg/api/v1/admin",
+      "appName": "Pré-production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "production": {
+      "apiBaseUrl": "https://api.gouv.tg/api/v1/admin",
+      "appName": "Production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    }
+  },
+  "components": [
+    {
+      "type": "htmlelement",
+      "key": "titreValidation",
+      "tag": "div",
+      "input": false,
+      "tableView": false,
+      "label": "Titre",
+      "content": "<div style=\"background:#eff6ff;border-left:4px solid #2563eb;padding:16px 20px;border-radius:8px;margin-bottom:24px\"><h3 style=\"margin:0 0 8px;color:#1d4ed8\">✅ Validation Chef de Service</h3><p style=\"margin:0;color:#1e40af;font-size:14px\">Ce dossier a été instruit par l'agent état civil. Vérifiez la conformité et prenez votre décision finale. SLA : 48 heures.</p></div>"
+    },
+    {
+      "type": "htmlelement",
+      "key": "resumeInstruction",
+      "tag": "div",
+      "input": false,
+      "tableView": false,
+      "label": "Résumé instruction",
+      "content": "<div style=\"background:#f8f8f8;border-radius:10px;padding:20px;margin-bottom:20px\"><h4 style=\"margin:0 0 12px;color:#1f2937\">Synthèse de l'instruction</h4><p style=\"color:#6b7280;font-size:13px\">Les données du dossier et les observations de l'agent sont disponibles via <code>this.data.Activity_X_Instruction.result.submissionData</code>.</p></div>"
+    },
+    {
+      "type": "radio",
+      "key": "decision",
+      "label": "Décision finale",
+      "input": true,
+      "tableView": true,
+      "values": [
+        { "label": "✅ Approuver — Autoriser la délivrance de l'extrait", "value": "oui" },
+        { "label": "❌ Rejeter — Refuser la délivrance", "value": "non" }
+      ],
+      "validateOn": "blur",
+      "validate": { "required": true },
+      "errors": { "required": "La décision est obligatoire" }
+    },
+    {
+      "type": "textarea",
+      "key": "motif",
+      "label": "Motif de rejet",
+      "placeholder": "Expliquez le motif du rejet. Ce message sera transmis au citoyen.",
+      "input": true,
+      "tableView": true,
+      "rows": 4,
+      "validateOn": "blur",
+      "validate": { "required": true, "maxLength": 500 },
+      "errors": { "required": "Le motif de rejet est obligatoire" },
+      "customConditional": "show = (data.decision === 'non');"
+    },
+    {
+      "type": "textarea",
+      "key": "commentaireValidation",
+      "label": "Commentaire (facultatif)",
+      "placeholder": "Observations ou instructions particulières pour la remise au guichet...",
+      "input": true,
+      "tableView": false,
+      "rows": 3,
+      "validate": { "required": false, "maxLength": 500 },
+      "customConditional": "show = (data.decision === 'oui');"
+    }
+  ],
+  "actions": []
+}

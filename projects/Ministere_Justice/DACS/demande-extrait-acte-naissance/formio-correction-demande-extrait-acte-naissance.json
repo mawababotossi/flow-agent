@@ -1,0 +1,210 @@
+{
+  "title": "Correction — Demande d'extrait d'acte de naissance",
+  "name": "correctionDemandeExtraitActeNaissance",
+  "path": "formio-correction-demande-extrait-acte-naissance",
+  "type": "form",
+  "display": "form",
+  "i18n": {
+    "en": {
+      "Corriger ma demande": "Correct my request",
+      "Soumettre la correction": "Submit correction"
+    }
+  },
+  "config": {
+    "development": {
+      "apiBaseUrl": "https://api.dev.gouv.tg/api/v1/admin",
+      "appName": "Développement",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "sandbox": {
+      "apiBaseUrl": "https://api.sandbox.gouv.tg/api/v1/admin",
+      "appName": "Sandbox",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "preproduction": {
+      "apiBaseUrl": "https://api.preprod.gouv.tg/api/v1/admin",
+      "appName": "Pré-production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "production": {
+      "apiBaseUrl": "https://api.gouv.tg/api/v1/admin",
+      "appName": "Production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    }
+  },
+  "components": [
+    {
+      "type": "htmlelement",
+      "key": "bandeauMotif",
+      "tag": "div",
+      "input": false,
+      "tableView": false,
+      "label": "Motif de correction",
+      "content": "<div style=\"background:#fffbeb;border-left:4px solid #f59e0b;padding:16px 20px;border-radius:8px;margin-bottom:24px\"><p style=\"font-weight:700;color:#92400e;margin:0 0 8px\">⚠️ Votre dossier nécessite une correction</p><p style=\"color:#92400e;margin:0;font-size:14px\">Motif communiqué par l'agent : <strong>{{ data.motifCorrection }}</strong></p><p style=\"color:#92400e;margin:8px 0 0;font-size:13px\">Veuillez corriger les informations ci-dessous et resoumttre votre demande.</p></div>"
+    },
+    {
+      "type": "hidden",
+      "key": "motifCorrection",
+      "label": "Motif de correction",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "type": "datetime",
+      "key": "dateNaissanceInteresse",
+      "label": "Date de naissance de l'intéressé(e)",
+      "input": true,
+      "tableView": true,
+      "format": "dd/MM/yyyy",
+      "enableMaxDateInput": true,
+      "datePicker": { "maxDate": null },
+      "validateOn": "blur",
+      "validate": { "required": true },
+      "errors": { "required": "La date de naissance est obligatoire" },
+      "description": "Corrigez la date si elle était incorrecte"
+    },
+    {
+      "type": "columns",
+      "key": "colonnesCommunePrefecture",
+      "input": false,
+      "tableView": false,
+      "label": "Commune et préfecture",
+      "columns": [
+        {
+          "width": 6,
+          "components": [
+            {
+              "type": "textfield",
+              "key": "communeNaissance",
+              "label": "Commune de naissance",
+              "placeholder": "Ex : Lomé, Sokodé...",
+              "input": true,
+              "tableView": true,
+              "validateOn": "blur",
+              "validate": { "required": true, "maxLength": 150 },
+              "errors": { "required": "La commune de naissance est obligatoire" }
+            }
+          ]
+        },
+        {
+          "width": 6,
+          "components": [
+            {
+              "type": "select",
+              "key": "prefectureNaissance",
+              "label": "Préfecture / Région",
+              "input": true,
+              "tableView": true,
+              "dataSrc": "values",
+              "data": {
+                "values": [
+                  { "label": "Lomé Commune", "value": "lome_commune" },
+                  { "label": "Golfe", "value": "golfe" },
+                  { "label": "Kloto", "value": "kloto" },
+                  { "label": "Kozah", "value": "kozah" },
+                  { "label": "Ogou", "value": "ogou" },
+                  { "label": "Tchaoudjo", "value": "tchaoudjo" },
+                  { "label": "Tone", "value": "tone" },
+                  { "label": "Autre / Étranger", "value": "etranger" }
+                ]
+              },
+              "validateOn": "blur",
+              "validate": { "required": true },
+              "errors": { "required": "La préfecture est obligatoire" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "textfield",
+      "key": "numeroActe",
+      "label": "Numéro de l'acte (si connu)",
+      "placeholder": "Ex : 245 / 2005",
+      "input": true,
+      "tableView": true,
+      "validate": { "required": false },
+      "description": "Si vous le connaissez, il accélère la recherche de l'acte dans le registre"
+    },
+    {
+      "type": "file",
+      "key": "pieceIdentite",
+      "label": "Copie de la pièce d'identité (optionnel — remplacement)",
+      "input": true,
+      "tableView": false,
+      "storage": "base64",
+      "multiple": false,
+      "filePattern": ".pdf,.jpg,.jpeg,.png",
+      "fileMaxSize": "2MB",
+      "validate": { "required": false },
+      "description": "Uploadez uniquement si vous souhaitez remplacer le document précédemment soumis"
+    },
+    {
+      "type": "checkbox",
+      "key": "certificationCorrection",
+      "label": "Je certifie que les informations corrigées sont exactes et complètes.",
+      "input": true,
+      "tableView": false,
+      "validateOn": "submit",
+      "validate": { "required": true },
+      "errors": { "required": "Vous devez certifier l'exactitude des corrections avant de resoumttre" }
+    }
+  ],
+  "actions": [
+    {
+      "name": "publishToRabbitMQ",
+      "title": "Publish to RabbitMQ",
+      "type": "rabbitmq",
+      "handler": ["before"],
+      "method": ["create"],
+      "settings": {
+        "topic": "submissions.topic",
+        "queue": "workflows-engine.main.queue",
+        "payload": "{{ submission.data }}"
+      },
+      "condition": { "show": "" },
+      "priority": 0,
+      "enabled": true
+    }
+  ]
+}

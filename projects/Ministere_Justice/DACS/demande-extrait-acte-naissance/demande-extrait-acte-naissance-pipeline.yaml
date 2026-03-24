@@ -1,0 +1,94 @@
+service: demande-extrait-acte-naissance
+label: "Demande d'extrait d'acte de naissance"
+organisme: "Ministère de la Justice — DACS"
+version: "1.0"
+type: hybride
+payant: false
+
+pipeline:
+
+  - step: 1
+    name: "Soumission de la demande en ligne"
+    actor: "Citoyen"
+    system: "XPortal"
+    type: "humain"
+    action: "Le citoyen se connecte au portail, remplit le formulaire de demande (identité, date et lieu de naissance, type d'extrait souhaité, objet de la demande) et joint une copie de sa pièce d'identité."
+    inputs:
+      - "Nom et prénoms du déclaré"
+      - "Date de naissance"
+      - "Lieu de naissance (commune / préfecture)"
+      - "Numéro de l'acte (si connu)"
+      - "Type d'extrait : extrait avec filiation ou copie intégrale"
+      - "Lien de parenté du demandeur (si différent de l'intéressé)"
+      - "Objet de la demande"
+      - "Copie pièce d'identité du demandeur (PDF/JPEG)"
+    output: "Dossier soumis — numéro de dossier généré"
+    sla: "Immédiat"
+
+  - step: 2
+    name: "Réception et accusé de réception automatique"
+    actor: "XFlow"
+    system: "XFlow"
+    type: "système"
+    action: "Le système enregistre le dossier, génère un numéro de référence et notifie le citoyen par email et SMS."
+    inputs: ["Données de soumission"]
+    output: "Accusé de réception (email + SMS)"
+    sla: "Immédiat"
+
+  - step: 3
+    name: "Instruction de la demande — Recherche dans le registre"
+    actor: "Agent état civil (DACS)"
+    system: "XFlow"
+    type: "humain"
+    sla: "72h"
+    action: "L'agent reçoit le dossier dans son interface, consulte le registre de l'état civil pour localiser l'acte, puis prend une décision : acte trouvé et conforme → validation, informations insuffisantes → correction demandée, acte introuvable → rejet avec orientation."
+    inputs:
+      - "Formulaire de demande citoyen"
+      - "Registre de l'état civil (papier ou numérisé)"
+    output: "Décision : Acte trouvé (→ étape 4) / Correction demandée (→ étape 3a) / Introuvable (→ rejet)"
+
+  - step: "3a"
+    name: "Correction du dossier — boucle de resoumission"
+    actor: "Citoyen"
+    system: "XPortal"
+    type: "humain"
+    sla: "15 jours"
+    retry:
+      max: 3
+      timer: "P15D"
+    action: "Le citoyen est notifié par email/SMS avec le motif de correction (ex : commune de naissance imprécise, date incorrecte). Il corrige sa demande en ligne et la resoumit. Sans réponse sous 15 jours, la demande est clôturée automatiquement."
+    inputs: ["Motif de correction communiqué par l'agent"]
+    output: "Demande corrigée et resoumise à l'agent"
+
+  - step: 4
+    name: "Validation Chef de Service"
+    actor: "Chef de Service DACS"
+    system: "XFlow"
+    type: "humain"
+    sla: "48h"
+    action: "Le chef de service vérifie la conformité de la délivrance préparée par l'agent et valide ou rejette la demande."
+    inputs:
+      - "Dossier instruit par l'agent"
+      - "Décision d'instruction"
+    output: "Décision finale : Accepté / Rejeté"
+
+  - step: 5
+    name: "Notification du résultat"
+    actor: "XFlow"
+    system: "XFlow"
+    type: "système"
+    action: "Le citoyen est notifié du résultat par email et SMS : document prêt pour retrait physique, ou demande rejetée avec motif."
+    inputs: ["Décision finale validée"]
+    output: "Notification email + SMS citoyen"
+    sla: "Immédiat"
+
+  - step: 6
+    name: "Retrait physique du document — PHYSIQUE"
+    actor: "Citoyen"
+    system: "Communauté"
+    type: "physique"
+    action: "Le citoyen se présente au guichet DACS muni de sa pièce d'identité originale et de son numéro de dossier pour retirer l'extrait d'acte de naissance signé et scellé par l'officier d'état civil. La signature manuscrite et le cachet humide officiel sont obligatoires."
+    inputs:
+      - "Pièce d'identité originale"
+      - "Numéro de dossier"
+    output: "Extrait d'acte de naissance officiel (signé + scellé)"

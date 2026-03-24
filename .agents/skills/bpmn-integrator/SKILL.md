@@ -51,6 +51,8 @@ L'architecture ATD repose sur deux moteurs BPMN distincts communiquant de maniè
 
 **XFlow (Le Back-Office)** : Orchestrateur métier. Gère : instruction agent, Odoo ERP, APIs REST tierces, notifications. Pool BPMN `isExecutable="true"`.
 
+> **⚠️ RÈGLE DE CONFORMITÉ CRITIQUE** : Toutes les tâches techniques (UserTask, ServiceTask, SendTask, ReceiveTask) **DOIVENT** impérativement déclarer `camunda:type="external"` pour être pilotables par les workers du framework GNSPD.
+
 ```
 [XPortal] sendTask → Kafka (peer-xflow) → [XFlow] startEvent
 [XFlow]   sendTask → Kafka (ch-portail) → [XPortal] receiveTask
@@ -130,10 +132,10 @@ Chaque SendTask inter-pool a un ReceiveTask (ou StartEvent) correspondant dans l
 </bpmn:collaboration>
 
 <bpmn:process id="Process_Portal" isExecutable="true" camunda:versionTag="1">...</bpmn:process>
-<bpmn:process id="Process_Xflow" isExecutable="true" camunda:versionTag="1">...</bpmn:process>
+<bpmn:process id="Process_Xflow" isExecutable="false" camunda:versionTag="1">...</bpmn:process>
 ```
 
-**Les deux pools DOIVENT être `isExecutable="true"`.**
+> **`isExecutable` XFlow** : Le participant XFlow a `isExecutable="true"` (pour le déploiement), mais le **process** XFlow a `isExecutable="false"`. Dans Camunda/GNSPD, c'est le `isExecutable` du **participant** qui prime. Le process XFlow ne doit pas être instancié manuellement — il démarre uniquement via message Kafka.
 
 ### 3. Messages Kafka — Déclaration globale
 
@@ -214,12 +216,20 @@ Topic Kafka : toujours `bpmn.commands`. Destinations :
 <bpmn:sendTask ... camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:topic="flow-send-message">
   <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
   <camunda:inputParameter name="gnspdTargetElementType">bpmn:StartEvent</camunda:inputParameter>
-  <!-- bpmn:StartEvent pour la soumission initiale, bpmn:ReceiveTask pour tous les autres -->
+  <!-- gnspdTargetElementType :
+       - bpmn:StartEvent  → pour la sendTask initiale XPortal → XFlow startEvent uniquement
+       - bpmn:ReceiveTask → pour toutes les autres sendTask (retours, confirmations, corrections)
+  -->
   <camunda:inputParameter name="gnspdMessageDestination">peer-xflow-local-sp</camunda:inputParameter>
   <camunda:inputParameter name="gnspdMessageRef">MSG_SERVICE_START</camunda:inputParameter>
   <camunda:inputParameter name="gnspdMessage">$this.data.Event_P_Start.parameters</camunda:inputParameter>
   <!-- + 8 paramètres de tâche standards (voir §Paramètres standards) -->
 ```
+
+**Valeurs de `gnspdMessage` selon le contexte :**
+- Envoi complet des données formulaire : `$this.data.Event_P_Start.parameters`
+- Signal booléen simple (déclenchement) : `true`
+- JSON structuré : `${"action": "correction", "motif": this.data.X.result.submissionData.motif ?? null}`
 
 **Payload recommandé pour les retours XFlow → Portail (pattern action unique) :**
 ```javascript
@@ -244,16 +254,14 @@ ${
 #### D. UserTask (`tg.gouv.gnspd.userTask`)
 
 ```xml
+<!-- Tâche de soumission initiale (XPortal) -->
 <bpmn:userTask ... camunda:modelerTemplate="tg.gouv.gnspd.userTask"
   camunda:formKey="[UUID_FORM]"
   camunda:topic="flow-user-task">
   <camunda:inputParameter name="gnspdTaskDescription">Description métier</camunda:inputParameter>
   <camunda:inputParameter name="gnspdHandlerType">publish_submission</camunda:inputParameter>
-  <!-- gnspdHandlerType : publish_submission | tarification | download_files -->
-  <camunda:inputParameter name="gnspdSubmissionFormkey">[slug-formulaire]</camunda:inputParameter>
-  <camunda:inputParameter name="gnspdSubmissionData">$this.data.Event_X_Start.parameters.submissionData</camunda:inputParameter>
   <camunda:inputParameter name="gnspdAttachments">${
-  "pieceIdentite": this.data.Event_X_Start.parameters.submissionData.pieceIdentite ?? null
+  "pieceIdentite": this.data.Event_X_Start.parameters.submissionData.data.pieceIdentite ?? null
 }</camunda:inputParameter>
   <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
   <camunda:inputParameter name="gnspdTaskLabel">Libellé visible citoyen</camunda:inputParameter>
@@ -261,13 +269,47 @@ ${
   <!-- + autres paramètres standards -->
 ```
 
+**Tâche de correction XPortal** (`gnspdHandlerType="publish_submission"` avec pré-remplissage conditionnel) :
+
+```xml
+<!-- Tâche correction citoyen (XPortal) — pré-remplie avec données existantes -->
+<bpmn:userTask id="Task_P_Correction" name="Corriger le dossier"
+  camunda:modelerTemplate="tg.gouv.gnspd.userTask"
+  camunda:formKey="[UUID_FORM_CORRECTION]"
+  camunda:topic="flow-user-task">
+  <bpmn:extensionElements>
+    <camunda:inputOutput>
+      <camunda:inputParameter name="gnspdHandlerType">publish_submission</camunda:inputParameter>
+      <camunda:inputParameter name="gnspdSubmissionData">$(this.data.Task_P_Correction &amp;&amp; this.data.Task_P_Correction.result ? this.data.Task_P_Correction.result : this.data.Event_P_Start.parameters.submissionData.data)</camunda:inputParameter>
+      <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
+      <camunda:inputParameter name="gnspdTaskLabel">Corriger mon dossier</camunda:inputParameter>
+      <camunda:inputParameter name="gnspdTaskStatus">PendingPortal</camunda:inputParameter>
+      <camunda:inputParameter name="gnspdTaskOrder">2</camunda:inputParameter>
+      <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+      <camunda:inputParameter name="gnspdCostVariable" />
+      <camunda:inputParameter name="gnspdCostTotal" />
+      <camunda:inputParameter name="gnspdCostUnitaire" />
+    </camunda:inputOutput>
+    <camunda:taskListener class="" event="create" />
+  </bpmn:extensionElements>
+  ...
+</bpmn:userTask>
+```
+
+> **Pattern `gnspdSubmissionData` conditionnel** : `$(this.data.TASK_ID && this.data.TASK_ID.result ? this.data.TASK_ID.result : this.data.EVENT_START.parameters.submissionData.data)`
+> - `$()` wrapping obligatoire pour l'expression JavaScript
+> - 1ère correction → utilise les données initiales (`Event_P_Start.parameters.submissionData.data`)
+> - Corrections suivantes → réutilise la dernière saisie (`Task_P_Correction.result`)
+> - **Important** : le chemin des données initiales se termine par `.submissionData.data` (avec `.data`)
+> - `gnspdSubmissionFormkey` est **optionnel** (absent du passeport de référence)
+
 **Seules les userTasks visibles par le citoyen ont `gnspdTaskIsVisible=true`** (paiement, corrections, suivi). Les userTasks agent en back-office ont `gnspdTaskIsVisible=false`.
 
 **Valeurs de `gnspdHandlerType`** :
 
 | Valeur | Usage | Contexte |
 |--------|-------|----------|
-| `publish_submission` | Afficher un formulaire Form.io | Soumission initiale, correction, instruction agent |
+| `publish_submission` | Afficher un formulaire Form.io | Soumission initiale (XPortal), correction citoyen (XPortal), instruction agent (XFlow back-office) |
 | `tarification` | Rediriger vers la plateforme de paiement e-Gov **externe** | Paiement des frais de service |
 | `download_files` | Proposer un téléchargement de fichier | Téléchargement d'un récépissé, bulletin, attestation |
 
@@ -333,8 +375,16 @@ Pour les APIs REST tierces (hors Odoo) :
   <camunda:inputParameter name="gnspdDataFormat">JSON</camunda:inputParameter>
   <camunda:inputParameter name="gnspdSingleVariableKey">${"champ": this.data.X.Y.valeur}</camunda:inputParameter>
   <camunda:inputParameter name="gnspdSystemData">${"applicant": this.data.applicant, "recordUid": this.data.recordUid}</camunda:inputParameter>
+  <!-- gnspdSystemData : inclure sur TOUS les restBuilders XFlow — envoie applicant + recordUid au système tiers -->
   <camunda:inputParameter name="gnspdTimeOutValue">120000</camunda:inputParameter>
+  <!-- outputParameter payment_key : initialiser à false sur le restBuilder de création de dossier
+       sera remis à true par l'executionListener de l'IntermediateCatchEvent paiement -->
+  <camunda:outputParameter name="payment_key">false</camunda:outputParameter>
 ```
+
+> **`gnspdSystemData`** : pattern standard `${"applicant": this.data.applicant, "recordUid": this.data.recordUid}` — à inclure sur **tous** les restBuilders XFlow pour transmettre le contexte métier à l'API.
+
+> **`payment_key` initialisation** : Sur le **premier restBuilder** de création du dossier, ajouter `<camunda:outputParameter name="payment_key">false</camunda:outputParameter>`. Valeur mise à `true` exclusivement par l'`executionListener event="end"` de l'IntermediateCatchEvent paiement (voir §H-bis).
 
 #### H. EndEvent (`tg.gouv.gnspd.endEvent`)
 - **Alignement SRS Premium** : L'agent doit s'assurer que la numérotation des étapes dans le XML (IDs ou documentation) correspond à la numérotation du SRS Premium : Lane PORTAL (01, 02...) et Lane XFLOW (B01, B02...).
@@ -370,6 +420,52 @@ Utilisé **uniquement dans le pool XFlow** pour recevoir le callback de la plate
 - L'`executionListener` (event="end") positionne `payment_key = true` dans le contexte d'exécution
 - Placé entre `SendPayOrder` (XFlow → XPortal) et `SendPayConfirm` (XFlow → XPortal)
 - Cet événement **bloque le flux XFlow** jusqu'à réception du callback e-Gov
+
+#### D-bis. ScriptTask — Compteurs et initialisations de variables
+
+`bpmn:scriptTask` natif Camunda (pas de `camunda:modelerTemplate`). Utilisé pour manipuler des variables globales de contexte (compteurs de boucle, flags, resets). **Pas de 8 paramètres standards** — element simple.
+
+```xml
+<!-- Initialisation du compteur (avant la première entrée dans la boucle) -->
+<bpmn:scriptTask id="ScriptTask_InitCount" name="Initialiser compteur à 0" scriptFormat="javascript">
+  <bpmn:incoming>Flow_from_Prev</bpmn:incoming>
+  <bpmn:outgoing>Flow_to_Next</bpmn:outgoing>
+  <bpmn:script>this.data.reformulationCount = 0</bpmn:script>
+</bpmn:scriptTask>
+
+<!-- Incrémentation après chaque tentative -->
+<bpmn:scriptTask id="ScriptTask_IncrCount" name="Incrémenter compteur" scriptFormat="javascript">
+  <bpmn:incoming>Flow_from_UserTask</bpmn:incoming>
+  <bpmn:outgoing>Flow_to_Gateway</bpmn:outgoing>
+  <bpmn:script>this.data.reformulationCount += 1</bpmn:script>
+</bpmn:scriptTask>
+```
+
+Gateway de sortie de boucle lisant la variable globale :
+```javascript
+// Condition continuation
+this.data.reformulationCount <= 2
+// Condition arrêt forcé (max atteint)
+this.data.reformulationCount > 2
+```
+
+> ⚠️ **La gateway doit lire `this.data.reformulationCount` directement** — PAS via `this.data.TASK_ID.result.reformulationCount` (erreur fréquente : lire la variable depuis le résultat d'une tâche au lieu du contexte global).
+
+**Pattern complet boucle limitée :**
+```
+ScriptTask(init=0) → UserTask(analyze) → ScriptTask(+=1) → Gateway(<=2 ?)
+  ├─ [oui] → loopback vers UserTask
+  └─ [non] → EndEvent clôture forcée
+```
+
+#### D-ter. UserTask back-office — `gnspdCandidateCompanies`
+
+Paramètre optionnel présent sur les userTasks back-office XFlow pour restreindre les entités autorisées à prendre la tâche :
+
+```xml
+<camunda:inputParameter name="gnspdCandidateCompanies" />
+<!-- Laisser vide si pas de restriction, ou remplir avec les IDs des entités autorisées -->
+```
 
 ### 5. Paramètres de tâche standards (toujours présents)
 
@@ -496,9 +592,11 @@ this.data.Activity_X_RecvPay.result.data.paymentStatus == "confirmed"
 ### 9. Accès aux données — Grammaire `this.data`
 
 ```javascript
-// Données de la soumission initiale (formulaire citoyen)
-this.data.Event_X_Start.parameters.submissionData.data.champFormulaire
-this.data.Event_X_Start.parameters.submissionData.nomChamp
+// Données de la soumission initiale — DEUX formats possibles selon l'action
+this.data.Event_X_Start.parameters.submissionData.data.champFormulaire  // ← format standard
+this.data.Event_X_Start.parameters.submissionData.nomChamp               // ← format alternatif
+// ⚠️ Le chemin correct se termine par .submissionData.data.champFormulaire (avec .data)
+// Vérifier dans le SRS quel format utilise le formulaire Form.io du service
 
 // Identité du demandeur (disponible globalement)
 this.data.applicant.email
@@ -515,15 +613,40 @@ this.data.Activity_X_Agent.result.submissionData.motif
 // Message reçu via receiveTask XPortal
 this.data.Activity_P_Receive.result.data.action
 
-// Configuration Odoo/API (depuis le startEvent)
+// Données reçues via receiveTask (message Kafka entrant)
+// DEUX patterns selon le pool et l'émetteur :
+this.data.Activity_X_RecvResub.parameters.message.champFormulaire   // ← XFlow reçoit de XPortal
+this.data.Activity_P_RecvFiche.parameters.message.submission_file.file  // ← XPortal reçoit de XFlow
+this.data.Activity_P_RecvFiche.parameters.message.check_state.data.state
+// Pattern général : this.data.[RECV_TASK_ID].result.message.[CHAMP]
+// (certains exemples utilisent .parameters.message., d'autres .result.message. — vérifier l'exemple de référence)
+
+// Données d'une userTask XPortal envoyées vers XFlow via sendTask
+// Utiliser .parameters (pas .result) pour les tâches XPortal
+$this.data.Activity_P_UserTask.parameters  // ← envoi du contexte complet d'une tâche XPortal
+
+// Configuration Odoo/API (depuis le startEvent XFlow)
 this.data.Event_X_Start.parameters.configuration.ODOO.URL
 this.data.Event_X_Start.parameters.configuration.DGDN.BASE_URL
+this.data.Event_X_Start.parameters.configuration.DGDN.AUTH_URL
 
-// Résultat Odoo
+// Résultat restBuilder
 this.data.Activity_X_Odoo.result.id
+this.data.Activity_X_Rest.result.data.id
+this.data.Activity_X_Rest.result ?? null  // avec nullish pour optional chaining
+
+// payment_key — flag de paiement
+// Initialisé à false via outputParameter du 1er restBuilder de création :
+//   <camunda:outputParameter name="payment_key">false</camunda:outputParameter>
+// Mis à true via executionListener event="end" sur le IntermediateCatchEvent paiement :
+//   <camunda:script scriptFormat="javascript">this.data.payment_key = true</camunda:script>
+this.data.payment_key == true   // condition "paiement reçu"
+
+// gnspdSystemData — à inclure dans TOUS les restBuilders XFlow (référence applicant + recordUid)
+// ${"applicant": this.data.applicant, "recordUid": this.data.recordUid}
 
 // Opérateur nullish (toujours utiliser pour les champs optionnels)
-this.data.Activity_P_Payment.result.data.paymentRef ?? null
+this.data.Activity_X_Rest.result?.transactionNumber ?? null
 ```
 
 ### 10. Boucle de correction — Intelligence et limites
@@ -532,7 +655,7 @@ La boucle n'est **jamais** un simple retour en arrière. Elle est interactive et
 1. **XFlow** → Notifier le citoyen (sendNotification avec le motif)
 2. **XFlow** → Envoyer l'ordre de correction au portail (sendTask avec `action: "correction"` et le motif)
 3. **XFlow** → Se mettre en pause (receiveTask "attendre resoumission")
-4. **XPortal** → Recevoir la commande → UserTask de correction pré-remplie (`gnspdFormSetting`)
+4. **XPortal** → Recevoir la commande → UserTask de correction pré-remplie (`gnspdHandlerType="publish_submission"` + `gnspdSubmissionData` conditionnel)
 5. **XPortal** → Renvoyer le dossier corrigé (sendTask)
 6. **XFlow** → Réceptionner et retourner sur la userTask agent
 
@@ -597,6 +720,10 @@ Le contenu porte les secrets et connexions back-office (ODOO, GED, APIs tierces)
 ```
 
 Si un environnement n'a pas de config spécifique, mettre `{}` vides. Les deux configurations (XPortal et XFlow) coexistent mais ne se chevauchent pas.
+
+> **Duplication KMS autorisée** : Certains services (ex: DNCCP) mettent la même config KMS sur les deux startEvents. Cela est valide : XPortal envoie `$this.data.Event_P_Start.parameters` à XFlow, qui peut donc lire la config depuis `this.data.Event_P_Start.parameters.configuration.API.XXX`. Si la config n'est que sur XFlow, utiliser `this.data.Event_X_Start.parameters.configuration.API.XXX`. Mettre la config sur les deux garantit l'accès depuis n'importe quel chemin.
+
+> **`isExecutable` — Règle définitive** : L'attribut qui compte pour le déploiement Camunda est sur le **`bpmn:process`** (pas le participant). XPortal process : `isExecutable="true"`. XFlow process : `isExecutable="false"`. Les participants peuvent avoir l'attribut ou non — ça ne change pas le comportement.
 
 ### 12. Section BPMNDiagram — Obligatoire et complète
 
@@ -686,15 +813,19 @@ Génère un fichier (PDF, DOCX) à partir d'un template prédéfini. Topic : `fl
   camunda:type="external" camunda:topic="flow-generate-template">
   <bpmn:extensionElements>
     <camunda:inputOutput>
-      <camunda:inputParameter name="gnspdGeneratedName">attestation-${this.data.xref}.pdf</camunda:inputParameter>
-      <camunda:inputParameter name="gnspdTemplate">TEMPLATE_ID_ATTESTATION</camunda:inputParameter>
+      <camunda:inputParameter name="gnspdGeneratedName">Lettre d'avis ${this.data.xref}</camunda:inputParameter>
+      <camunda:inputParameter name="gnspdTemplate">24</camunda:inputParameter>
+      <!-- gnspdTemplate : ID NUMÉRIQUE du template dans le CMS GNSPD (pas un nom, un entier) -->
       <camunda:inputParameter name="gnspdTempData">${
-  "nom": this.data.Event_X_Start.parameters.submissionData.nom,
-  "prenom": this.data.Event_X_Start.parameters.submissionData.prenom,
-  "reference": this.data.xref,
-  "date": this.data.Event_X_Start.parameters.submissionData.date
+  "numero": this.data.xref,
+  "dateDeTransmission": this.data.Activity_X_Agent.result.submissionData.date ?? null,
+  "recepteurLettre": this.data.Event_X_Start.parameters.submissionData.data.nomOrganisme,
+  "objetLettre": this.data.Activity_X_Agent.result.submissionData.objet ?? null,
+  "contenu": this.data.Activity_X_Agent.result.submissionData.avis ?? null
 }</camunda:inputParameter>
+      <!-- ⚠️ gnspdTempData : TOUJOURS référencer this.data.XXX — JAMAIS de valeurs hardcodées -->
       <camunda:inputParameter name="gnspdPrintOptions">{'format':'A4'}</camunda:inputParameter>
+      <!-- gnspdPrintOptions : {'format':'A4'} est la valeur standard -->
       <camunda:inputParameter name="gnspdGroups" />
       <camunda:inputParameter name="gnspdRoles" />
       <!-- + 8 paramètres de tâche standards -->
@@ -702,6 +833,9 @@ Génère un fichier (PDF, DOCX) à partir d'un template prédéfini. Topic : `fl
   </bpmn:extensionElements>
 </bpmn:serviceTask>
 ```
+
+> **Usage typique** : après une userTask agent qui saisit le contenu (ex: "Analyser et proposer une réponse"), puis avant une userTask de validation/signature.
+> Le résultat (`this.data.Activity_X_Generate.result`) est un objet fichier passable à `gnspdAttachments` ou `gnspdPdfFile`.
 
 #### L. PdfImage — Apposition d'image sur PDF (`tg.gouv.gnspd.pdfImage`)
 
@@ -787,36 +921,39 @@ Exécute une requête HTTP avec une configuration JSON libre. Topic : `flow-http
 
 Met à jour le statut d'une étape visible côté portail. Topic : `flow-step-notification`.
 
-> **⛔ VALEURS AUTORISÉES pour `gnspdStatus` (liste exhaustive et définitive — toute autre valeur est rejetée à l'exécution) :**
+> **⚠️ DEUX CHAMPS DISTINCTS — NE PAS CONFONDRE :**
+>
+> **`gnspdStatus`** (champ de `stepNotification`) — valeurs autorisées :
 > `Pending` | `PendingPeer` | `PendingPayment` | `PendingUser` | `PendingBackOffice` | `Success` | `Fail` | `WaitingForControls` | `SavedAsDraft` | `Submited` | `Terminated`
+> ⛔ INVALIDES : `Submitted` (2 t), `Processing`, `Completed`, `InProgress`, `Done`
+> ⚠️ `Submited` s'écrit avec **1 seul `t`** — c'est un quirk du framework, pas une faute.
 >
-> **⚠️ PIÈGES FRÉQUENTS** — Ces valeurs sont INVALIDES : `Submitted` (double `t`), `Processing`, `Completed`, `InProgress`, `Done`, `Approved`, `Rejected`.
+> **`gnspdTaskStatus`** (champ des tâches userTask/sendTask/receiveTask) — valeurs autorisées :
+> `Pending` | `PendingPortal` | `PendingPayment` | `PendingBackOffice` | `Review` | `Submitted` | `Rejected` | `Completed` | `Failed` | `PendingCompletion` | `PendingPublic`
+> ⛔ INVALIDES pour les tâches : `PendingUser`, `Success`, `Fail`, `Submited`
+
+> **Mapping `gnspdStatus` selon le contexte :**
 >
-> **Mapping recommandé selon le contexte :**
->
-> | Moment dans le processus | Valeur à utiliser |
+> | Moment dans le processus | Valeur |
 > |---|---|
-> | Dossier reçu par XFlow (démarrage) | `Submited` *(un seul `t` — typo du framework)* |
-> | En attente d'action du citoyen (paiement, correction) | `PendingUser` |
+> | Dossier reçu par XFlow (démarrage) | `Submited` |
 > | En cours d'instruction back-office | `PendingBackOffice` |
-> | Document généré / service rendu avec succès | `Success` |
+> | En attente d'action citoyen | `PendingUser` |
+> | En attente de paiement | `PendingPayment` |
+> | Service rendu avec succès | `Success` |
 > | Dossier rejeté | `Fail` |
 > | Clôturé / annulé | `Terminated` |
+
+> **⛔ `stepNotification` N'UTILISE PAS les 8 paramètres de tâche standards** (`gnspdTaskIsVisible`, `gnspdTaskStatus`, `gnspdTaskKind`, etc.). Seulement les 3 champs ci-dessous.
 
 ```xml
 <bpmn:serviceTask ... camunda:modelerTemplate="tg.gouv.gnspd.stepNotification"
   camunda:type="external" camunda:topic="flow-step-notification">
   <bpmn:extensionElements>
     <camunda:inputOutput>
-      <camunda:inputParameter name="gnspdStatus">Success</camunda:inputParameter>
-      <!-- VALEURS AUTORISÉES : Pending, PendingPeer, PendingPayment, PendingUser, PendingBackOffice, Success, Fail, WaitingForControls, SavedAsDraft, Submited, Terminated -->
-      <!-- INVALIDES (rejetées à l'exécution) : Submitted, Processing, Completed, InProgress, Done -->
+      <camunda:inputParameter name="gnspdStatus">Submited</camunda:inputParameter>
       <camunda:inputParameter name="gnspdIsPortal">true</camunda:inputParameter>
       <camunda:inputParameter name="gnspdStepOrder">1</camunda:inputParameter>
-      <camunda:inputParameter name="gnspdPassData" />
-      <camunda:inputParameter name="gnspdPassCost" />
-      <camunda:inputParameter name="gnspdIgnoreNotFound">false</camunda:inputParameter>
-      <!-- + 8 paramètres de tâche standards -->
     </camunda:inputOutput>
   </bpmn:extensionElements>
 </bpmn:serviceTask>

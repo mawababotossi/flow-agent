@@ -226,10 +226,28 @@
 
     <!-- Branche correction : userTask de correction pré-remplie -->
     <bpmn:userTask id="Task_P_Correction" name="Corriger le dossier"
-      camunda:modelerTemplate="tg.gouv.gnspd.userTask" camunda:topic="flow-user-task">
+      camunda:modelerTemplate="tg.gouv.gnspd.userTask"
+      camunda:formKey="[UUID_FORM_CORRECTION]"
+      camunda:topic="flow-user-task">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdHandlerType">publish_submission</camunda:inputParameter>
+          <!-- gnspdSubmissionData : pattern conditionnel avec fallback — .submissionData.data (avec .data) -->
+          <camunda:inputParameter name="gnspdSubmissionData">$(this.data.Task_P_Correction &amp;&amp; this.data.Task_P_Correction.result ? this.data.Task_P_Correction.result : this.data.Event_P_Start.parameters.submissionData.data)</camunda:inputParameter>
+          <!-- gnspdSubmissionFormkey : OPTIONNEL (absent du passeport de référence) -->
+          <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel">Corriger mon dossier</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">PendingPortal</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder">2</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+        <camunda:taskListener class="" event="create" />
+      </bpmn:extensionElements>
       <bpmn:incoming>SF_P_Action_Correction</bpmn:incoming>
       <bpmn:outgoing>SF_P_Correction_Send</bpmn:outgoing>
-      <!-- gnspdHandlerType = publish_submission -->
     </bpmn:userTask>
 
     <bpmn:sendTask id="Send_P_Resub" name="Soumettre correction XFlow"
@@ -318,11 +336,18 @@
     </bpmn:startEvent>
 
     <!-- Mise à jour statut portail (optionnel mais recommandé au démarrage) -->
+    <!-- ⛔ stepNotification N'UTILISE PAS les 8 champs de tâche standards — seulement ces 3 champs -->
     <bpmn:serviceTask id="StepNotif_X_Submitted" name="Mettre à jour étape (Soumis)"
       camunda:modelerTemplate="tg.gouv.gnspd.stepNotification" camunda:topic="flow-step-notification">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdStatus">Submited</camunda:inputParameter><!-- UN SEUL t — quirk framework -->
+          <camunda:inputParameter name="gnspdIsPortal">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdStepOrder">1</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>SF_X_Start_StepNotif</bpmn:incoming>
       <bpmn:outgoing>SF_X_StepNotif_OdooSearch</bpmn:outgoing>
-      <!-- gnspdStatus = Submited (UN SEUL t — typo framework) -->
     </bpmn:serviceTask>
 
     <!-- P5 : vérification Odoo AVANT l'agent -->
@@ -344,9 +369,15 @@
     <!-- Mise à jour statut : en cours d'instruction -->
     <bpmn:serviceTask id="StepNotif_X_Processing" name="Mettre à jour étape (Instruction)"
       camunda:modelerTemplate="tg.gouv.gnspd.stepNotification" camunda:topic="flow-step-notification">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdStatus">PendingBackOffice</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdIsPortal">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdStepOrder">2</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>SF_X_OdooOK_StepNotifProcessing</bpmn:incoming>
       <bpmn:outgoing>SF_X_StepNotif_SendAgent</bpmn:outgoing>
-      <!-- gnspdStatus = PendingBackOffice -->
     </bpmn:serviceTask>
 
     <!-- TODO : SendTask vers XPortal si handoff visuel nécessaire (optionnel selon SRS) -->
@@ -488,9 +519,15 @@
 
     <bpmn:serviceTask id="StepNotif_X_Success" name="Mettre à jour étape (Succès)"
       camunda:modelerTemplate="tg.gouv.gnspd.stepNotification" camunda:topic="flow-step-notification">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdStatus">Success</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdIsPortal">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdStepOrder">3</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>SF_X_Sign_StepNotifSuccess</bpmn:incoming>
       <bpmn:outgoing>SF_X_StepNotifSuccess_Notif</bpmn:outgoing>
-      <!-- gnspdStatus = Success -->
     </bpmn:serviceTask>
 
     <!-- P3 : notify AVANT send -->
@@ -585,12 +622,13 @@
 
 ```xml
     <!-- Timer non-interrompant sur la userTask agent : déclenche l'escalade SLA -->
+    <!-- ⚠️ PAS de camunda:type ni camunda:topic sur bpmn:boundaryEvent — sinon "non atteignable depuis les startEvents" -->
     <bpmn:boundaryEvent id="BoundaryTimer_X_Agent"
-      cancelActivity="false"   <!-- NON interrompant : le flux principal continue -->
+      cancelActivity="false"
       attachedToRef="Activity_X_Agent">
       <bpmn:outgoing>SF_X_Timer_NotifEscalade</bpmn:outgoing>
-      <bpmn:timerEventDefinition>
-        <bpmn:timeDuration>PT72H</bpmn:timeDuration>  <!-- délai SLA configurable -->
+      <bpmn:timerEventDefinition id="TimerDef_X_Agent">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT72H</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
 
@@ -612,7 +650,65 @@
 
 ---
 
-## 12. BPMNDiagram — Grille de coordonnées de référence
+## 12. XFlow — ScriptTask compteur de boucle (alternative au boundary timer)
+
+> Quand la boucle doit s'arrêter après N tentatives (correction, reformulation) sans délai temporel.
+> Alternative au boundary timer : contrôle explicite par compteur de variables.
+
+```xml
+    <!-- 1. Initialisation à 0 (une seule fois, en entrée de process ou après conformité) -->
+    <bpmn:scriptTask id="ScriptTask_InitCount" name="Initialiser compteur reformulations à 0"
+      scriptFormat="javascript">
+      <bpmn:incoming>SF_X_Prev_Init</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Init_Analyze</bpmn:outgoing>
+      <bpmn:script>this.data.reformulationCount = 0</bpmn:script>
+    </bpmn:scriptTask>
+
+    <!-- 2. Tâche agent (analyse, proposition de réponse...) -->
+    <bpmn:userTask id="Activity_X_Analyze" name="Analyser et proposer une réponse" ... />
+
+    <!-- 3. Incrémentation APRÈS la tâche agent -->
+    <bpmn:scriptTask id="ScriptTask_IncrCount" name="Incrémenter compteur reformulations"
+      scriptFormat="javascript">
+      <bpmn:incoming>SF_X_Analyze_Incr</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Incr_GwValidate</bpmn:outgoing>
+      <bpmn:script>this.data.reformulationCount += 1</bpmn:script>
+    </bpmn:scriptTask>
+
+    <!-- 4. Validation par le chef / superviseur -->
+    <bpmn:userTask id="Activity_X_Validate" name="Valider et signer la réponse" ... />
+
+    <!-- 5. Gateway : validé ou reformulation ? -->
+    <bpmn:exclusiveGateway id="Gw_X_Validated" name="Validé ?">
+      <bpmn:incoming>SF_X_Validate_Gw</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Validated_Yes</bpmn:outgoing>
+      <bpmn:outgoing>SF_X_Validated_No</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <!-- Condition validation : this.data.Activity_X_Validate.result.decision == 'oui' -->
+    <!-- Condition reformulation : this.data.Activity_X_Validate.result.decision == 'non' -->
+
+    <!-- 6. Gateway de limite (après validation NON) -->
+    <bpmn:exclusiveGateway id="Gw_X_CountLimit" name="Reformulations ≤ 2 ?">
+      <bpmn:incoming>SF_X_Validated_No</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Count_Continue</bpmn:outgoing>
+      <bpmn:outgoing>SF_X_Count_Max</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SF_X_Count_Continue" sourceRef="Gw_X_CountLimit" targetRef="Activity_X_Analyze">
+      <!-- ⚠️ Lire la VARIABLE GLOBALE, pas this.data.TASK.result.reformulationCount -->
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">
+        this.data.reformulationCount &lt;= 2
+      </bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_X_Count_Max" sourceRef="Gw_X_CountLimit" targetRef="End_X_Cloture">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">
+        this.data.reformulationCount &gt; 2
+      </bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+```
+
+---
+
+## 13. BPMNDiagram — Grille de coordonnées de référence
 
 > Grille standard ATD. Adapter les x selon le nombre de tâches (pas de 160px entre tâches).
 
@@ -668,7 +764,13 @@ Gateway (exclusiveGateway) : 50x50
 - [ ] P3 : dans chaque chemin, la sendNotification précède le sendTask inter-pool
 - [ ] Tous les `conditionExpression` ont `language="javascript"` (sans typo `javscript`)
 - [ ] Tous les `conditionExpression` utilisent `this.data.` (sans `$`) — le `$` est réservé aux `inputParameter`
-- [ ] `gnspdStatus` dans les stepNotification : `Submited` (1 seul t), `PendingBackOffice`, `Success`, `Fail`, `PendingUser`
+- [ ] `gnspdStatus` (stepNotification) : `Submited` (1 t!), `PendingBackOffice`, `PendingUser`, `PendingPayment`, `Success`, `Fail`, `Terminated` — ⛔ pas `Submitted`, `Completed`, `Processing`
+- [ ] `gnspdTaskStatus` (userTask/sendTask) : `Pending`, `PendingPortal`, `PendingPayment`, `PendingBackOffice`, `Completed`, `Rejected` — ⛔ pas `PendingUser`, `Success`, `Submited`
+- [ ] stepNotification : seulement `gnspdStatus` + `gnspdIsPortal` + `gnspdStepOrder` — ⛔ pas les 8 champs de tâche
 - [ ] BPMNDiagram : tous les éléments ont un Shape et tous les flux ont un Edge
-- [ ] Les 2 pools ont `isExecutable="true"`
+- [ ] Pool XPortal : `isExecutable="true"` sur participant ET process. Pool XFlow : `isExecutable="true"` sur participant, `isExecutable="false"` sur process.
 - [ ] Aucun namespace `zeebe:`
+- [ ] `boundaryEvent` timer : pas de `camunda:type` ni `camunda:topic` sur l'élément — `timerEventDefinition` avec `id`, `timeDuration` avec `xsi:type="bpmn:tFormalExpression"`
+- [ ] Correction XPortal : `gnspdHandlerType="publish_submission"` + `gnspdSubmissionData` conditionnel avec `.submissionData.data` (avec `.data`). Pattern : `$(this.data.TASK && this.data.TASK.result ? this.data.TASK.result : this.data.EVENT.parameters.submissionData.data)`
+- [ ] RestBuilders XFlow : inclure `gnspdSystemData=${"applicant": this.data.applicant, "recordUid": this.data.recordUid}` sur tous
+- [ ] `gnspdTargetElementType` : `bpmn:StartEvent` pour la sendTask initiale seulement, `bpmn:ReceiveTask` pour toutes les autres

@@ -1,0 +1,152 @@
+{
+  "title": "Instruction — Demande d'extrait d'acte de naissance",
+  "name": "instructionDemandeExtraitActeNaissance",
+  "path": "formio-instruction-demande-extrait-acte-naissance",
+  "type": "form",
+  "display": "form",
+  "i18n": {
+    "en": {
+      "Instruction du dossier": "File Instruction",
+      "Soumettre la décision": "Submit decision"
+    }
+  },
+  "config": {
+    "development": {
+      "apiBaseUrl": "https://api.dev.gouv.tg/api/v1/admin",
+      "appName": "Développement",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "sandbox": {
+      "apiBaseUrl": "https://api.sandbox.gouv.tg/api/v1/admin",
+      "appName": "Sandbox",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "preproduction": {
+      "apiBaseUrl": "https://api.preprod.gouv.tg/api/v1/admin",
+      "appName": "Pré-production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "production": {
+      "apiBaseUrl": "https://api.gouv.tg/api/v1/admin",
+      "appName": "Production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    }
+  },
+  "components": [
+    {
+      "type": "htmlelement",
+      "key": "titreDossier",
+      "tag": "div",
+      "input": false,
+      "tableView": false,
+      "label": "Titre",
+      "content": "<div style=\"background:#f0fdf4;border-left:4px solid #16a34a;padding:16px 20px;border-radius:8px;margin-bottom:24px\"><h3 style=\"margin:0 0 8px;color:#15803d\">📂 Instruction du dossier</h3><p style=\"margin:0;color:#166534;font-size:14px\">Consultez les informations de la demande ci-dessous et rendez votre décision. SLA : 72 heures.</p></div>"
+    },
+    {
+      "type": "htmlelement",
+      "key": "donneesDemande",
+      "tag": "div",
+      "input": false,
+      "tableView": false,
+      "label": "Données de la demande",
+      "content": "<div style=\"background:#f8f8f8;border-radius:10px;padding:20px;margin-bottom:20px\"><h4 style=\"margin:0 0 16px;color:#1f2937\">Données de la demande citoyen</h4><p style=\"color:#6b7280;font-size:13px\">Les informations saisies par le citoyen sont disponibles dans le contexte XFlow via <code>this.data.Event_X_Start.parameters.submissionData.data</code>.</p></div>"
+    },
+    {
+      "type": "select",
+      "key": "decision",
+      "label": "Décision d'instruction",
+      "input": true,
+      "tableView": true,
+      "dataSrc": "values",
+      "data": {
+        "values": [
+          { "label": "✅ Acte trouvé — Transmettre pour validation", "value": "approve" },
+          { "label": "✏️ Informations insuffisantes — Demander une correction", "value": "correction" },
+          { "label": "❌ Acte introuvable — Rejeter et orienter vers TGI", "value": "reject" }
+        ]
+      },
+      "validateOn": "blur",
+      "validate": { "required": true },
+      "errors": { "required": "La décision est obligatoire" }
+    },
+    {
+      "type": "textarea",
+      "key": "motifCorrection",
+      "label": "Motif de correction (instructions pour le citoyen)",
+      "placeholder": "Ex : La date de naissance indiquée ne correspond pas au registre. Veuillez préciser le jour et le mois exacts. / La commune de naissance est insuffisante, précisez le quartier ou arrondissement...",
+      "input": true,
+      "tableView": true,
+      "rows": 4,
+      "validateOn": "blur",
+      "validate": { "required": true, "maxLength": 500 },
+      "errors": { "required": "Le motif de correction est obligatoire pour guider le citoyen" },
+      "customConditional": "show = (data.decision === 'correction');",
+      "description": "Ce message sera transmis directement au citoyen. Soyez précis et constructif."
+    },
+    {
+      "type": "textarea",
+      "key": "motifRejet",
+      "label": "Motif de rejet",
+      "placeholder": "Ex : Acte introuvable dans les registres de la commune de Lomé pour la période 1985-1995. Le demandeur est orienté vers le TGI de Lomé pour une procédure de jugement supplétif.",
+      "input": true,
+      "tableView": true,
+      "rows": 4,
+      "validateOn": "blur",
+      "validate": { "required": true, "maxLength": 500 },
+      "errors": { "required": "Le motif de rejet est obligatoire" },
+      "customConditional": "show = (data.decision === 'reject');"
+    },
+    {
+      "type": "textarea",
+      "key": "observationsInstruction",
+      "label": "Observations internes (facultatif)",
+      "placeholder": "Notes internes à destination du chef de service (non transmises au citoyen)...",
+      "input": true,
+      "tableView": false,
+      "rows": 3,
+      "validate": { "required": false, "maxLength": 1000 },
+      "customConditional": "show = (data.decision === 'approve');"
+    }
+  ],
+  "actions": []
+}

@@ -1,0 +1,797 @@
+{
+  "title": "Demande d'extrait d'acte de naissance",
+  "name": "demandeExtraitActeNaissance",
+  "path": "demande-extrait-acte-naissance",
+  "type": "form",
+  "display": "wizard",
+  "i18n": {
+    "en": {
+      "Présentation du service": "Service Presentation",
+      "Identité du demandeur": "Applicant Identity",
+      "Informations sur la naissance": "Birth Information",
+      "Pièces justificatives": "Supporting Documents",
+      "Récapitulatif et soumission": "Summary and Submission",
+      "Commencer": "Start",
+      "Soumettre la demande": "Submit request",
+      "Suivant": "Next",
+      "Précédent": "Previous"
+    }
+  },
+  "config": {
+    "development": {
+      "apiBaseUrl": "https://api.dev.gouv.tg/api/v1/admin",
+      "appName": "Développement",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "sandbox": {
+      "apiBaseUrl": "https://api.sandbox.gouv.tg/api/v1/admin",
+      "appName": "Sandbox",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "preproduction": {
+      "apiBaseUrl": "https://api.preprod.gouv.tg/api/v1/admin",
+      "appName": "Pré-production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    },
+    "production": {
+      "apiBaseUrl": "https://api.gouv.tg/api/v1/admin",
+      "appName": "Production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "username": "user.username",
+        "userId": "user.userId",
+        "accountType": "user.accountType",
+        "language": "user.language",
+        "phone": "user.phone"
+      }
+    }
+  },
+  "components": [
+    {
+      "type": "panel",
+      "title": "Présentation du service",
+      "label": "Présentation du service",
+      "key": "stepIntro",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "type": "htmlelement",
+          "key": "stylesCss",
+          "tag": "style",
+          "input": false,
+          "tableView": false,
+          "label": "CSS",
+          "content": ".sfc-card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:20px}.sfc-subtitle{color:#6b7280;font-size:13px;margin-bottom:16px}.sfc-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px}.sfc-ico{font-size:18px;min-width:24px}.sfc-boxes{display:flex;gap:12px;margin:16px 0}.sfc-box{flex:1;background:#f9fafb;border-radius:8px;padding:12px;text-align:center}.sfc-lbl{font-size:11px;color:#6b7280;margin:0}.sfc-val{font-size:20px;font-weight:700;color:#1f2937;margin:4px 0 0}.sfc-stitle{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:16px;margin-top:16px}.sfc-link{display:flex;align-items:center;gap:8px;color:#16a34a;text-decoration:none;font-size:13px;font-weight:500;margin-top:16px}.sfc-link-ico{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;background:#16a34a;border-radius:50%;color:#fff;font-size:10px}.info-pill{flex:1;min-width:200px;background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.06)}.info-pills-wrap{display:flex;gap:16px;flex-wrap:wrap;margin:20px 0}.step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:#1bae4a;border-radius:50%;color:#fff;font-size:13px;font-weight:700;margin-right:10px;flex-shrink:0}.step-row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #f3f4f6}.step-row:last-child{border-bottom:none}.bloc-gris{background:#f8f8f8;border-radius:10px;padding:16px 20px;margin:16px 0}.avert{background:#fffbeb;border-left:4px solid #f59e0b;padding:12px 16px;border-radius:6px;font-size:13px;color:#92400e;margin:16px 0}"
+        },
+        {
+          "type": "columns",
+          "key": "columnsIntro",
+          "input": false,
+          "tableView": false,
+          "label": "Colonnes intro",
+          "columns": [
+            {
+              "width": 8,
+              "components": [
+                {
+                  "type": "htmlelement",
+                  "key": "titreService",
+                  "tag": "h2",
+                  "input": false,
+                  "tableView": false,
+                  "label": "Titre",
+                  "content": "Demande d'extrait d'acte de naissance"
+                },
+                {
+                  "type": "htmlelement",
+                  "key": "infoPills",
+                  "tag": "div",
+                  "input": false,
+                  "tableView": false,
+                  "label": "Info Pills",
+                  "content": "<div class=\"info-pills-wrap\"><div class=\"info-pill\"><div style=\"font-size:28px;margin-bottom:8px\">⏱️</div><div style=\"font-size:13px;font-weight:600;color:#374151\">Délai de traitement</div><div style=\"font-size:15px;color:#1bae4a;font-weight:700\">3 jours ouvrables</div></div><div class=\"info-pill\" style=\"background:#f9fafb\"><div style=\"font-size:28px;margin-bottom:8px\">💰</div><div style=\"font-size:13px;font-weight:600;color:#374151\">Coût</div><div style=\"font-size:15px;color:#1bae4a;font-weight:700\">Gratuit</div></div><div class=\"info-pill\" style=\"background:#f9fafb\"><div style=\"font-size:28px;margin-bottom:8px\">📍</div><div style=\"font-size:13px;font-weight:600;color:#374151\">Retrait</div><div style=\"font-size:15px;color:#374151;font-weight:600\">Guichet DACS</div></div></div>"
+                },
+                {
+                  "type": "htmlelement",
+                  "key": "descriptionService",
+                  "tag": "div",
+                  "input": false,
+                  "tableView": false,
+                  "label": "Description",
+                  "content": "<p style=\"color:#374151;line-height:1.7;\">L'extrait d'acte de naissance est un document officiel de l'état civil attestant de votre naissance. Il est requis pour de nombreuses démarches : inscription scolaire, demande de CNI ou passeport, mariage civil, visa, succession, concours publics.</p><p style=\"color:#374151;line-height:1.7;\">Ce service vous permet de soumettre votre demande <strong>en ligne</strong>, sans vous déplacer pour le dépôt du dossier. Vous serez notifié par SMS et email à chaque étape. Le retrait du document signé reste obligatoire au guichet de la DACS.</p>"
+                },
+                {
+                  "type": "htmlelement",
+                  "key": "conditionsEligibilite",
+                  "tag": "div",
+                  "input": false,
+                  "tableView": false,
+                  "label": "Conditions",
+                  "content": "<div class=\"bloc-gris\"><strong>✅ Qui peut faire cette demande ?</strong><ul style=\"margin:10px 0 0;padding-left:20px;color:#374151;line-height:1.8\"><li>L'intéressé(e) lui-même</li><li>Un parent direct (père, mère)</li><li>Un représentant légal muni d'une procuration notariée</li></ul></div>"
+                },
+                {
+                  "type": "htmlelement",
+                  "key": "piecesRequises",
+                  "tag": "div",
+                  "input": false,
+                  "tableView": false,
+                  "label": "Pièces",
+                  "content": "<div class=\"bloc-gris\"><strong>📎 Pièces à fournir (en ligne)</strong><ul style=\"margin:10px 0 0;padding-left:20px;color:#374151;line-height:1.8\"><li>Copie de votre pièce d'identité (CNI, passeport ou titre de séjour) — PDF/JPG/PNG, max 2 Mo</li><li>Procuration notariée (si vous faites la demande pour un tiers) — PDF, max 2 Mo</li></ul></div>"
+                },
+                {
+                  "type": "htmlelement",
+                  "key": "etapesProcessus",
+                  "tag": "div",
+                  "input": false,
+                  "tableView": false,
+                  "label": "Étapes",
+                  "content": "<p style=\"font-weight:600;color:#1f2937;margin-bottom:12px\">Comment ça marche ?</p><div class=\"step-row\"><span class=\"step-num\">1</span><span>Remplissez le formulaire en ligne et joignez vos pièces</span></div><div class=\"step-row\"><span class=\"step-num\">2</span><span>Recevez un accusé de réception par SMS et email</span></div><div class=\"step-row\"><span class=\"step-num\">3</span><span>L'agent DACS instruit votre demande (délai : 3 jours)</span></div><div class=\"step-row\"><span class=\"step-num\">4</span><span>Recevez une notification dès que votre extrait est prêt</span></div><div class=\"step-row\"><span class=\"step-num\">5</span><span>Retirez votre extrait signé au guichet DACS (pièce d'identité originale requise)</span></div>"
+                },
+                {
+                  "type": "htmlelement",
+                  "key": "avertissement",
+                  "tag": "div",
+                  "input": false,
+                  "tableView": false,
+                  "label": "Avertissement",
+                  "content": "<div class=\"avert\">⚠️ <strong>Service hybride :</strong> La signature de l'officier d'état civil et le cachet humide sont légalement obligatoires. Le retrait physique au guichet DACS est obligatoire et ne peut pas être remplacé par une signature électronique.</div>"
+                }
+              ]
+            },
+            {
+              "width": 4,
+              "components": [
+                {
+                  "type": "htmlelement",
+                  "key": "sidebarFournisseur",
+                  "tag": "div",
+                  "input": false,
+                  "tableView": false,
+                  "label": "Sidebar",
+                  "content": "<div class=\"sfc-card\" id=\"sidebar-fournisseur\"><h3 style=\"font-size:16px;font-weight:700;margin-bottom:4px\">Fournisseur de service</h3><p class=\"sfc-subtitle\">Ministère de la Justice<br>Direction des Affaires Civiles et du Sceau (DACS)</p><div class=\"sfc-row\"><span class=\"sfc-ico\">📞</span><span><strong>Téléphone :</strong> +228 22 21 XX XX</span></div><div class=\"sfc-row\"><span class=\"sfc-ico\">📧</span><span><strong>Email :</strong> dacs@justice.gouv.tg</span></div><div class=\"sfc-row\"><span class=\"sfc-ico\">📍</span><span><strong>Adresse :</strong> Rue de l'Ancienne Préfecture, Lomé</span></div><div class=\"sfc-row\"><span class=\"sfc-ico\">🕐</span><span><strong>Horaires guichet :</strong> Lun–Ven 8h–16h</span></div><div class=\"sfc-boxes\"><div class=\"sfc-box\"><p class=\"sfc-lbl\">Délai cible</p><p class=\"sfc-val\">3 <span style=\"font-size:12px\">jours</span></p></div><div class=\"sfc-box\"><p class=\"sfc-lbl\">Coût</p><p class=\"sfc-val\" style=\"font-size:16px\">Gratuit</p></div></div><p class=\"sfc-stitle\">Besoin d'aide ?</p><div class=\"sfc-row\"><span class=\"sfc-ico\">💬</span><span style=\"font-size:13px\">Appelez le centre d'appel ATD au <strong>+228 20 XX XX XX</strong></span></div></div>"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "panel",
+      "title": "Identité du demandeur",
+      "label": "Identité du demandeur",
+      "key": "stepIdentite",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "type": "htmlelement",
+          "key": "introIdentite",
+          "tag": "p",
+          "input": false,
+          "tableView": false,
+          "label": "Intro",
+          "content": "<p style=\"color:#6b7280;margin-bottom:20px\">Vos informations d'identité sont pré-remplies depuis votre profil e-ID. Vérifiez les informations et complétez les champs restants.</p>"
+        },
+        {
+          "type": "columns",
+          "key": "colonnesNomPrenom",
+          "input": false,
+          "tableView": false,
+          "label": "Nom Prénom",
+          "columns": [
+            {
+              "width": 6,
+              "components": [
+                {
+                  "type": "textfield",
+                  "key": "nom",
+                  "label": "Nom de famille",
+                  "placeholder": "Votre nom",
+                  "defaultValue": "{{ config.users.lastName }}",
+                  "input": true,
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": { "required": true, "maxLength": 100 },
+                  "errors": { "required": "Le nom de famille est obligatoire" },
+                  "logic": [
+                    {
+                      "name": "verrouillageNom",
+                      "trigger": {
+                        "type": "javascript",
+                        "javascript": "result = !!(data.nom && String(data.nom).trim().length > 0);"
+                      },
+                      "actions": [
+                        {
+                          "name": "desactiverNom",
+                          "type": "property",
+                          "property": { "label": "Disabled", "value": "disabled", "type": "boolean" },
+                          "state": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "width": 6,
+              "components": [
+                {
+                  "type": "textfield",
+                  "key": "prenom",
+                  "label": "Prénom(s)",
+                  "placeholder": "Votre prénom",
+                  "defaultValue": "{{ config.users.firstName }}",
+                  "input": true,
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": { "required": true, "maxLength": 100 },
+                  "errors": { "required": "Le prénom est obligatoire" },
+                  "logic": [
+                    {
+                      "name": "verrouillagePrenom",
+                      "trigger": {
+                        "type": "javascript",
+                        "javascript": "result = !!(data.prenom && String(data.prenom).trim().length > 0);"
+                      },
+                      "actions": [
+                        {
+                          "name": "desactiverPrenom",
+                          "type": "property",
+                          "property": { "label": "Disabled", "value": "disabled", "type": "boolean" },
+                          "state": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "columns",
+          "key": "colonnesContact",
+          "input": false,
+          "tableView": false,
+          "label": "Contact",
+          "columns": [
+            {
+              "width": 6,
+              "components": [
+                {
+                  "type": "email",
+                  "key": "email",
+                  "label": "Adresse e-mail",
+                  "placeholder": "votre@email.tg",
+                  "defaultValue": "{{ config.users.email }}",
+                  "input": true,
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "L'adresse e-mail est obligatoire", "invalid_email": "Adresse e-mail invalide" },
+                  "logic": [
+                    {
+                      "name": "verrouillageEmail",
+                      "trigger": {
+                        "type": "javascript",
+                        "javascript": "result = !!(data.email && String(data.email).trim().length > 0);"
+                      },
+                      "actions": [
+                        {
+                          "name": "desactiverEmail",
+                          "type": "property",
+                          "property": { "label": "Disabled", "value": "disabled", "type": "boolean" },
+                          "state": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "width": 6,
+              "components": [
+                {
+                  "type": "phoneNumber",
+                  "key": "telephone",
+                  "label": "Numéro de téléphone",
+                  "placeholder": "228 XX XX XX XX",
+                  "defaultValue": "{{ config.users.phone }}",
+                  "inputMask": "228 99 99 99 99",
+                  "input": true,
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "Le numéro de téléphone est obligatoire" },
+                  "logic": [
+                    {
+                      "name": "verrouillageTel",
+                      "trigger": {
+                        "type": "javascript",
+                        "javascript": "result = !!(data.telephone && String(data.telephone).trim().length > 0);"
+                      },
+                      "actions": [
+                        {
+                          "name": "desactiverTel",
+                          "type": "property",
+                          "property": { "label": "Disabled", "value": "disabled", "type": "boolean" },
+                          "state": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "columns",
+          "key": "colonnesPiece",
+          "input": false,
+          "tableView": false,
+          "label": "Pièce",
+          "columns": [
+            {
+              "width": 6,
+              "components": [
+                {
+                  "type": "select",
+                  "key": "typePiece",
+                  "label": "Type de pièce d'identité",
+                  "input": true,
+                  "tableView": true,
+                  "dataSrc": "values",
+                  "data": {
+                    "values": [
+                      { "label": "Carte Nationale d'Identité (CNI)", "value": "CNI" },
+                      { "label": "Passeport", "value": "PASSEPORT" },
+                      { "label": "Titre de séjour", "value": "TITRE_SEJOUR" }
+                    ]
+                  },
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "Veuillez sélectionner un type de pièce d'identité" }
+                }
+              ]
+            },
+            {
+              "width": 6,
+              "components": [
+                {
+                  "type": "textfield",
+                  "key": "numeroPiece",
+                  "label": "Numéro de la pièce d'identité",
+                  "placeholder": "Ex : TG123456789",
+                  "input": true,
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": { "required": true, "minLength": 6, "maxLength": 20 },
+                  "errors": {
+                    "required": "Le numéro de pièce est obligatoire",
+                    "minLength": "Le numéro doit comporter au moins 6 caractères",
+                    "maxLength": "Le numéro ne doit pas dépasser 20 caractères"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "key": "lienParente",
+          "label": "Lien de parenté avec l'intéressé(e)",
+          "input": true,
+          "tableView": true,
+          "dataSrc": "values",
+          "data": {
+            "values": [
+              { "label": "Moi-même (je suis l'intéressé(e))", "value": "moi-meme" },
+              { "label": "Père ou mère", "value": "parent" },
+              { "label": "Représentant légal mandaté", "value": "mandataire" }
+            ]
+          },
+          "validateOn": "blur",
+          "validate": { "required": true },
+          "errors": { "required": "Veuillez sélectionner votre lien de parenté" }
+        },
+        {
+          "type": "textfield",
+          "key": "nomInteresse",
+          "label": "Nom complet de l'intéressé(e)",
+          "placeholder": "Nom et prénom(s) de la personne concernée par l'acte",
+          "input": true,
+          "tableView": true,
+          "validateOn": "blur",
+          "validate": { "required": true, "maxLength": 200 },
+          "errors": { "required": "Le nom de l'intéressé(e) est obligatoire" },
+          "customConditional": "show = (data.lienParente !== 'moi-meme' && data.lienParente !== undefined && data.lienParente !== '');"
+        }
+      ]
+    },
+    {
+      "type": "panel",
+      "title": "Informations sur la naissance",
+      "label": "Informations sur la naissance",
+      "key": "stepNaissance",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "type": "htmlelement",
+          "key": "introNaissance",
+          "tag": "p",
+          "input": false,
+          "tableView": false,
+          "label": "Intro",
+          "content": "<p style=\"color:#6b7280;margin-bottom:20px\">Renseignez les informations permettant à l'agent de localiser l'acte dans le registre de l'état civil. Plus vos informations sont précises, plus rapide sera le traitement.</p>"
+        },
+        {
+          "type": "columns",
+          "key": "colonnesDateLieu",
+          "input": false,
+          "tableView": false,
+          "label": "Date et lieu",
+          "columns": [
+            {
+              "width": 6,
+              "components": [
+                {
+                  "type": "datetime",
+                  "key": "dateNaissanceInteresse",
+                  "label": "Date de naissance de l'intéressé(e)",
+                  "input": true,
+                  "tableView": true,
+                  "format": "dd/MM/yyyy",
+                  "enableMaxDateInput": true,
+                  "datePicker": { "maxDate": null, "disableFunction": "date > moment()" },
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "La date de naissance est obligatoire" }
+                }
+              ]
+            },
+            {
+              "width": 6,
+              "components": [
+                {
+                  "type": "textfield",
+                  "key": "communeNaissance",
+                  "label": "Commune de naissance",
+                  "placeholder": "Ex : Lomé, Sokodé, Kpalimé...",
+                  "input": true,
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": { "required": true, "maxLength": 150 },
+                  "errors": { "required": "La commune de naissance est obligatoire" },
+                  "description": "Indiquez la commune exacte (pas seulement la préfecture)"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "columns",
+          "key": "colonnesPrefecturePays",
+          "input": false,
+          "tableView": false,
+          "label": "Préfecture et pays",
+          "columns": [
+            {
+              "width": 6,
+              "components": [
+                {
+                  "type": "select",
+                  "key": "prefectureNaissance",
+                  "label": "Préfecture / Région de naissance",
+                  "input": true,
+                  "tableView": true,
+                  "dataSrc": "values",
+                  "data": {
+                    "values": [
+                      { "label": "Lomé Commune", "value": "lome_commune" },
+                      { "label": "Golfe", "value": "golfe" },
+                      { "label": "Kloto", "value": "kloto" },
+                      { "label": "Agou", "value": "agou" },
+                      { "label": "Amou", "value": "amou" },
+                      { "label": "Bassar", "value": "bassar" },
+                      { "label": "Binah", "value": "binah" },
+                      { "label": "Blitta", "value": "blitta" },
+                      { "label": "Cinkassé", "value": "cinkasse" },
+                      { "label": "Dankpen", "value": "dankpen" },
+                      { "label": "Danyi", "value": "danyi" },
+                      { "label": "Est Mono", "value": "est_mono" },
+                      { "label": "Haho", "value": "haho" },
+                      { "label": "Kpélé", "value": "kpele" },
+                      { "label": "Kozah", "value": "kozah" },
+                      { "label": "Kpendjal", "value": "kpendjal" },
+                      { "label": "Moyen Mono", "value": "moyen_mono" },
+                      { "label": "Ogou", "value": "ogou" },
+                      { "label": "Oti", "value": "oti" },
+                      { "label": "Plaine du Mô", "value": "plaine_mo" },
+                      { "label": "Sotouboua", "value": "sotouboua" },
+                      { "label": "Tchaoudjo", "value": "tchaoudjo" },
+                      { "label": "Tchamba", "value": "tchamba" },
+                      { "label": "Tone", "value": "tone" },
+                      { "label": "Vo", "value": "vo" },
+                      { "label": "Wawa", "value": "wawa" },
+                      { "label": "Zio", "value": "zio" },
+                      { "label": "Autre / Étranger", "value": "etranger" }
+                    ]
+                  },
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "Veuillez sélectionner la préfecture de naissance" }
+                }
+              ]
+            },
+            {
+              "width": 6,
+              "components": [
+                {
+                  "type": "select",
+                  "key": "paysNaissance",
+                  "label": "Pays de naissance",
+                  "input": true,
+                  "tableView": true,
+                  "dataSrc": "values",
+                  "defaultValue": "TG",
+                  "data": {
+                    "values": [
+                      { "label": "Togo", "value": "TG" },
+                      { "label": "Bénin", "value": "BJ" },
+                      { "label": "Burkina Faso", "value": "BF" },
+                      { "label": "Côte d'Ivoire", "value": "CI" },
+                      { "label": "France", "value": "FR" },
+                      { "label": "Ghana", "value": "GH" },
+                      { "label": "Mali", "value": "ML" },
+                      { "label": "Niger", "value": "NE" },
+                      { "label": "Nigeria", "value": "NG" },
+                      { "label": "Sénégal", "value": "SN" },
+                      { "label": "Autre", "value": "AUTRE" }
+                    ]
+                  },
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "Le pays de naissance est obligatoire" }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "columns",
+          "key": "colonnesNumeroActeType",
+          "input": false,
+          "tableView": false,
+          "label": "Numéro acte et type",
+          "columns": [
+            {
+              "width": 6,
+              "components": [
+                {
+                  "type": "textfield",
+                  "key": "numeroActe",
+                  "label": "Numéro de l'acte (si connu)",
+                  "placeholder": "Ex : 245 / 2005",
+                  "input": true,
+                  "tableView": true,
+                  "validateOn": "blur",
+                  "validate": { "required": false },
+                  "description": "Facultatif. Si vous le connaissez, il accélère la recherche."
+                }
+              ]
+            },
+            {
+              "width": 6,
+              "components": [
+                {
+                  "type": "radio",
+                  "key": "typeExtrait",
+                  "label": "Type d'extrait demandé",
+                  "input": true,
+                  "tableView": true,
+                  "values": [
+                    { "label": "Extrait avec filiation (mentions essentielles)", "value": "avec_filiation" },
+                    { "label": "Copie intégrale (toutes les mentions)", "value": "copie_integrale" }
+                  ],
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "Veuillez sélectionner le type d'extrait" }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "columns",
+          "key": "colonnesObjet",
+          "input": false,
+          "tableView": false,
+          "label": "Objet",
+          "columns": [
+            {
+              "width": 6,
+              "components": [
+                {
+                  "type": "select",
+                  "key": "objetDemande",
+                  "label": "Objet de la demande",
+                  "input": true,
+                  "tableView": true,
+                  "dataSrc": "values",
+                  "data": {
+                    "values": [
+                      { "label": "Inscription scolaire / universitaire", "value": "inscription_scolaire" },
+                      { "label": "Demande de CNI ou passeport", "value": "cni_passeport" },
+                      { "label": "Mariage civil", "value": "mariage" },
+                      { "label": "Demande de visa", "value": "visa" },
+                      { "label": "Succession / héritage", "value": "succession" },
+                      { "label": "Concours public", "value": "concours" },
+                      { "label": "Recrutement", "value": "recrutement" },
+                      { "label": "Autre", "value": "autre" }
+                    ]
+                  },
+                  "validateOn": "blur",
+                  "validate": { "required": true },
+                  "errors": { "required": "L'objet de la demande est obligatoire" }
+                }
+              ]
+            },
+            {
+              "width": 6,
+              "components": [
+                {
+                  "type": "textarea",
+                  "key": "objetAutre",
+                  "label": "Précisez l'objet",
+                  "placeholder": "Décrivez l'objet de votre demande...",
+                  "input": true,
+                  "tableView": true,
+                  "rows": 3,
+                  "validate": { "maxLength": 300 },
+                  "customConditional": "show = (data.objetDemande === 'autre');"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "panel",
+      "title": "Pièces justificatives",
+      "label": "Pièces justificatives",
+      "key": "stepPieces",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "type": "htmlelement",
+          "key": "introPieces",
+          "tag": "div",
+          "input": false,
+          "tableView": false,
+          "label": "Intro",
+          "content": "<div class=\"bloc-gris\"><strong>📎 Instructions pour l'upload</strong><ul style=\"margin:8px 0 0;padding-left:20px;color:#374151;line-height:1.8\"><li>Formats acceptés : PDF, JPG, PNG</li><li>Taille maximale : 2 Mo par fichier</li><li>Assurez-vous que le document est lisible et non tronqué</li></ul></div>"
+        },
+        {
+          "type": "file",
+          "key": "pieceIdentite",
+          "label": "Copie de votre pièce d'identité (recto/verso)",
+          "input": true,
+          "tableView": false,
+          "storage": "base64",
+          "multiple": false,
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "fileMaxSize": "2MB",
+          "validateOn": "blur",
+          "validate": { "required": true },
+          "errors": { "required": "La copie de votre pièce d'identité est obligatoire" },
+          "description": "CNI, passeport ou titre de séjour — recto et verso si possible"
+        },
+        {
+          "type": "file",
+          "key": "procuration",
+          "label": "Procuration notariée",
+          "input": true,
+          "tableView": false,
+          "storage": "base64",
+          "multiple": false,
+          "filePattern": ".pdf",
+          "fileMaxSize": "2MB",
+          "validateOn": "blur",
+          "validate": { "required": true },
+          "errors": { "required": "La procuration notariée est obligatoire pour un mandataire" },
+          "customConditional": "show = (data.lienParente === 'mandataire');",
+          "description": "Obligatoire si vous faites la demande pour le compte d'un tiers — Format PDF uniquement"
+        }
+      ]
+    },
+    {
+      "type": "panel",
+      "title": "Récapitulatif et soumission",
+      "label": "Récapitulatif et soumission",
+      "key": "stepRecapitulatif",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "type": "htmlelement",
+          "key": "htmlRecapitulatifFinal",
+          "tag": "div",
+          "input": false,
+          "tableView": false,
+          "label": "Récapitulatif",
+          "content": "<div id=\"recap-container\" style=\"background:#f8f8f8;border-radius:10px;padding:20px;margin-bottom:20px\"><h3 style=\"margin-top:0;color:#1f2937\">📋 Récapitulatif de votre demande</h3><p style=\"color:#6b7280;font-size:13px\">Vérifiez vos informations avant de soumettre.</p><div id=\"recap-content\"></div></div>",
+          "refreshOnChange": true,
+          "calculateValue": "var fields={\"Nom\":data.nom,\"Prénom(s)\":data.prenom,\"Email\":data.email,\"Téléphone\":data.telephone,\"Type de pièce\":data.typePiece,\"Numéro de pièce\":data.numeroPiece,\"Lien de parenté\":data.lienParente,\"Nom de l'intéressé\":data.nomInteresse,\"Date de naissance\":data.dateNaissanceInteresse,\"Commune de naissance\":data.communeNaissance,\"Préfecture\":data.prefectureNaissance,\"Pays de naissance\":data.paysNaissance,\"Numéro de l'acte\":data.numeroActe,\"Type d'extrait\":data.typeExtrait,\"Objet\":data.objetDemande};var html='';for(var k in fields){if(fields[k]){html+='<div style=\"display:flex;padding:8px 0;border-bottom:1px solid #e5e7eb\"><span style=\"font-weight:600;min-width:200px;color:#374151\">'+k+'</span><span style=\"color:#1f2937\">'+fields[k]+'</span></div>';}}document.getElementById&&document.getElementById('recap-content')&&(document.getElementById('recap-content').innerHTML=html);value='';"
+        },
+        {
+          "type": "checkbox",
+          "key": "luEtApprouve",
+          "label": "Je déclare et certifie sur l'honneur que les informations fournies sont exactes et complètes. Je reconnais que toute fausse déclaration m'expose à des poursuites pénales.",
+          "input": true,
+          "tableView": false,
+          "validateOn": "submit",
+          "validate": { "required": true },
+          "errors": { "required": "Vous devez certifier l'exactitude des informations avant de soumettre" }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "name": "publishToRabbitMQ",
+      "title": "Publish to RabbitMQ",
+      "type": "rabbitmq",
+      "handler": ["before"],
+      "method": ["create"],
+      "settings": {
+        "topic": "submissions.topic",
+        "queue": "workflows-engine.main.queue",
+        "payload": "{{ submission.data }}"
+      },
+      "condition": { "show": "" },
+      "priority": 0,
+      "enabled": true
+    }
+  ]
+}

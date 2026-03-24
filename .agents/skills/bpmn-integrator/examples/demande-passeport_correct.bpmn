@@ -130,7 +130,7 @@
           <camunda:inputParameter name="gnspdCostTotal" />
           <camunda:inputParameter name="gnspdCostUnitaire" />
           <camunda:inputParameter name="gnspdMessage">Envoie de la resoumission</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdMessageRef">MSG_PASSEPORT_PREAUTH</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">Message_2s2tcfg</camunda:inputParameter>
           <camunda:inputParameter name="gnspdMessageDestination">peer-xflow-service-public-sandbox</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
@@ -233,7 +233,7 @@
           <camunda:inputParameter name="gnspdCostVariable" />
           <camunda:inputParameter name="gnspdCostTotal" />
           <camunda:inputParameter name="gnspdCostUnitaire" />
-          <camunda:inputParameter name="gnspdMessageRef">MSG_PASSEPORT_UPDATE_REQ</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">Message_2h0grrm</camunda:inputParameter>
           <camunda:inputParameter name="gnspdMessage">true</camunda:inputParameter>
           <camunda:inputParameter name="gnspdMessageDestination">peer-xflow-service-public-sandbox</camunda:inputParameter>
         </camunda:inputOutput>
@@ -265,7 +265,7 @@
       <bpmn:incoming>Flow_0wtmb2z</bpmn:incoming>
     </bpmn:endEvent>
   </bpmn:process>
-  <bpmn:process id="Process_0tbnwk1" isExecutable="true" camunda:versionTag="1.0" camunda:historyTimeToLive="180">
+  <bpmn:process id="Process_0tbnwk1" isExecutable="false">
     <bpmn:intermediateCatchEvent id="Event_1od6pdc" name="Recevoir les information de paiement">
       <bpmn:extensionElements>
         <camunda:executionListener event="end">
@@ -305,7 +305,7 @@
           <camunda:inputParameter name="gnspdCostTotal" />
           <camunda:inputParameter name="gnspdCostUnitaire" />
           <camunda:inputParameter name="gnspdMessage">true</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdMessageRef">MSG_PASSEPORT_START</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">Message_39ok695</camunda:inputParameter>
           <camunda:inputParameter name="gnspdMessageDestination">ch-portail-service-public-sandbox</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
@@ -436,7 +436,6 @@
           <camunda:inputParameter name="gnspdRestMethod">POST</camunda:inputParameter>
           <camunda:inputParameter name="gnspdIsCustomData">true</camunda:inputParameter>
           <camunda:inputParameter name="gnspdDataFormat">JSON</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdAuthContentType" />
           <camunda:inputParameter name="gnspdTimeOutValue" />
           <camunda:inputParameter name="gnspdAttachments" />
           <camunda:inputParameter name="gnspdContentType" />
@@ -502,6 +501,7 @@
           <camunda:inputParameter name="gnspdRestDataUrl">$(this.data.Event_11woeyh.parameters.configuration.DGDN.BASE_URL + '/api/passport-applications?site=cc')</camunda:inputParameter>
           <camunda:inputParameter name="gnspdRestAuthUrl">$this.data.Event_11woeyh.parameters.configuration.DGDN.AUTH_URL</camunda:inputParameter>
           <camunda:inputParameter name="gnspdRestUser">$this.data.Event_11woeyh.parameters.configuration.DGDN.SECRET_USERNAME</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdAuthContentType" />
           <camunda:outputParameter name="payment_key">false</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
@@ -575,7 +575,7 @@
           <camunda:inputParameter name="gnspdCostVariable" />
           <camunda:inputParameter name="gnspdCostTotal" />
           <camunda:inputParameter name="gnspdCostUnitaire" />
-          <camunda:inputParameter name="gnspdMessageRef">MSG_PASSEPORT_UPDATE_RESP</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">Message_1s8l82b</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskLabel" />
           <camunda:inputParameter name="gnspdMessage">true</camunda:inputParameter>
           <camunda:inputParameter name="gnspdMessageDestination">ch-portail-service-public-sandbox</camunda:inputParameter>
@@ -584,19 +584,7 @@
       <bpmn:incoming>Flow_0ap83qu</bpmn:incoming>
       <bpmn:outgoing>Flow_0ae790m</bpmn:outgoing>
     </bpmn:sendTask>
-    <bpmn:receiveTask id="Activity_099ydlb" name="Recevoir la demande de la fiche mis à jour" camunda:modelerTemplate="tg.gouv.gnspd.receiveTask" messageRef="MSG_PASSEPORT_UPDATE_REQ" camunda:type="external" camunda:topic="flow-receive-task">
-      <bpmn:extensionElements>
-        <camunda:inputOutput>
-          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskLabel" />
-          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskOrder" />
-          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdCostVariable" />
-          <camunda:inputParameter name="gnspdCostTotal" />
-          <camunda:inputParameter name="gnspdCostUnitaire" />
-        </camunda:inputOutput>
-      </bpmn:extensionElements>
+    <bpmn:receiveTask id="Activity_099ydlb" name="Recevoir la demande de la fiche mis à jour" messageRef="Message_2h0grrm">
       <bpmn:incoming>Flow_0imxpcy</bpmn:incoming>
       <bpmn:outgoing>Flow_1cpuoxg</bpmn:outgoing>
     </bpmn:receiveTask>
@@ -702,7 +690,7 @@
           <camunda:inputParameter name="gnspdCostVariable" />
           <camunda:inputParameter name="gnspdCostTotal" />
           <camunda:inputParameter name="gnspdCostUnitaire" />
-          <camunda:inputParameter name="gnspdMessageRef">MSG_PASSEPORT_FICHE_REQ</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">Message_3mjs8s8</camunda:inputParameter>
           <camunda:inputParameter name="gnspdMessage">${
   "submission_file": this.data.Activity_0n5mlg6.result ?? null,
   "check_state": this.data.Activity_1gq7egx.result ?? null
@@ -721,19 +709,7 @@
       <bpmn:outgoing>Flow_0tv9e79</bpmn:outgoing>
       <bpmn:outgoing>Flow_0imxpcy</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="Event_1j4oekb" name="Fin succès" camunda:modelerTemplate="tg.gouv.gnspd.endEvent" camunda:type="external" camunda:topic="flow-end-event">
-      <bpmn:extensionElements>
-        <camunda:inputOutput>
-          <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskLabel" />
-          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskOrder" />
-          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdCostVariable" />
-          <camunda:inputParameter name="gnspdCostTotal" />
-          <camunda:inputParameter name="gnspdCostUnitaire" />
-        </camunda:inputOutput>
-      </bpmn:extensionElements>
+    <bpmn:endEvent id="Event_1j4oekb" name="Fin">
       <bpmn:incoming>Flow_0tv9e79</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1cglkcw" sourceRef="Activity_1fdifv5" targetRef="Gateway_12c9hi2" />
@@ -947,15 +923,15 @@
   <bpmn:message id="Message_3vt66h6" name="SUBMITTION" />
   <bpmn:message id="Message_0iav579" name="NOTIFICATION_ACCEPTED" />
   <bpmn:message id="Message_0us4lsq" name="PAYMENT_RECEIVED" />
-  <bpmn:message id="Message_39ok695" name="MSG_PASSEPORT_START" />
-  <bpmn:message id="Message_2s2tcfg" name="MSG_PASSEPORT_PREAUTH" />
-  <bpmn:message id="Message_1g4u3te" name="MSG_PASSEPORT_SUBMIT_DGDN" />
-  <bpmn:message id="Message_245fosu" name="MSG_PASSEPORT_STATUS_REQ" />
-  <bpmn:message id="Message_30c9pre" name="MSG_PASSEPORT_STATUS_RESP" />
-  <bpmn:message id="Message_3mjs8s8" name="MSG_PASSEPORT_FICHE_REQ" />
-  <bpmn:message id="Message_288agfc" name="MSG_PASSEPORT_FICHE_RESP" />
-  <bpmn:message id="Message_2h0grrm" name="MSG_PASSEPORT_UPDATE_REQ" />
-  <bpmn:message id="Message_1s8l82b" name="MSG_PASSEPORT_UPDATE_RESP" />
+  <bpmn:message id="Message_39ok695" name="Message_39ok695" />
+  <bpmn:message id="Message_2s2tcfg" name="Message_2s2tcfg" />
+  <bpmn:message id="Message_1g4u3te" name="Message_1g4u3te" />
+  <bpmn:message id="Message_245fosu" name="Message_245fosu" />
+  <bpmn:message id="Message_30c9pre" name="Message_30c9pre" />
+  <bpmn:message id="Message_3mjs8s8" name="Message_3mjs8s8" />
+  <bpmn:message id="Message_288agfc" name="Message_288agfc" />
+  <bpmn:message id="Message_2h0grrm" name="Message_2h0grrm" />
+  <bpmn:message id="Message_1s8l82b" name="Message_1s8l82b" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1sa8syn">
       <bpmndi:BPMNShape id="Participant_0re4blc_di" bpmnElement="Participant_0re4blc" isHorizontal="true">

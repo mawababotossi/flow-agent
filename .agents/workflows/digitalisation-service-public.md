@@ -966,14 +966,16 @@ Avant de livrer, vérifier chaque livrable :
 
 **Templates GNSPD et paramètres**
 - [ ] Toutes les tâches interactives déclarent un `camunda:modelerTemplate` GNSPD (`tg.gouv.gnspd.userTask`, `tg.gouv.gnspd.sendMessage`, `tg.gouv.gnspd.receiveTask`, `tg.gouv.gnspd.sendNotification`, `tg.gouv.gnspd.odoo`, `tg.gouv.gnspd.restBuilder`, `tg.gouv.gnspd.endEvent`).
-- [ ] Les Service Tasks utilisent `camunda:type="external"` avec un `camunda:topic` valide (`flow-start`, `flow-send-message`, `flow-receive-task`, `flow-user-task`, `flow-notify`, `flow-odoo`, `flow-rest-builder`, `flow-end-event`).
-- [ ] Chaque tâche avec un `camunda:modelerTemplate` contient les **8 paramètres standards** : `gnspdTaskIsVisible`, `gnspdTaskLabel`, `gnspdTaskStatus` (= `Pending`), `gnspdTaskOrder`, `gnspdTaskKind` (= `citizen`), `gnspdCostVariable`, `gnspdCostTotal`, `gnspdCostUnitaire`.
+- [ ] **TOUTES** les tâches techniques (User, Service, Send, Receive) utilisent `camunda:type="external"` avec un `camunda:topic` valide (`flow-start`, `flow-send-message`, `flow-receive-task`, `flow-user-task`, `flow-notify`, `flow-odoo`, `flow-rest-builder`, `flow-end-event`). **Exception : `bpmn:boundaryEvent` timer — PAS de `camunda:type` ni `camunda:topic` sur l'élément boundary lui-même.**
+- [ ] Le pool XFlow a `isExecutable="true"` sur le **participant** et `isExecutable="false"` sur le **process**. Le pool XPortal a `isExecutable="true"` sur les deux.
+- [ ] Chaque tâche avec un `camunda:modelerTemplate` contient les **8 paramètres standards** : `gnspdTaskIsVisible`, `gnspdTaskLabel`, `gnspdTaskStatus` (ex: `Pending`, `PendingPortal`), `gnspdTaskOrder`, `gnspdTaskKind`, `gnspdCostVariable`, `gnspdCostTotal`, `gnspdCostUnitaire`. **Exception : `tg.gouv.gnspd.stepNotification` n'utilise PAS ces 8 champs** — seulement `gnspdStatus`, `gnspdIsPortal`, `gnspdStepOrder` (voir section SKILL.md §P).
+- [ ] Les tâches de notification (`flow-notify`) ont **au moins un canal active** (`gnspdNotifySendEmail`, `gnspdNotifySendSMS` ou `gnspdNotifySendInApp` à `true`).
 
 **Tâches citoyen XPortal (userTask, pas flowPortail)**
 - [ ] Les tâches citoyen côté XPortal utilisent `tg.gouv.gnspd.userTask` (`bpmn:userTask`) avec `camunda:formKey="[ULID]"` et `gnspdHandlerType` — et **non** `tg.gouv.gnspd.flowPortail` (pattern legacy).
 - [ ] Le `startEvent` XPortal porte `camunda:formKey="[ULID]"` (formulaire initial) et `gnspdPaymentAmount` (montant si service payant).
-- [ ] Chaque `userTask` citoyen a un `gnspdHandlerType` correct : `publish_submission` (formulaire), `tarification` (paiement), ou `download_files` (téléchargement).
-- [ ] La correction côté XPortal est une `userTask` avec `gnspdHandlerType="publish_submission"` et `gnspdSubmissionData` pré-rempli avec les données existantes.
+- [ ] Chaque `userTask` citoyen de soumission ou d'instruction agent a un `gnspdHandlerType` correct : `publish_submission` (formulaire), `tarification` (paiement), ou `download_files` (téléchargement).
+- [ ] La tâche de correction côté **XPortal** utilise `gnspdHandlerType="publish_submission"` avec `gnspdSubmissionData` **conditionnel** : `$(this.data.TASK_ID && this.data.TASK_ID.result ? this.data.TASK_ID.result : this.data.EVENT_START.parameters.submissionData.data)`. Le chemin des données initiales se termine par `.submissionData.data` (avec `.data`). `gnspdSubmissionFormkey` est optionnel.
 
 **Configuration KMS**
 - [ ] Le startEvent **XFlow** embarque la configuration KMS des 4 environnements (`development`, `sandbox`, `preproduction`, `production`) avec les blocs JSON des systèmes tiers (ODOO, GED, API…).
@@ -1029,6 +1031,12 @@ Avant de livrer, vérifier chaque livrable :
 | ExclusiveGateway utilisé comme simple merge (N entrées → 1 sortie) | Erreur validation : « ExclusiveGateway doit avoir au moins 2 flux sortants » | Ne jamais utiliser d'ExclusiveGateway pour la convergence. Connecter les flux entrants directement sur la tâche cible (une tâche accepte plusieurs `<bpmn:incoming>`) |
 | Namespace `zeebe:` présent | Incompatible Camunda Platform 7 | Supprimer, utiliser uniquement `camunda:` |
 | `$this.data.` dans les `conditionExpression` | Erreur de validation P-Studio | Toujours utiliser `this.data.` (sans préfixe `$`) dans les expressions de condition des `sequenceFlow`. Le préfixe `$` est réservé aux `inputParameter` (ex: `gnspdMessage`, `gnspdSubmissionData`) |
+| `camunda:topic` sur un `bpmn:boundaryEvent` timer | L'élément devient "non atteignable depuis les startEvents" — le validateur GNSPD le traite comme un service externe | Ne **jamais** ajouter `camunda:type` ni `camunda:topic` sur l'élément `bpmn:boundaryEvent` lui-même. Utiliser `timerEventDefinition` avec un `id` et `timeDuration xsi:type="bpmn:tFormalExpression"` |
+| `gnspdSubmissionData` pointant vers un champ inexistant dans le formulaire | "Le champ X référencé n'existe dans aucun formulaire" | Utiliser le pattern conditionnel avec `.submissionData.data` : `$(this.data.TASK && this.data.TASK.result ? this.data.TASK.result : this.data.EVENT_START.parameters.submissionData.data)` |
+| `gnspdTempData` avec valeurs hardcodées | Document généré avec données fictives en production | Toujours référencer `this.data.XXX.result.submissionData.YYY` — jamais de chaînes littérales comme `"12345"` ou `"2026-03-23"` |
+| Compteur de boucle : condition lit `this.data.TASK.result.reformulationCount` | Variable non trouvée ou toujours 0 | Lire la variable globale directement : `this.data.reformulationCount` (modifiée par le scriptTask, pas par la tâche) |
+| `bpmn:receiveTask` sans `camunda:modelerTemplate` | Le worker GNSPD ne prend pas la tâche | Toujours ajouter `camunda:modelerTemplate="tg.gouv.gnspd.receiveTask"` + `camunda:type="external"` + `camunda:topic="flow-receive-task"` |
+| Destinations Kafka inversées (ch-portail-* pour XPortal→XFlow) | Les messages ne sont jamais reçus | XPortal→XFlow : `peer-xflow-*` ; XFlow→XPortal : `ch-portail-*` — ne jamais inverser |
 
 ---
 
