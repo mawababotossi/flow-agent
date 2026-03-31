@@ -158,15 +158,15 @@
     <bpmn:sequenceFlow id="Flow_P02" sourceRef="Activity_P_SendBO" targetRef="Activity_P_Receive" />
     <bpmn:sequenceFlow id="Flow_P03" sourceRef="Activity_P_Receive" targetRef="Gateway_P_Action" />
     <bpmn:sequenceFlow id="Flow_P04" name="correction" sourceRef="Gateway_P_Action" targetRef="Activity_P_Corrections">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">$this.data.Activity_P_Receive.result.data.action == "correction"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_P_Receive.result.data.action == "correction"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_P05" sourceRef="Activity_P_Corrections" targetRef="Activity_P_SendResub" />
     <bpmn:sequenceFlow id="Flow_P06" sourceRef="Activity_P_SendResub" targetRef="Activity_P_Receive" />
     <bpmn:sequenceFlow id="Flow_P07" name="accepte" sourceRef="Gateway_P_Action" targetRef="Event_P_End_Accept">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">$this.data.Activity_P_Receive.result.data.action == "accepte"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_P_Receive.result.data.action == "accepte"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_P08" name="rejete" sourceRef="Gateway_P_Action" targetRef="Event_P_End_Reject">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">$this.data.Activity_P_Receive.result.data.action == "rejete"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_P_Receive.result.data.action == "rejete"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
   </bpmn:process>
 
@@ -296,12 +296,6 @@
       <bpmn:outgoing>Flow_X05</bpmn:outgoing>
     </bpmn:serviceTask>
 
-    <bpmn:exclusiveGateway id="Gateway_X_Merge" name="Fusion">
-      <bpmn:incoming>Flow_X03</bpmn:incoming>
-      <bpmn:incoming>Flow_X05</bpmn:incoming>
-      <bpmn:outgoing>Flow_X06</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-
     <!-- ===== ODOO create : créer l'inscription ===== -->
     <bpmn:serviceTask id="Activity_X_OdooCreateInscription" name="Créer inscription dans Odoo" camunda:modelerTemplate="tg.gouv.gnspd.odoo" camunda:type="external" camunda:topic="flow-odoo">
       <bpmn:extensionElements>
@@ -329,7 +323,8 @@
           <camunda:inputParameter name="gnspdCostUnitaire" />
         </camunda:inputOutput>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_X06</bpmn:incoming>
+      <bpmn:incoming>Flow_X03</bpmn:incoming>
+      <bpmn:incoming>Flow_X05</bpmn:incoming>
       <bpmn:outgoing>Flow_X07</bpmn:outgoing>
     </bpmn:serviceTask>
 
@@ -590,7 +585,7 @@
         <camunda:inputOutput>
           <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskLabel">Inscription rejetée</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskStatus">Rejected</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskOrder">3</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskKind">system</camunda:inputParameter>
           <camunda:inputParameter name="gnspdCostVariable" />
@@ -604,14 +599,13 @@
     <!-- ===== Flux séquentiels ===== -->
     <bpmn:sequenceFlow id="Flow_X01" sourceRef="Event_X_Start" targetRef="Activity_X_OdooSearch" />
     <bpmn:sequenceFlow id="Flow_X02" sourceRef="Activity_X_OdooSearch" targetRef="Gateway_X_CandidatExists" />
-    <bpmn:sequenceFlow id="Flow_X03" name="Candidat existe" sourceRef="Gateway_X_CandidatExists" targetRef="Gateway_X_Merge">
+    <bpmn:sequenceFlow id="Flow_X03" name="Candidat existe" sourceRef="Gateway_X_CandidatExists" targetRef="Activity_X_OdooCreateInscription">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_X_OdooSearch.result.id != null</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_X04" name="Candidat inexistant" sourceRef="Gateway_X_CandidatExists" targetRef="Activity_X_OdooCreateCandidat">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_X_OdooSearch.result.id == null</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_X05" sourceRef="Activity_X_OdooCreateCandidat" targetRef="Gateway_X_Merge" />
-    <bpmn:sequenceFlow id="Flow_X06" sourceRef="Gateway_X_Merge" targetRef="Activity_X_OdooCreateInscription" />
+    <bpmn:sequenceFlow id="Flow_X05" sourceRef="Activity_X_OdooCreateCandidat" targetRef="Activity_X_OdooCreateInscription" />
     <bpmn:sequenceFlow id="Flow_X07" sourceRef="Activity_X_OdooCreateInscription" targetRef="Activity_X_Agent" />
     <bpmn:sequenceFlow id="Flow_X08" sourceRef="Activity_X_Agent" targetRef="Gateway_X_Decision" />
     <bpmn:sequenceFlow id="Flow_X09" name="Approuvé" sourceRef="Gateway_X_Decision" targetRef="Activity_X_OdooUpdateStatus">
@@ -719,9 +713,6 @@
       <bpmndi:BPMNShape id="Activity_X_OdooCreateCandidat_di" bpmnElement="Activity_X_OdooCreateCandidat">
         <dc:Bounds x="560" y="940" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_X_Merge_di" bpmnElement="Gateway_X_Merge" isMarkerVisible="true">
-        <dc:Bounds x="715" y="845" width="50" height="50" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_X_OdooCreateInscription_di" bpmnElement="Activity_X_OdooCreateInscription">
         <dc:Bounds x="830" y="830" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -772,7 +763,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_X03_di" bpmnElement="Flow_X03">
         <di:waypoint x="525" y="870" />
-        <di:waypoint x="715" y="870" />
+        <di:waypoint x="830" y="870" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_X04_di" bpmnElement="Flow_X04">
         <di:waypoint x="500" y="895" />
@@ -781,12 +772,8 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_X05_di" bpmnElement="Flow_X05">
         <di:waypoint x="660" y="980" />
-        <di:waypoint x="740" y="980" />
-        <di:waypoint x="740" y="895" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_X06_di" bpmnElement="Flow_X06">
-        <di:waypoint x="765" y="870" />
-        <di:waypoint x="830" y="870" />
+        <di:waypoint x="880" y="980" />
+        <di:waypoint x="880" y="910" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_X07_di" bpmnElement="Flow_X07">
         <di:waypoint x="930" y="870" />

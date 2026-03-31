@@ -160,7 +160,7 @@
         <camunda:inputOutput>
           <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskLabel" />
-          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskOrder" />
           <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
           <camunda:inputParameter name="gnspdCostVariable" />
@@ -474,7 +474,7 @@
         <camunda:inputOutput>
           <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskLabel" />
-          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskOrder" />
           <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
           <camunda:inputParameter name="gnspdCostVariable" />
@@ -489,7 +489,7 @@
         <camunda:inputOutput>
           <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskLabel" />
-          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskOrder" />
           <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
           <camunda:inputParameter name="gnspdCostVariable" />

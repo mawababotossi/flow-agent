@@ -161,15 +161,15 @@
     <bpmn:sequenceFlow id="Flow_P02" sourceRef="Activity_P_SendBO" targetRef="Activity_P_Receive" />
     <bpmn:sequenceFlow id="Flow_P03" sourceRef="Activity_P_Receive" targetRef="Gateway_P_Action" />
     <bpmn:sequenceFlow id="Flow_P04" name="correction" sourceRef="Gateway_P_Action" targetRef="Activity_P_Corrections">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">$this.data.Activity_P_Receive.result.data.action == "correction"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_P_Receive.result.data.action == "correction"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_P05" sourceRef="Activity_P_Corrections" targetRef="Activity_P_SendResub" />
     <bpmn:sequenceFlow id="Flow_P06" sourceRef="Activity_P_SendResub" targetRef="Activity_P_Receive" />
     <bpmn:sequenceFlow id="Flow_P07" name="accepte" sourceRef="Gateway_P_Action" targetRef="Event_P_End_Accept">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">$this.data.Activity_P_Receive.result.data.action == "accepte"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_P_Receive.result.data.action == "accepte"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_P08" name="rejete" sourceRef="Gateway_P_Action" targetRef="Event_P_End_Reject">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">$this.data.Activity_P_Receive.result.data.action == "rejete"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_P_Receive.result.data.action == "rejete"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
   </bpmn:process>
 
@@ -278,19 +278,8 @@
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="gnspdStatus">PendingBackOffice</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdIsPortal">true</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdStepOrder">2</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdPassData" />
-          <camunda:inputParameter name="gnspdPassCost" />
-          <camunda:inputParameter name="gnspdIgnoreNotFound">false</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskLabel">Génération du document</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskStatus">PendingBackOffice</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskOrder">2</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskKind">system</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdCostVariable" />
-          <camunda:inputParameter name="gnspdCostTotal" />
-          <camunda:inputParameter name="gnspdCostUnitaire" />
+          <camunda:inputParameter name="gnspdDescription">Traitement en cours</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdLabel">Génération du document</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_X03</bpmn:incoming>
@@ -409,19 +398,8 @@
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="gnspdStatus">Success</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdIsPortal">true</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdStepOrder">2</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdPassData" />
-          <camunda:inputParameter name="gnspdPassCost" />
-          <camunda:inputParameter name="gnspdIgnoreNotFound">false</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskLabel" />
-          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskOrder" />
-          <camunda:inputParameter name="gnspdTaskKind">system</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdCostVariable" />
-          <camunda:inputParameter name="gnspdCostTotal" />
-          <camunda:inputParameter name="gnspdCostUnitaire" />
+          <camunda:inputParameter name="gnspdDescription">Traitement terminé</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdLabel">Étape terminée</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_X08</bpmn:incoming>
@@ -629,7 +607,7 @@
         <camunda:inputOutput>
           <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskLabel">Demande rejetée</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskStatus">Rejected</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskOrder">3</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskKind">system</camunda:inputParameter>
           <camunda:inputParameter name="gnspdCostVariable" />

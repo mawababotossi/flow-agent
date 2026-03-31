@@ -807,7 +807,7 @@ this.data.Activity_P_Recv.parameters.message.check_state.data.state == 'disallow
 this.data.Activity_P_Recv.parameters.message.check_state.data.state == 'validated'
 ```
 
-> **ATTENTION** : Typo observée dans `expert-camunda7-gnspd-1.bpmn` — `language="javscript"` (sans 'a'). Toujours vérifier l'orthographe de l'attribut `language`.
+> **ATTENTION** : Toujours vérifier l'orthographe de l'attribut `language="javascript"` (erreur fréquente : "javscript" sans 'a').
 
 ---
 
@@ -826,7 +826,7 @@ this.data.Activity_P_Recv.parameters.message.check_state.data.state == 'validate
 
 ### 8.2 GED (Gestion Electronique de Documents)
 
-Observée dans `expert-camunda7-gnspd-2.bpmn` (configuration) et `demande-passeport.bpmn` (appel REST). La GED est accessible via l'API GED avec une clé API KMS :
+La GED est accessible via l'API GED avec une clé API KMS :
 
 ```json
 "GED": {

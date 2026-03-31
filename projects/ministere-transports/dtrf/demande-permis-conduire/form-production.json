@@ -1,0 +1,17 @@
+{
+  "display": "form",
+  "components": [
+    {
+      "label": "Impression du permis",
+      "type": "htmlelement",
+      "tag": "div",
+      "content": "<p>Veuillez confirmer que le support physique du permis de conduire a été imprimé et est prêt pour retrait.</p>"
+    },
+    {
+      "label": "Confirmer la production",
+      "type": "button",
+      "key": "submit",
+      "input": true
+    }
+  ]
+}

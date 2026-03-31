@@ -103,9 +103,11 @@
 ```xml
   <!-- Point de convergence XPortal : même tâche attend indifféremment
        la première soumission, la confirmation de paiement, ou un retour correction -->
+  <!-- ⚠️ camunda:type="external" OBLIGATOIRE sur toute receiveTask — sinon validateur "Implementation Type vide" -->
   <bpmn:receiveTask id="Recv_P_Return" name="Attendre réponse XFlow"
     camunda:modelerTemplate="tg.gouv.gnspd.receiveTask"
     messageRef="MSG_SERVICE_RETURN"
+    camunda:type="external"
     camunda:topic="flow-receive-task">
     <bpmn:incoming>SF_P_SendStart_RecvReturn</bpmn:incoming>   <!-- chemin initial (sans paiement) -->
     <bpmn:incoming>SF_P_PayConfirm_RecvReturn</bpmn:incoming>  <!-- après confirmation paiement -->
@@ -134,11 +136,15 @@
 
 ```xml
   <!-- XFlow : notification PUIS envoi (ordre immuable) -->
+  <!-- ⚠️ Si gnspdNotifyInApp=true, gnspdNotifyTemplateInApp DOIT être renseigné (TODO_TPL_INAPP_xxx) — sinon validateur "Template In-App obligatoire" -->
+  <!-- ⚠️ Même règle pour Email/SMS : si gnspdNotifySendEmail=true → gnspdNotifyTemplateEmail obligatoire, etc. -->
   <bpmn:serviceTask id="Notif_X_Accept" name="Notifier acceptation"
     camunda:modelerTemplate="tg.gouv.gnspd.sendNotification" camunda:topic="flow-notify">
     <bpmn:incoming>SF_X_DocChain_Notif</bpmn:incoming>
     <bpmn:outgoing>SF_X_Notif_Send</bpmn:outgoing>
-    <!-- gnspdNotifySendEmail, gnspdNotifySendSMS, gnspdNotifyInApp = true -->
+    <!-- gnspdNotifyInApp = true → gnspdNotifyTemplateInApp = TODO_TPL_INAPP_xxx (JAMAIS vide) -->
+    <!-- gnspdNotifySendEmail = true → gnspdNotifyTemplateEmail = TODO_TPL_EMAIL_xxx (JAMAIS vide) -->
+    <!-- gnspdNotifySendSMS = true → gnspdNotifyTemplateSMS = TODO_TPL_SMS_xxx (JAMAIS vide) -->
   </bpmn:serviceTask>
 
   <bpmn:sendTask id="Send_X_Return" name="Envoyer réponse XPortal"
@@ -208,9 +214,12 @@
     </bpmn:sendTask>
 
     <!-- Point de convergence P2 : reçoit retour XFlow (3 chemins possibles) -->
+    <!-- ⚠️ camunda:type="external" OBLIGATOIRE -->
     <bpmn:receiveTask id="Recv_P_Return" name="Attendre réponse XFlow"
       camunda:modelerTemplate="tg.gouv.gnspd.receiveTask"
-      messageRef="MSG_SERVICE_RETURN" camunda:topic="flow-receive-task">
+      messageRef="MSG_SERVICE_RETURN"
+      camunda:type="external"
+      camunda:topic="flow-receive-task">
       <bpmn:incoming>SF_P_SendStart_RecvReturn</bpmn:incoming>
       <bpmn:incoming>SF_P_SendResub_RecvReturn</bpmn:incoming>
       <bpmn:outgoing>SF_P_RecvReturn_GwAction</bpmn:outgoing>
@@ -225,8 +234,10 @@
     </bpmn:exclusiveGateway>
 
     <!-- Branche correction : userTask de correction pré-remplie -->
+    <!-- ⚠️ camunda:type="external" OBLIGATOIRE sur toute userTask — sinon validateur "Implementation Type vide" -->
     <bpmn:userTask id="Task_P_Correction" name="Corriger le dossier"
       camunda:modelerTemplate="tg.gouv.gnspd.userTask"
+      camunda:type="external"
       camunda:formKey="[UUID_FORM_CORRECTION]"
       camunda:topic="flow-user-task">
       <bpmn:extensionElements>
@@ -303,8 +314,11 @@
     </bpmn:receiveTask>
 
     <!-- Redirection vers la plateforme e-Gov externe (tarification) -->
+    <!-- ⚠️ camunda:type="external" OBLIGATOIRE sur toute userTask -->
     <bpmn:userTask id="Task_P_Payment" name="Procéder au paiement"
-      camunda:modelerTemplate="tg.gouv.gnspd.userTask" camunda:topic="flow-user-task">
+      camunda:modelerTemplate="tg.gouv.gnspd.userTask"
+      camunda:type="external"
+      camunda:topic="flow-user-task">
       <bpmn:incoming>SF_P_PayOrder_TaskPay</bpmn:incoming>
       <bpmn:outgoing>SF_P_TaskPay_RecvConfirm</bpmn:outgoing>
       <!-- gnspdHandlerType = tarification (JAMAIS publish_submission pour le paiement) -->
@@ -383,11 +397,18 @@
     <!-- TODO : SendTask vers XPortal si handoff visuel nécessaire (optionnel selon SRS) -->
 
     <!-- Instruction agent -->
+    <!-- ⚠️ toute userTask avec gnspdTaskKind=backoffice DOIT avoir camunda:formKey — sinon XFlow ne peut pas router -->
+    <!-- ⚠️ camunda:type="external" OBLIGATOIRE sur toute userTask -->
     <bpmn:userTask id="Activity_X_Agent" name="Instruire le dossier"
-      camunda:modelerTemplate="tg.gouv.gnspd.userTask" camunda:topic="flow-user-task">
+      camunda:modelerTemplate="tg.gouv.gnspd.userTask"
+      camunda:type="external"
+      camunda:formKey="ULID_FORM_AGENT_[NOM]"
+      camunda:topic="flow-user-task">
       <bpmn:incoming>SF_X_StepNotif_SendAgent</bpmn:incoming>
       <bpmn:outgoing>SF_X_Agent_GwDecision</bpmn:outgoing>
-      <!-- gnspdHandlerType = publish_submission, gnspdTaskIsVisible = false (back-office) -->
+      <!-- gnspdHandlerType = publish_submission -->
+      <!-- gnspdTaskIsVisible = false, gnspdTaskKind = backoffice -->
+      <!-- camunda:formKey : ULID_FORM_[NOM] à remplacer lors de l'intégration -->
     </bpmn:userTask>
 
     <!-- Gateway décision agent : 3 sorties OBLIGATOIRES (P7 : jamais de deadlock) -->
@@ -454,9 +475,12 @@
     </bpmn:sendTask>
 
     <!-- XFlow attend la resoumission (compteur anti-boucle infinie) -->
+    <!-- ⚠️ camunda:type="external" OBLIGATOIRE -->
     <bpmn:receiveTask id="Recv_X_Resub" name="Attendre resoumission"
       camunda:modelerTemplate="tg.gouv.gnspd.receiveTask"
-      messageRef="MSG_SERVICE_RESUB" camunda:topic="flow-receive-task">
+      messageRef="MSG_SERVICE_RESUB"
+      camunda:type="external"
+      camunda:topic="flow-receive-task">
       <bpmn:incoming>SF_X_SendCorr_RecvResub</bpmn:incoming>
       <bpmn:outgoing>SF_X_RecvResub_GwCounter</bpmn:outgoing>
     </bpmn:receiveTask>
@@ -485,34 +509,82 @@
 
 ## 9. XFlow — Chaîne documentaire complète
 
-> Ordre obligatoire : generateTemplate → generateUrlQrcode → pdfImage → certSign/signServer → stepNotification → notify → send
+> Ordre obligatoire : generateTemplate → generateUrlQrcode → pdfImage → certSign → stepNotification → notify → send
+>
+> **Prérequis** : `Event_X_Start` doit avoir les configs `ECERT` et `PORTAL` dans ses 4 environnements (voir §9bis).
 
 ```xml
+    <!-- ── generateTemplate : gnspdTempData et gnspdPrintOptions OBLIGATOIRES ── -->
     <bpmn:serviceTask id="Doc_X_Generate" name="Générer le document"
       camunda:modelerTemplate="tg.gouv.gnspd.generateTemplate" camunda:topic="flow-generate-template">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTemplate">ULID_TEMPLATE_[NOM]</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdGeneratedName">${"document-" + this.data.xref + ".pdf"}</camunda:inputParameter>
+          <!-- ⚠️ gnspdTempData OBLIGATOIRE — champs à adapter selon le service -->
+          <camunda:inputParameter name="gnspdTempData">${
+            "numero": this.data.xref,
+            "nom": this.data.Event_X_Start.parameters.submissionData.nom,
+            "prenom": this.data.Event_X_Start.parameters.submissionData.prenom
+          }</camunda:inputParameter>
+          <!-- ⚠️ gnspdPrintOptions OBLIGATOIRE -->
+          <camunda:inputParameter name="gnspdPrintOptions">{'format':'A4'}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdGroups" />
+          <camunda:inputParameter name="gnspdRoles" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>SF_X_Approve_Generate</bpmn:incoming>
       <bpmn:outgoing>SF_X_Generate_Qrcode</bpmn:outgoing>
-      <!-- gnspdGeneratedName = "diplome-${this.data.xref}.pdf" -->
-      <!-- gnspdTemplate = TEMPLATE_ID (ULID du template GED) -->
     </bpmn:serviceTask>
 
+    <!-- ── generateUrlQrcode : URL construit depuis PORTAL.BASE_URL ── -->
+    <!-- ⚠️ PORTAL.BASE_URL doit être déclaré dans les 4 env de Event_X_Start -->
     <bpmn:serviceTask id="Doc_X_Qrcode" name="Générer QR code vérification"
       camunda:modelerTemplate="tg.gouv.gnspd.generateUrlQrcode" camunda:topic="flow-generate-url-qrcode">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdUrl">$(this.data.Event_X_Start.parameters.configuration.PORTAL.BASE_URL + '/verify/' + this.data.xref)</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>SF_X_Generate_Qrcode</bpmn:incoming>
       <bpmn:outgoing>SF_X_Qrcode_PdfImage</bpmn:outgoing>
-      <!-- gnspdUrl = $(this.data.Event_X_Start.parameters.configuration.PORTAL.BASE_URL + '/verify/' + this.data.xref) -->
     </bpmn:serviceTask>
 
+    <!-- ── pdfImage : gnspdClickedX/Y/CurrentPage/File OBLIGATOIRES ── -->
     <bpmn:serviceTask id="Doc_X_PdfImage" name="Apposer QR sur document"
       camunda:modelerTemplate="tg.gouv.gnspd.pdfImage" camunda:topic="flow-pdf-image">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdPdfFile">$this.data.Doc_X_Generate.result</camunda:inputParameter>
+          <!-- ⚠️ Position OBLIGATOIRE -->
+          <camunda:inputParameter name="gnspdClickedX">450</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdClickedY">680</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCurrentPage">1</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdFile">$this.data.Doc_X_Generate.result</camunda:inputParameter>
+          <!-- Note : gnspdPdfFile et gnspdFile reçoivent tous les deux le même document source -->
+          <camunda:inputParameter name="gnspdImage">$this.data.Doc_X_Qrcode.result</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>SF_X_Qrcode_PdfImage</bpmn:incoming>
       <bpmn:outgoing>SF_X_PdfImage_Sign</bpmn:outgoing>
-      <!-- gnspdPdfFile = $this.data.Doc_X_Generate.result -->
-      <!-- gnspdImage = $this.data.Doc_X_Qrcode.result -->
     </bpmn:serviceTask>
 
+    <!-- ── certSign : gnspdId/Key/Data OBLIGATOIRES — lire depuis ECERT config ── -->
+    <!-- ⚠️ ECERT doit être déclaré dans les 4 env de Event_X_Start -->
     <bpmn:serviceTask id="Doc_X_Sign" name="Signer le document (E-Cert)"
       camunda:modelerTemplate="tg.gouv.gnspd.certSign" camunda:topic="flow-cert-sign">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdId">$this.data.Event_X_Start.parameters.configuration.ECERT.SECRET_USERNAME</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdKey">$this.data.Event_X_Start.parameters.configuration.ECERT.SECRET_PASSWORD</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdIsFormat">true</camunda:inputParameter>
+          <!-- gnspdData : champs identitaires du signataire — adapter selon le service -->
+          <camunda:inputParameter name="gnspdData">${"nom": this.data.Event_X_Start.parameters.submissionData.nom, "prenom": this.data.Event_X_Start.parameters.submissionData.prenom}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdUseNewMethod">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdDefaultValue" />
+          <camunda:inputParameter name="gnspdIgnoreList" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>SF_X_PdfImage_Sign</bpmn:incoming>
       <bpmn:outgoing>SF_X_Sign_StepNotifSuccess</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -545,8 +617,15 @@
       <!-- gnspdMessageRef = MSG_SERVICE_RETURN -->
     </bpmn:sendTask>
 
+    <!-- ⚠️ EndEvent : gnspdTaskStatus DOIT être "Completed" — jamais "Success" -->
+    <!-- "Success" est valide pour gnspdStatus (stepNotification) mais INVALIDE pour gnspdTaskStatus -->
     <bpmn:endEvent id="End_X_Success" name="Document délivré"
       camunda:modelerTemplate="tg.gouv.gnspd.endEvent" camunda:topic="flow-end-event">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>SF_X_SendAccept_End</bpmn:incoming>
     </bpmn:endEvent>
 
@@ -557,6 +636,29 @@
     <bpmn:sequenceFlow id="SF_X_StepNotifSuccess_Notif" sourceRef="StepNotif_X_Success"    targetRef="Notif_X_Accept" />
     <bpmn:sequenceFlow id="SF_X_Notif_SendAccept"       sourceRef="Notif_X_Accept"         targetRef="Send_X_Return" />
     <bpmn:sequenceFlow id="SF_X_SendAccept_End"         sourceRef="Send_X_Return"           targetRef="End_X_Success" />
+```
+
+---
+
+## 9bis. XFlow — Event_X_Start : configs ECERT et PORTAL obligatoires
+
+> Dès qu'une chaîne documentaire est présente (generateTemplate → certSign), `Event_X_Start` DOIT déclarer `ECERT` et `PORTAL` dans ses 4 environnements. Sans ces configs, `certSign` ne peut pas lire les credentials et `generateUrlQrcode` produit une URL invalide.
+
+```xml
+    <bpmn:startEvent id="Event_X_Start" name="Réception dossier"
+      camunda:modelerTemplate="tg.gouv.gnspd.startEvent" camunda:topic="flow-start">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <!-- ⚠️ ECERT et PORTAL doivent figurer dans les 4 environnements -->
+          <camunda:inputParameter name="development">{"ODOO": {"BASE_URL": "...", "DB": "...", "USERNAME": "...", "PASSWORD": "..."}, "ECERT": {"SECRET_USERNAME": "{dbkms:ECERT_USER}", "SECRET_PASSWORD": "{dbkms:ECERT_PASS}"}, "PORTAL": {"BASE_URL": "https://portail.dev.gouv.tg"}}</camunda:inputParameter>
+          <camunda:inputParameter name="sandbox">{"ODOO": {"BASE_URL": "...", "DB": "...", "USERNAME": "...", "PASSWORD": "..."}, "ECERT": {"SECRET_USERNAME": "{dbkms:ECERT_USER}", "SECRET_PASSWORD": "{dbkms:ECERT_PASS}"}, "PORTAL": {"BASE_URL": "https://portail.sandbox.gouv.tg"}}</camunda:inputParameter>
+          <camunda:inputParameter name="preproduction">{"ODOO": {"BASE_URL": "...", "DB": "...", "USERNAME": "...", "PASSWORD": "..."}, "ECERT": {"SECRET_USERNAME": "{dbkms:ECERT_USER}", "SECRET_PASSWORD": "{dbkms:ECERT_PASS}"}, "PORTAL": {"BASE_URL": "https://portail.preprod.gouv.tg"}}</camunda:inputParameter>
+          <camunda:inputParameter name="production">{"ODOO": {"BASE_URL": "...", "DB": "...", "USERNAME": "...", "PASSWORD": "..."}, "ECERT": {"SECRET_USERNAME": "{dbkms:ECERT_USER}", "SECRET_PASSWORD": "{dbkms:ECERT_PASS}"}, "PORTAL": {"BASE_URL": "https://portail.gouv.tg"}}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:messageEventDefinition messageRef="MSG_SERVICE_START" />
+      <bpmn:outgoing>SF_X_Start_StepNotif</bpmn:outgoing>
+    </bpmn:startEvent>
 ```
 
 ---
@@ -577,10 +679,11 @@
     </bpmn:sendTask>
 
     <!-- XFlow se bloque ici jusqu'à réception du callback e-Gov -->
+    <!-- ⚠️ Le script DOIT évaluer conditionnellement le statut du callback — JAMAIS affecter true inconditionnellement -->
     <bpmn:intermediateCatchEvent id="Event_X_PayCallback" name="Recevoir callback paiement e-Gov">
       <bpmn:extensionElements>
         <camunda:executionListener event="end">
-          <camunda:script scriptFormat="javascript">this.data.payment_key = true</camunda:script>
+          <camunda:script scriptFormat="javascript">this.data.payment_key = (this.data.Event_X_PayCallback.result.paymentStatus == 'paid')</camunda:script>
         </camunda:executionListener>
       </bpmn:extensionElements>
       <bpmn:incoming>SF_X_PayOrder_CatchCallback</bpmn:incoming>
@@ -712,7 +815,7 @@
 
 > Grille standard ATD. Adapter les x selon le nombre de tâches (pas de 160px entre tâches).
 
-```
+```text
 Pool XPortal  : y=80,  hauteur=500  → centre des tâches y≈180 (événements) / y≈220 (tâches)
 Pool XFlow    : y=650, hauteur=600  → centre des tâches y≈730 (événements) / y≈770 (tâches)
 
@@ -765,12 +868,22 @@ Gateway (exclusiveGateway) : 50x50
 - [ ] Tous les `conditionExpression` ont `language="javascript"` (sans typo `javscript`)
 - [ ] Tous les `conditionExpression` utilisent `this.data.` (sans `$`) — le `$` est réservé aux `inputParameter`
 - [ ] `gnspdStatus` (stepNotification) : `Submited` (1 t!), `PendingBackOffice`, `PendingUser`, `PendingPayment`, `Success`, `Fail`, `Terminated` — ⛔ pas `Submitted`, `Completed`, `Processing`
-- [ ] `gnspdTaskStatus` (userTask/sendTask) : `Pending`, `PendingPortal`, `PendingPayment`, `PendingBackOffice`, `Completed`, `Rejected` — ⛔ pas `PendingUser`, `Success`, `Submited`
+- [ ] `gnspdTaskStatus` (userTask/sendTask) : `Pending`, `PendingPortal`, `PendingPayment`, `PendingBackOffice`, `Review`, `Submitted`, `Rejected`, `Completed`, `Failed`, `PendingCompletion`, `PendingPublic` — ⛔ pas `PendingUser`, `Success`, `Submited` (1 t)
 - [ ] stepNotification : seulement `gnspdStatus` + `gnspdIsPortal` + `gnspdStepOrder` — ⛔ pas les 8 champs de tâche
 - [ ] BPMNDiagram : tous les éléments ont un Shape et tous les flux ont un Edge
-- [ ] Pool XPortal : `isExecutable="true"` sur participant ET process. Pool XFlow : `isExecutable="true"` sur participant, `isExecutable="false"` sur process.
+- [ ] Pool XPortal : `isExecutable="true"` sur participant ET process. Pool XFlow : `isExecutable="true"` sur participant ET process — ⛔ `isExecutable="false"` sur `Process_Xflow` empêche le déploiement Camunda
 - [ ] Aucun namespace `zeebe:`
 - [ ] `boundaryEvent` timer : pas de `camunda:type` ni `camunda:topic` sur l'élément — `timerEventDefinition` avec `id`, `timeDuration` avec `xsi:type="bpmn:tFormalExpression"`
 - [ ] Correction XPortal : `gnspdHandlerType="publish_submission"` + `gnspdSubmissionData` conditionnel avec `.submissionData.data` (avec `.data`). Pattern : `$(this.data.TASK && this.data.TASK.result ? this.data.TASK.result : this.data.EVENT.parameters.submissionData.data)`
 - [ ] RestBuilders XFlow : inclure `gnspdSystemData=${"applicant": this.data.applicant, "recordUid": this.data.recordUid}` sur tous
 - [ ] `gnspdTargetElementType` : `bpmn:StartEvent` pour la sendTask initiale seulement, `bpmn:ReceiveTask` pour toutes les autres
+- [ ] Toute `bpmn:receiveTask` a `camunda:type="external"` — ⛔ sans cela le validateur signale "Implementation Type vide"
+- [ ] Toute `bpmn:userTask` a `camunda:type="external"` — ⛔ même erreur validateur "Implementation Type vide"
+- [ ] `EndEvent` avec template `tg.gouv.gnspd.endEvent` : `gnspdTaskStatus="Completed"` — ⛔ jamais `"Success"` (valide pour `gnspdStatus` stepNotification, mais INVALIDE pour `gnspdTaskStatus`)
+- [ ] Toute `userTask` avec `gnspdTaskKind=backoffice` a `camunda:formKey` — ⛔ sans cela XFlow ne peut pas router vers Form.io
+- [ ] Chaîne documentaire présente → `Event_X_Start` a `ECERT` + `PORTAL` dans les 4 environnements
+- [ ] `generateTemplate` : `gnspdTempData` (champs du document) + `gnspdPrintOptions` + `gnspdGroups` + `gnspdRoles` OBLIGATOIRES
+- [ ] `pdfImage` : `gnspdClickedX` + `gnspdClickedY` + `gnspdCurrentPage` + `gnspdFile` OBLIGATOIRES (en plus de `gnspdPdfFile` et `gnspdImage`)
+- [ ] `certSign` : `gnspdId` (SECRET_USERNAME) + `gnspdKey` (SECRET_PASSWORD) + `gnspdData` + `gnspdIsFormat` + `gnspdUseNewMethod` OBLIGATOIRES
+- [ ] `sendNotification` : si `gnspdNotifyInApp=true` → `gnspdNotifyTemplateInApp` DOIT être renseigné (TODO_TPL_INAPP_xxx, JAMAIS vide) — même règle pour Email et SMS
+- [ ] Cycle paiement : `Event_X_PayCallback` executionListener DOIT évaluer conditionnellement le statut (ex: `this.data.Event_X_PayCallback.result.paymentStatus == 'paid'`) — ⛔ JAMAIS `this.data.payment_key = true` inconditionnel (rend la branche PayKO morte)

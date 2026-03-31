@@ -1,0 +1,42 @@
+{
+  "display": "form",
+  "components": [
+    {
+      "label": "Dossier Citoyen",
+      "type": "panel",
+      "key": "dossierCitoyen",
+      "components": [
+        { "label": "Nom", "type": "textfield", "key": "nom", "disabled": true },
+        { "label": "Prénoms", "type": "textfield", "key": "prenom", "disabled": true },
+        { "label": "Téléphone", "type": "textfield", "key": "telephone", "disabled": true }
+      ]
+    },
+    {
+      "label": "Décision d'instruction",
+      "type": "radio",
+      "key": "decision",
+      "values": [
+        { "label": "Approuver (Aller aux examens)", "value": "oui" },
+        { "label": "Demander correction", "value": "correction" },
+        { "label": "Rejeter le dossier", "value": "non" }
+      ],
+      "validate": { "required": true }
+    },
+    {
+      "label": "Motif (si rejet ou correction)",
+      "type": "textarea",
+      "key": "motif",
+      "conditional": {
+        "show": true,
+        "when": "decision",
+        "pattern": "non|correction"
+      }
+    },
+    {
+      "type": "button",
+      "label": "Valider l'instruction",
+      "key": "submit",
+      "input": true
+    }
+  ]
+}

@@ -10,11 +10,14 @@ Avant d'écrire une seule ligne de XML, l'agent **doit** exécuter les étapes s
 
 ### Étape A — Lire les modèles de référence
 
-Lire impérativement les deux fichiers experts :
-1. `expert-camunda7-gnspd-1.bpmn` → Pattern XFlow complet avec Odoo, boucle de correction, gestion duplicata, paiement orchestré côté XFlow.
-2. `expert-camunda7-gnspd-2.bpmn` → Pattern XPortal optimal (machine à états avec receiveTask unique multi-entrante, gateway action unique).
+Lire impérativement les fichiers de référence suivants :
 
-Ces fichiers ont priorité sur tout autre document en cas de contradiction.
+1. `.agents/skills/bpmn-integrator/PATTERNS.md` → Snippets XML validés et checklist de conformité (source de vérité).
+2. `.agents/skills/bpmn-integrator/examples/skeleton-dual-pool.bpmn` → Squelette dual-pool de départ (point de départ obligatoire).
+3. `.agents/skills/bpmn-integrator/examples/expert-chaine-documentaire.bpmn` → Pattern chaîne documentaire complète (generateTemplate → QR → pdfImage → certSign).
+4. `.agents/skills/bpmn-integrator/examples/expert-odoo-integration.bpmn` → Pattern intégration Odoo (search_read, create, write).
+
+PATTERNS.md a priorité sur tout autre document en cas de contradiction.
 
 ### Étape B — Extraire les informations métier
 

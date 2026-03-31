@@ -1,0 +1,81 @@
+{
+  "title": "Paiement - Demande d'autorisation d'ouverture d'établissement",
+  "name": "demandeAutorisationOuvertureEcolePriveePaiement",
+  "path": "autorisation-ouverture-ecole-privee-paiement",
+  "type": "form",
+  "display": "form",
+  "i18n": {
+    "en": {
+      "Effectuer le paiement": "Make a payment"
+    }
+  },
+  "config": {
+    "development": {
+      "apiBaseUrl": "https://api.education.dev.gouv.tg",
+      "appName": "Développement"
+    },
+    "sandbox": {
+      "apiBaseUrl": "https://api.education.sandbox.gouv.tg",
+      "appName": "Sandbox"
+    },
+    "preproduction": {
+      "apiBaseUrl": "https://api.education.preprod.gouv.tg",
+      "appName": "Pré-production"
+    },
+    "production": {
+      "apiBaseUrl": "https://api.education.gouv.tg",
+      "appName": "Production"
+    }
+  },
+  "components": [
+    {
+      "type": "htmlelement",
+      "tag": "h2",
+      "content": "Paiement des frais",
+      "key": "serviceTitle"
+    },
+    {
+      "type": "htmlelement",
+      "tag": "div",
+      "content": "<p>Pour poursuivre votre demande, veuillez vous acquitter des frais uniques de dossier et d'inspection s'élevant à <strong>40 000 FCFA</strong>.</p>",
+      "key": "paymentText"
+    },
+    {
+      "type": "textfield",
+      "key": "montantAPayer",
+      "label": "Montant à payer",
+      "disabled": true,
+      "defaultValue": "40000"
+    },
+    {
+      "type": "textfield",
+      "key": "dynamicCost",
+      "hidden": true,
+      "clearOnHide": false,
+      "defaultValue": 40000
+    },
+    {
+      "type": "textfield",
+      "key": "dejaPaye",
+      "hidden": true,
+      "clearOnHide": false,
+      "defaultValue": "OUI"
+    }
+  ],
+  "actions": {
+    "calculate-costs": {
+      "name": "calculate-costs",
+      "method": ["create"],
+      "handler": [{ "method": "before", "name": "Calculate Costs" }],
+      "settings": {
+        "serviceId": "SRV-MEPS-2026-003",
+        "pricingMode": "fixed",
+        "defaultPrice": 40000,
+        "quantityField": "",
+        "applyTax": false,
+        "fixedPrice": 40000
+      },
+      "enabled": true
+    }
+  }
+}

@@ -56,17 +56,11 @@
       <bpmn:incoming>Flow_P1</bpmn:incoming>
       <bpmn:outgoing>Flow_P2</bpmn:outgoing>
     </bpmn:sendTask>
-    <bpmn:sequenceFlow id="Flow_P2" sourceRef="Activity_P_Submit" targetRef="Gateway_P_Loop" />
-
-    <bpmn:exclusiveGateway id="Gateway_P_Loop" name="Attente Etat">
-      <bpmn:incoming>Flow_P2</bpmn:incoming>
-      <bpmn:incoming>Flow_P_LoopIn</bpmn:incoming>
-      <bpmn:outgoing>Flow_P3</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_P3" sourceRef="Gateway_P_Loop" targetRef="Gateway_P_Wait" />
+    <bpmn:sequenceFlow id="Flow_P2" sourceRef="Activity_P_Submit" targetRef="Gateway_P_Wait" />
 
     <bpmn:eventBasedGateway id="Gateway_P_Wait" name="Attendre Message">
-      <bpmn:incoming>Flow_P3</bpmn:incoming>
+      <bpmn:incoming>Flow_P2</bpmn:incoming>
+      <bpmn:incoming>Flow_P_LoopIn</bpmn:incoming>
       <bpmn:outgoing>Flow_P_ToCorr</bpmn:outgoing>
       <bpmn:outgoing>Flow_P_ToFinal</bpmn:outgoing>
     </bpmn:eventBasedGateway>
@@ -94,7 +88,7 @@
       <bpmn:outgoing>Flow_P_LoopIn</bpmn:outgoing>
     </bpmn:sendTask>
     <bpmn:sequenceFlow id="Flow_P5" sourceRef="Activity_P_Correction" targetRef="Activity_P_SendResubmit" />
-    <bpmn:sequenceFlow id="Flow_P_LoopIn" sourceRef="Activity_P_SendResubmit" targetRef="Gateway_P_Loop" />
+    <bpmn:sequenceFlow id="Flow_P_LoopIn" sourceRef="Activity_P_SendResubmit" targetRef="Gateway_P_Wait" />
 
     <bpmn:intermediateCatchEvent id="Activity_P_RecvFinal" name="Notification Finale">
       <bpmn:incoming>Flow_P_ToFinal</bpmn:incoming>
@@ -108,7 +102,7 @@
         <camunda:inputOutput>
           <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskLabel" />
-          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskOrder" />
           <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
           <camunda:inputParameter name="gnspdCostVariable" />
@@ -156,7 +150,7 @@
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_F3" sourceRef="Activity_F_VerifyOdoo" targetRef="Activity_F_Instruction" />
 
-    <bpmn:userTask id="Activity_F_Instruction" name="Instruction du Dossier" camunda:modelerTemplate="tg.gouv.gnspd.userTask" camunda:type="external" camunda:topic="flow-user-task">
+    <bpmn:userTask id="Activity_F_Instruction" name="Instruction du Dossier" camunda:modelerTemplate="tg.gouv.gnspd.userTask" camunda:type="external" camunda:topic="flow-user-task" camunda:formKey="ULID_FORM_AGENT_INSTRUCTION">
       <bpmn:incoming>Flow_F3</bpmn:incoming>
       <bpmn:outgoing>Flow_F4</bpmn:outgoing>
     </bpmn:userTask>
@@ -219,7 +213,7 @@
         <camunda:inputOutput>
           <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskLabel" />
-          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskOrder" />
           <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
           <camunda:inputParameter name="gnspdCostVariable" />
@@ -285,7 +279,7 @@
         <camunda:inputOutput>
           <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskLabel" />
-          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskOrder" />
           <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
           <camunda:inputParameter name="gnspdCostVariable" />
@@ -310,10 +304,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_P_Submit_di" bpmnElement="Activity_P_Submit">
         <dc:Bounds x="310" y="170" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_P_Loop_di" bpmnElement="Gateway_P_Loop" isMarkerVisible="true">
-        <dc:Bounds x="465" y="185" width="50" height="50" />
-        <bpmndi:BPMNLabel><dc:Bounds x="453" y="242" width="74" height="14" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_P_Wait_di" bpmnElement="Gateway_P_Wait">
         <dc:Bounds x="575" y="185" width="50" height="50" />
@@ -394,10 +384,7 @@
         <di:waypoint x="258" y="210" /><di:waypoint x="310" y="210" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_P2_di" bpmnElement="Flow_P2">
-        <di:waypoint x="410" y="210" /><di:waypoint x="465" y="210" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_P3_di" bpmnElement="Flow_P3">
-        <di:waypoint x="515" y="210" /><di:waypoint x="575" y="210" />
+        <di:waypoint x="410" y="210" /><di:waypoint x="575" y="210" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_P_ToCorr_di" bpmnElement="Flow_P_ToCorr">
         <di:waypoint x="600" y="235" /><di:waypoint x="600" y="300" /><di:waypoint x="687" y="300" />

@@ -14,6 +14,39 @@ Le fichier XML BPMN doit impérativement être nommé :
 
 ---
 
+## Stratégie de génération en deux passes
+
+> **⚠️ CONTRAINTE CAPACITÉ** : Un fichier BPMN dual-pool complet (XML fonctionnel + bpmndi) atteint ~1000 lignes, ce qui dépasse la capacité de génération fiable d'un modèle IA en une seule passe. La génération se fait donc en **deux passes distinctes**.
+
+### Passe 1 — XML fonctionnel (messages, collaboration, processus, flux)
+
+L'agent génère **tout le contenu fonctionnel** du fichier BPMN :
+- `<bpmn:message>` declarations
+- `<bpmn:collaboration>` avec participants et messageFlows
+- `<bpmn:process>` XPortal complet (startEvent, tâches, gateways, endEvents, sequenceFlows)
+- `<bpmn:process>` XFlow complet (startEvent, tâches, gateways, endEvents, sequenceFlows)
+- Section `<bpmndi:BPMNDiagram>` **vide** (placeholder) :
+```xml
+<bpmndi:BPMNDiagram id="BPMNDiagram_1">
+  <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_[Service]" />
+</bpmndi:BPMNDiagram>
+```
+
+Le fichier est écrit avec `Write` à ce stade. Il est valide XML mais **non visualisable** dans Camunda Modeler (page blanche sans bpmndi).
+
+### Passe 2 — Génération du BPMNDiagram (layout)
+
+L'agent **relit** le fichier généré en Passe 1, extrait tous les IDs d'éléments BPMN, puis génère la section `<bpmndi:BPMNDiagram>` complète avec :
+- `BPMNShape` pour chaque participant (pool), startEvent, endEvent, tâche, gateway, boundaryEvent, intermediateCatchEvent
+- `BPMNEdge` pour chaque sequenceFlow et messageFlow
+- Coordonnées cohérentes respectant la disposition dual-pool (XPortal en haut, XFlow en bas)
+
+L'agent utilise `Edit` pour remplacer le placeholder bpmndi vide par la section complète.
+
+> **Règle d'or** : Ne JAMAIS tenter de générer le XML fonctionnel et le bpmndi dans la même passe. La Passe 2 est une passe séparée qui lit le résultat de la Passe 1.
+
+---
+
 ## Lectures obligatoires avant toute génération
 
 > **⛔ INTERDICTION ABSOLUE** : Ne JAMAIS utiliser les fichiers du dossier `projects/` comme source d'inspiration ou de référence. Seuls les fichiers listés ci-dessous et le dossier `exemples/` sont des sources de référence autorisées.
@@ -27,7 +60,7 @@ Le fichier XML BPMN doit impérativement être nommé :
 | **`PATTERNS.md`** (même dossier que SKILL.md) | Bibliothèque de wiring XML annoté P1-P8 + scénarios complets (XPortal machine à états, XFlow backbone, chaîne doc, paiement, boucle correction, boundary timer) | ~450 |
 | **`examples/skeleton-dual-pool.bpmn`** | Squelette dual-pool valide à compléter — NE PAS générer de zéro, partir de ce fichier | ~300 |
 
-> **Règle d'or** : Le squelette est le point de départ. L'agent complète les sections TODO de `Process_Xflow` avec les snippets de `PATTERNS.md`. Il ne génère jamais un BPMN entier de zéro.
+> **Règle d'or** : Le squelette est le point de départ. L'agent complète les sections TODO de `Process_Xflow` avec les snippets de `PATTERNS.md`. Il ne génère jamais un BPMN entier de zéro. Le bpmndi est généré en Passe 2 uniquement.
 
 ### Étape 2 — Lectures conditionnelles (selon le SRS)
 
@@ -35,7 +68,7 @@ Lire les fichiers ci-dessous **uniquement si le scénario correspondant est pré
 
 | Condition dans le SRS | Fichier à lire | Ce qu'il apporte |
 |----------------------|----------------|-----------------|
-| Service avec **paiement e-Gov** | `expert-camunda7-gnspd-1.bpmn` | Pattern complet XFlow paiement + callback |
+| Service avec **paiement e-Gov** | `demande-passeport_correct.bpmn` | Pattern XFlow paiement + callback |
 | Service avec **vérification Odoo** complexe (create/write) | `expert-odoo-integration.bpmn` | Odoo search_read + create + write avec gestion d'erreurs |
 | Service avec **génération de document officiel** ou **orchestration inter-pools avancée** | `diplome_cfa_correct.bpmn` | Chaîne documentaire complète (generateTemplate → QR → pdfImage → certSign) + référence P1-P8 en XML opérationnel |
 | Service avec **intégration API REST tierce** (non-Odoo) | `demande-acte-etat-civil-golf3.bpmn` | Pattern RestBuilder Auth + Prepare + Submit |
@@ -132,10 +165,10 @@ Chaque SendTask inter-pool a un ReceiveTask (ou StartEvent) correspondant dans l
 </bpmn:collaboration>
 
 <bpmn:process id="Process_Portal" isExecutable="true" camunda:versionTag="1">...</bpmn:process>
-<bpmn:process id="Process_Xflow" isExecutable="false" camunda:versionTag="1">...</bpmn:process>
+<bpmn:process id="Process_Xflow" isExecutable="true" camunda:versionTag="1">...</bpmn:process>
 ```
 
-> **`isExecutable` XFlow** : Le participant XFlow a `isExecutable="true"` (pour le déploiement), mais le **process** XFlow a `isExecutable="false"`. Dans Camunda/GNSPD, c'est le `isExecutable` du **participant** qui prime. Le process XFlow ne doit pas être instancié manuellement — il démarre uniquement via message Kafka.
+> **`isExecutable` — Règle** : Les **deux** `<bpmn:process>` (XPortal ET XFlow) doivent être `isExecutable="true"`. Sans cela, Camunda 7 refuse le déploiement. XFlow démarre via message Kafka, mais `isExecutable="true"` est requis pour le déploiement, pas pour l'instanciation manuelle.
 
 ### 3. Messages Kafka — Déclaration globale
 
@@ -255,7 +288,9 @@ ${
 
 ```xml
 <!-- Tâche de soumission initiale (XPortal) -->
+<!-- ⚠️ camunda:type="external" OBLIGATOIRE sur toute userTask — sinon validateur "Implementation Type vide" -->
 <bpmn:userTask ... camunda:modelerTemplate="tg.gouv.gnspd.userTask"
+  camunda:type="external"
   camunda:formKey="[UUID_FORM]"
   camunda:topic="flow-user-task">
   <camunda:inputParameter name="gnspdTaskDescription">Description métier</camunda:inputParameter>
@@ -275,6 +310,7 @@ ${
 <!-- Tâche correction citoyen (XPortal) — pré-remplie avec données existantes -->
 <bpmn:userTask id="Task_P_Correction" name="Corriger le dossier"
   camunda:modelerTemplate="tg.gouv.gnspd.userTask"
+  camunda:type="external"
   camunda:formKey="[UUID_FORM_CORRECTION]"
   camunda:topic="flow-user-task">
   <bpmn:extensionElements>
@@ -315,19 +351,26 @@ ${
 
 #### E. SendNotification (`tg.gouv.gnspd.sendNotification`)
 
+> **⚠️ RÈGLE TEMPLATES OBLIGATOIRES** : Si un canal est activé (`true`), son template correspondant **DOIT** être renseigné (JAMAIS vide).
+> - `gnspdNotifyInApp=true` → `gnspdNotifyTemplateInApp` obligatoire (ex: `TODO_TPL_INAPP_xxx`)
+> - `gnspdNotifySendEmail=true` → `gnspdNotifyTemplateEmail` obligatoire (ex: `TODO_TPL_EMAIL_xxx`)
+> - `gnspdNotifySendSMS=true` → `gnspdNotifyTemplateSMS` obligatoire (ex: `TODO_TPL_SMS_xxx`)
+>
+> ⛔ Laisser un template vide (`<camunda:inputParameter name="gnspdNotifyTemplateInApp" />`) déclenche l'erreur validateur : "Le champ Template In-App est obligatoire".
+
 ```xml
 <bpmn:serviceTask ... camunda:modelerTemplate="tg.gouv.gnspd.sendNotification"
   camunda:topic="flow-notify">
   <camunda:inputParameter name="gnspdNotifySendEmail">true</camunda:inputParameter>
   <camunda:inputParameter name="gnspdNotifyEmail">$this.data.applicant.email</camunda:inputParameter>
-  <camunda:inputParameter name="gnspdNotifyTemplateEmail">01KHBXDFGV1NTPHAR80ZSWEZXH</camunda:inputParameter>
+  <camunda:inputParameter name="gnspdNotifyTemplateEmail">TODO_TPL_EMAIL_xxx</camunda:inputParameter>
   <camunda:inputParameter name="gnspdNotifyContentEmail">${"record_id": this.data.xref}</camunda:inputParameter>
   <camunda:inputParameter name="gnspdNotifySendSMS">true</camunda:inputParameter>
   <camunda:inputParameter name="gnspdNotifyPhone">$this.data.applicant.phone</camunda:inputParameter>
-  <camunda:inputParameter name="gnspdNotifyTemplateSMS">01KHBXF5B8B8WH9QFDZP607F5M</camunda:inputParameter>
+  <camunda:inputParameter name="gnspdNotifyTemplateSMS">TODO_TPL_SMS_xxx</camunda:inputParameter>
   <camunda:inputParameter name="gnspdNotifyContentSMS">${"record_id": this.data.xref}</camunda:inputParameter>
   <camunda:inputParameter name="gnspdNotifyInApp">true</camunda:inputParameter>
-  <camunda:inputParameter name="gnspdNotifyTemplateInApp">01KHBXFNJPJT5WZ3K0W9BBDF3N</camunda:inputParameter>
+  <camunda:inputParameter name="gnspdNotifyTemplateInApp">TODO_TPL_INAPP_xxx</camunda:inputParameter>
   <camunda:inputParameter name="gnspdNotifyContentInApp">${"record_id": this.data.xref}</camunda:inputParameter>
   <camunda:inputParameter name="gnspdNotifyAttachment" />
   <!-- + paramètres de tâche standards (IsVisible=false) -->
@@ -406,7 +449,8 @@ Utilisé **uniquement dans le pool XFlow** pour recevoir le callback de la plate
 <bpmn:intermediateCatchEvent id="Event_X_PayCallback" name="Recevoir les informations de paiement">
   <bpmn:extensionElements>
     <camunda:executionListener event="end">
-      <camunda:script scriptFormat="javascript">this.data.payment_key = true</camunda:script>
+      <!-- ⚠️ ÉVALUATION CONDITIONNELLE OBLIGATOIRE — JAMAIS affecter true inconditionnellement -->
+      <camunda:script scriptFormat="javascript">this.data.payment_key = (this.data.Event_X_PayCallback.result.paymentStatus == 'paid')</camunda:script>
     </camunda:executionListener>
   </bpmn:extensionElements>
   <bpmn:incoming>Flow_from_SendPayOrder</bpmn:incoming>
@@ -417,7 +461,8 @@ Utilisé **uniquement dans le pool XFlow** pour recevoir le callback de la plate
 
 **Points clés** :
 - `messageEventDefinition` référence le message `MSG_SERVICE_PAY_CALLBACK`
-- L'`executionListener` (event="end") positionne `payment_key = true` dans le contexte d'exécution
+- L'`executionListener` (event="end") évalue **conditionnellement** le statut du callback e-Gov
+- ⛔ **ANTI-PATTERN** : `this.data.payment_key = true` (inconditionnel) rend la branche PayKO morte (code inatteignable)
 - Placé entre `SendPayOrder` (XFlow → XPortal) et `SendPayConfirm` (XFlow → XPortal)
 - Cet événement **bloque le flux XFlow** jusqu'à réception du callback e-Gov
 
@@ -723,14 +768,28 @@ Si un environnement n'a pas de config spécifique, mettre `{}` vides. Les deux c
 
 > **Duplication KMS autorisée** : Certains services (ex: DNCCP) mettent la même config KMS sur les deux startEvents. Cela est valide : XPortal envoie `$this.data.Event_P_Start.parameters` à XFlow, qui peut donc lire la config depuis `this.data.Event_P_Start.parameters.configuration.API.XXX`. Si la config n'est que sur XFlow, utiliser `this.data.Event_X_Start.parameters.configuration.API.XXX`. Mettre la config sur les deux garantit l'accès depuis n'importe quel chemin.
 
-> **`isExecutable` — Règle définitive** : L'attribut qui compte pour le déploiement Camunda est sur le **`bpmn:process`** (pas le participant). XPortal process : `isExecutable="true"`. XFlow process : `isExecutable="false"`. Les participants peuvent avoir l'attribut ou non — ça ne change pas le comportement.
+> **`isExecutable` — Règle définitive** : Les **deux** `<bpmn:process>` doivent être `isExecutable="true"`. XPortal process : `isExecutable="true"`. XFlow process : `isExecutable="true"`. Sans cela, Camunda 7 refuse le déploiement.
 
-### 12. Section BPMNDiagram — Obligatoire et complète
+### 12. Section BPMNDiagram — Générée en Passe 2
+
+> **IMPORTANT** : Cette section n'est PAS générée en même temps que le XML fonctionnel. Elle est produite lors de la **Passe 2** (voir "Stratégie de génération en deux passes" en début de document).
+
+#### En Passe 1 — Placeholder vide
+
+```xml
+<bpmndi:BPMNDiagram id="BPMNDiagram_1">
+  <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_[Service]" />
+</bpmndi:BPMNDiagram>
+```
+
+#### En Passe 2 — Section complète
+
+L'agent relit le fichier, identifie tous les éléments, et génère :
 
 ```xml
 <bpmndi:BPMNDiagram id="BPMNDiagram_1">
   <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_[Service]">
-    <!-- Shapes pour les participants (pools) -->
+    <!-- Pools : isHorizontal="true" -->
     <bpmndi:BPMNShape id="Participant_Portal_di" bpmnElement="Participant_Portal" isHorizontal="true">
       <dc:Bounds x="140" y="80" width="2970" height="500" />
     </bpmndi:BPMNShape>
@@ -738,16 +797,22 @@ Si un environnement n'a pas de config spécifique, mettre `{}` vides. Les deux c
       <dc:Bounds x="140" y="650" width="2970" height="600" />
     </bpmndi:BPMNShape>
 
-    <!-- Shapes pour TOUS les éléments de CHAQUE processus -->
-    <!-- StartEvent / EndEvent : 36x36 -->
-    <!-- Tâches : 100x80 -->
-    <!-- Gateway : 50x50 -->
+    <!-- BPMNShape pour CHAQUE élément (startEvent, endEvent, tâche, gateway, boundaryEvent, intermediateCatchEvent) -->
+    <!-- Conventions de taille : StartEvent/EndEvent 36x36, Tâches 100x80, Gateway 50x50 -->
 
-    <!-- Edges pour TOUS les sequenceFlow -->
-    <!-- Edges pour TOUS les messageFlow -->
+    <!-- BPMNEdge pour CHAQUE sequenceFlow -->
+    <!-- BPMNEdge pour CHAQUE messageFlow (inter-pools) -->
   </bpmndi:BPMNPlane>
 </bpmndi:BPMNDiagram>
 ```
+
+**Checklist Passe 2** — Avant de valider, vérifier que :
+- Chaque `id` d'élément du XML fonctionnel a un `BPMNShape` correspondant (`id` = `[elementId]_di`, `bpmnElement` = `[elementId]`)
+- Chaque `id` de sequenceFlow a un `BPMNEdge` correspondant
+- Chaque `id` de messageFlow a un `BPMNEdge` correspondant
+- Les pools XPortal (y=80) et XFlow (y=650) ne se chevauchent pas
+- Les éléments XPortal ont des coordonnées y entre 100 et 550
+- Les éléments XFlow ont des coordonnées y entre 670 et 1220
 
 ---
 
@@ -1072,16 +1137,27 @@ userTask(agent) → generateTemplate → generateUrlQrcode → pdfImage(QR sur d
 | ExclusiveGateway utilisé comme simple merge (N entrées → 1 sortie) | Erreur validation : « ExclusiveGateway doit avoir au moins 2 flux sortants » et « sans conditions ni flux par défaut » | Ne jamais utiliser d'ExclusiveGateway pour la convergence. Connecter les flux entrants directement sur la tâche cible (une tâche BPMN accepte plusieurs `<bpmn:incoming>`) |
 | `flowPortail` pour les tâches citoyen XPortal | Pattern legacy (3 usages vs 34 pour userTask) | Utiliser `userTask` avec `gnspdHandlerType` et `camunda:formKey` |
 | Paiement orchestré par XPortal seul | XPortal ne peut pas recevoir le callback e-Gov | Adopter le pattern `demande-passeport` : XFlow orchestre via `intermediateCatchEvent` |
+| `userTask` sans `camunda:type="external"` | Validateur : "Implementation Type vide" | Ajouter `camunda:type="external"` sur **toute** `userTask` (comme `receiveTask`) |
+| `sendNotification` avec template vide quand canal activé | Validateur : "Template In-App obligatoire" | Si `gnspdNotifyInApp=true` → `gnspdNotifyTemplateInApp=TODO_TPL_INAPP_xxx` (idem Email/SMS) |
+| `payment_key = true` inconditionnel dans executionListener | Branche PayKO morte (code inatteignable) | Évaluer conditionnellement : `this.data.Event_X_PayCallback.result.paymentStatus == 'paid'` |
 
 ---
 
 ## Mission finale
 
-Chaque fichier `.bpmn` généré doit pouvoir être importé directement dans Camunda Modeler 5.42.0 et déployé sur Camunda Platform 7.17 sans modification. Vérifier systématiquement :
+Chaque fichier `.bpmn` généré doit pouvoir être importé directement dans Camunda Modeler 5.42.0 et déployé sur Camunda Platform 7.17 sans modification. La génération se fait en **deux passes** :
+
+### Après Passe 1 — Vérifier :
 
 1. **Syntaxe XML valide** — Pas de balises non fermées, encodage UTF-8
 2. **IDs uniques** — Aucun doublon dans tout le fichier
 3. **Références cohérentes** — Chaque `sourceRef`, `targetRef`, `messageRef`, `processRef` pointe sur un ID existant
 4. **Templates complets** — Tous les paramètres standards présents sur chaque tâche
 5. **Chemins exhaustifs** — Pas de deadlock possible, tous les chemins atteignent un endEvent
-6. **BPMNDiagram complet** — Chaque élément BPMN a ses coordonnées graphiques
+6. **Placeholder bpmndi présent** — `<bpmndi:BPMNDiagram>` avec `<bpmndi:BPMNPlane ... />` vide
+
+### Après Passe 2 — Vérifier :
+
+7. **BPMNDiagram complet** — Chaque élément BPMN a son `BPMNShape`, chaque flux a son `BPMNEdge`
+8. **Aucun élément orphelin** — Pas d'élément fonctionnel sans shape, pas de shape sans élément fonctionnel
+9. **Ouverture Modeler** — Le fichier doit s'ouvrir correctement dans Camunda Modeler (pas de page blanche)

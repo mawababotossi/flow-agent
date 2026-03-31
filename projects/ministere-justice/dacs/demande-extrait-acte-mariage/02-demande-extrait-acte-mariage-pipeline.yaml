@@ -1,0 +1,53 @@
+pipeline:
+  - step: 1
+    name: "Soumission de la demande et Paiement intégré"
+    actor: "Citoyen"
+    system: "XPortal / Plateforme e-Gov"
+    action: "Remplissage form.io, choix du mode de retrait (guichet ou express), calcul des frais et paiement immédiat avant soumission."
+    inputs: [ "Informations demandeur", "Pièces justificatives", "Choix retrait", "Paiement" ]
+    output: "Dossier soumis et payé avec succès"
+
+  - step: 2
+    name: "Vérification automatisée au registre"
+    actor: "Système"
+    system: "XFlow / Odoo"
+    action: "Recherche automatique de l'acte dans la base de données de la commune si elle est numérisée."
+    inputs: [ "Données demandeur" ]
+    output: "Statut de pré-vérification (trouvé/non trouvé)"
+
+  - step: 3
+    name: "Instruction métier"
+    actor: "Agent d'état civil"
+    system: "XFlow"
+    action: "Vérification finale des pièces et de l'acte (manuel si non trouvé par le système)."
+    inputs: [ "Dossier complet", "Résultat système" ]
+    output: "Dossier conforme, à corriger ou rejeté"
+
+  - step: 3a
+    name: "Boucle de correction"
+    actor: "Citoyen"
+    system: "XPortal"
+    type: "humain"
+    sla: "72h"
+    retry:
+      max: 3
+      timer: "P15D"
+    action: "Correction des informations ou pièces selon le motif de l'agent."
+    inputs: [ "Motif de la correction agent" ]
+    output: "Dossier mis à jour et resoumis"
+
+  - step: 4
+    name: "Opération Légale (Impression et signature) — PHYSIQUE"
+    actor: "Officier d'état civil"
+    system: "XFlow"
+    action: "Édition de l'extrait officiel original avec identifiant unique, et signature manuelle obligatoire."
+    inputs: [ "Dossier instruit" ]
+    output: "Acte signé prêt pour remise"
+
+  - step: 5
+    name: "Notification et clôture numérique"
+    actor: "Système"
+    system: "XFlow / SMS"
+    action: "Envoi de la convocation de retrait au guichet, ou transmission sécurisée à La Poste selon le choix du citoyen. Fin du workflow BPMN."
+    inputs: [ "Acte signé disponible" ]
+    output: "Citoyen notifié / La Poste sollicitée"

@@ -1,0 +1,26 @@
+{
+  "display": "form",
+  "components": [
+    {
+      "label": "Résultat Examen Conduite",
+      "type": "radio",
+      "key": "succes",
+      "values": [
+        { "label": "Succès (Permis accordé)", "value": "oui" },
+        { "label": "Échec (Rejeté)", "value": "non" }
+      ],
+      "validate": { "required": true }
+    },
+    {
+      "label": "Observations",
+      "type": "textfield",
+      "key": "observations"
+    },
+    {
+      "type": "button",
+      "label": "Enregistrer résultat",
+      "key": "submit",
+      "input": true
+    }
+  ]
+}

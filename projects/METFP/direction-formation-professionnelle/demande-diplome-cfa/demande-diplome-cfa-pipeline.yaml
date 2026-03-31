@@ -1,0 +1,82 @@
+pipeline:
+  - step: 1
+    name: "Soumission de la demande"
+    actor: "Citoyen"
+    system: "XPortal"
+    type: "humain"
+    action: "Le candidat remplit et soumet le formulaire en ligne (qualification : initiale ou duplicata, identité, centre d'examen, pièces jointes). Le système génère un numéro de dossier unique et notifie le citoyen."
+    inputs:
+      - "duplicata (Oui/Non)"
+      - "exam réussi (Oui/Non)"
+      - "Nom, Prénoms, Date/Lieu de naissance"
+      - "Numéro de téléphone, E-mail"
+      - "Personne à prévenir"
+      - "Région, Préfecture, Centre d'examen"
+      - "Numéro de table, Spécialité, Session"
+      - "Acte de naissance (fichier)"
+      - "Relevé de notes (fichier)"
+      - "Copie du diplôme (fichier — si duplicata)"
+      - "Déclaration de perte (fichier — si duplicata)"
+    output: "Dossier créé dans XFlow avec numéro de référence unique"
+
+  - step: 2
+    name: "Paiement des frais (duplicata uniquement)"
+    actor: "Citoyen"
+    system: "XPortal + Plateforme e-Gov"
+    type: "humain"
+    sla: "48h"
+    condition: "duplicata = Oui"
+    retry:
+      max: 3
+      timer: "P2D"
+    action: "Xflow envoie une demande de paiement au portail. Le citoyen est redirigé vers la plateforme externe e-Gov (Flooz, TMoney, Visa, Mastercard) pour régler les frais de duplicata. La confirmation de paiement revient de manière asynchrone."
+    inputs:
+      - "Montant des frais (injecté par Xflow depuis référentiel tarifaire)"
+    output: "Confirmation de paiement reçue par Xflow"
+
+  - step: 3
+    name: "Vérification automatique et instruction du dossier"
+    actor: "Système + Agent CFA"
+    system: "XFlow + Odoo"
+    type: "système"
+    sla: "5 jours ouvrés"
+    action: "Xflow extrait et normalise les données. Le système vérifie automatiquement l'inscription du candidat et la réussite à l'examen dans Odoo. L'agent CFA instruit manuellement le dossier (conformité des pièces, cohérence des données)."
+    inputs:
+      - "Données du formulaire soumis"
+      - "Résultat vérification Odoo (inscription + réussite examen)"
+    output: "Décision : Conforme / Correction requise / Rejet définitif"
+
+  - step: 3a
+    name: "Boucle de correction — Citoyen"
+    actor: "Citoyen"
+    system: "XPortal"
+    type: "humain"
+    sla: "5 jours ouvrés"
+    retry:
+      max: 3
+      timer: "P5D"
+    action: "Le citoyen reçoit une notification précisant les erreurs ou pièces manquantes. Il corrige son dossier via un formulaire de correction dans Xportal et resoumet. Le dossier réintègre l'instruction sans créer un nouveau dossier."
+    inputs:
+      - "Liste des corrections demandées par l'agent"
+      - "Nouvelles pièces ou données corrigées"
+    output: "Dossier corrigé et renvoyé au back-office"
+
+  - step: 4
+    name: "Notification de la décision finale"
+    actor: "Système"
+    system: "XFlow + XPortal"
+    type: "système"
+    action: "Xflow envoie la décision finale au portail. Notification SMS et e-mail au citoyen : acceptation (diplôme en cours d'édition / disponible) ou rejet définitif motivé."
+    inputs:
+      - "Décision de l'agent CFA (Conforme / Rejet)"
+    output: "Notification SMS + e-mail envoyée au citoyen"
+
+  - step: 5
+    name: "Retrait du diplôme — PHYSIQUE"
+    actor: "Citoyen"
+    system: "Communauté / Direction des examens CFA"
+    type: "physique"
+    action: "Le citoyen retire son diplôme selon le mode de retrait choisi : Direction des examens CFA, CCom, CPM, CRM ou envoi postal. Des frais supplémentaires peuvent s'appliquer pour la poste."
+    inputs:
+      - "Pièce d'identité du citoyen"
+    output: "Diplôme CFA remis au bénéficiaire"

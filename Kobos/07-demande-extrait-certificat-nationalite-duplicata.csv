@@ -1,0 +1,91 @@
+Rubrique,Détail
+,,
+IDENTIFICATION DU SERVICE,,
+Nom du service,Demande d'extrait de certificat de nationalité (duplicata)
+Organisme,Ministère de la Justice et de la Législation / Direction des Affaires Civiles et du Sceau (DACS)
+Direction,Direction des Affaires Civiles et du Sceau (DACS)
+Rôle de la direction,"Administrer les actes civils et les documents officiels relatifs à l'état et à la nationalité des personnes ; délivrer les certificats de nationalité togolaise ; tenir le registre central de la nationalité."
+,,
+CONTEXTE ET BASE LÉGALE,,
+Description du service,"Le certificat de nationalité est un document officiel délivré par l'autorité judiciaire attestant qu'une personne possède la nationalité togolaise. Il est requis pour de nombreuses démarches administratives : inscription à un concours de la fonction publique, constitution d'un dossier de passeport, création d'entreprise, acquisition foncière, obtention de bourses d'études, etc. Lorsque le certificat original est perdu, volé ou détérioré, le citoyen peut demander un duplicata auprès du tribunal de première instance de son lieu de naissance ou de résidence, ou auprès de la DACS à Lomé."
+Texte réglementaire,"Code de la nationalité togolaise (Ordonnance n°78-34 du 7 septembre 1978 portant code de la nationalité togolaise, modifiée par la loi n°2007-010 du 13 mars 2007) ; Code de l'organisation judiciaire"
+Parties non digitalisables selon la loi,"La signature du certificat de nationalité doit obligatoirement être apposée par un magistrat habilité (président du tribunal ou juge délégué). Le cachet du tribunal et la signature manuscrite du magistrat sont des éléments de validité juridique non substituables par une signature électronique à ce jour."
+Signature électronique reconnue,"Non — le certificat de nationalité est un acte judiciaire nécessitant la signature manuscrite d'un magistrat et le cachet du tribunal."
+Documentation officielle existante,"Oui — formulaire de demande disponible aux greffes des tribunaux et à la DACS."
+Date de création du service,"Service existant depuis l'adoption du Code de la nationalité en 1978. Dernière modification législative en 2007."
+,,
+USAGERS,,
+Public cible,"Tout citoyen togolais (par naissance, par filiation ou par naturalisation) ayant perdu, détérioré ou égaré son certificat de nationalité original et ayant besoin d'un duplicata pour des démarches administratives."
+Conditions d'éligibilité,"• Être de nationalité togolaise
+• Justifier de la perte, du vol ou de la détérioration du certificat original (déclaration de perte ou attestation)
+• Fournir les pièces justificatives requises
+• S'acquitter des frais de délivrance"
+Volume estimé,"Environ 8 000 duplicatas délivrés par an sur l'ensemble du territoire (Lomé : ≈ 60 %, tribunaux régionaux : ≈ 40 %)."
+,,
+PIÈCES JUSTIFICATIVES,,
+Documents requis,"• Formulaire de demande de duplicata de certificat de nationalité (disponible au greffe du tribunal)
+• Déclaration de perte ou de vol établie par la police ou la gendarmerie (original)
+• Copie certifiée conforme de l'acte de naissance
+• Copie de la pièce d'identité en cours de validité (CNI ou passeport)
+• Copie du certificat de nationalité original (si disponible, même détérioré)
+• 2 photos d'identité format 4x4 cm fond blanc
+• Reçu de paiement des frais de délivrance"
+Coût,"Frais de délivrance du duplicata : 3 000 FCFA (fixe)
+Paiement accepté : espèces au greffe du tribunal, Flooz, TMoney"
+,,
+ÉTAPES DU PROCESSUS CÔTÉ CITOYEN,,
+Étape 1 — Déclaration de perte,"Le citoyen se rend au commissariat de police ou à la brigade de gendarmerie la plus proche pour établir une déclaration de perte ou de vol du certificat de nationalité original."
+Étape 2 — Constitution du dossier,"Le citoyen rassemble les pièces justificatives requises (formulaire, déclaration de perte, acte de naissance, pièce d'identité, photos)."
+Étape 3 — Dépôt et paiement,"Le citoyen se présente au greffe du tribunal de première instance de son lieu de naissance ou de résidence (ou à la DACS à Lomé). Il dépose le dossier complet, s'acquitte des frais de 3 000 FCFA et obtient un récépissé de dépôt avec une date prévisionnelle de retrait."
+Étape 4 — Attente de traitement,"Le citoyen attend le traitement de sa demande. Délai standard : 5 à 10 jours ouvrables."
+Étape 5 — Retrait du duplicata,"Le citoyen se présente à la date indiquée avec son récépissé et sa pièce d'identité originale pour retirer le duplicata du certificat de nationalité signé et cacheté par le magistrat."
+,,
+ACTIONS INTERNES DES AGENTS,,
+Greffier de réception,"Vérification de la complétude du dossier, encaissement des frais de délivrance, enregistrement dans le registre des demandes, remise du récépissé de dépôt."
+Greffier instructeur,"Consultation du registre central de la nationalité pour vérifier l'existence du certificat original, vérification de la concordance des informations (état civil, filiation), préparation du projet de duplicata."
+Magistrat (président du tribunal ou juge délégué),"Examen du dossier instruit, vérification de la conformité, signature du duplicata et apposition du cachet du tribunal."
+Agent de distribution,"Classement des duplicatas signés, notification au citoyen (appel téléphonique ou SMS si numéro disponible), délivrance au guichet sur présentation du récépissé."
+,,
+GOULOTS D'ÉTRANGLEMENT IDENTIFIÉS,,
+Goulot 1,"Double déplacement obligatoire : le citoyen doit se déplacer au minimum deux fois (dépôt puis retrait), en plus du déplacement pour la déclaration de perte."
+Goulot 2,"Délai de traitement variable : 5 à 10 jours ouvrables en standard, pouvant atteindre 3 semaines en période de forte activité ou en cas d'absence du magistrat signataire."
+Goulot 3,"Consultation manuelle du registre de nationalité : le registre central n'est pas informatisé dans tous les tribunaux, ce qui ralentit la vérification."
+Goulot 4,"Absence de notification systématique : le citoyen n'est pas toujours informé quand son duplicata est prêt, ce qui entraîne des déplacements inutiles."
+Goulot 5,"Paiement exclusivement en espèces au greffe : file d'attente, traçabilité limitée des recettes, risques de pertes."
+Goulot 6,"Dossiers incomplets au premier passage : environ 20 % des demandes sont refusées pour pièce manquante (déclaration de perte non originale, acte de naissance non certifié)."
+,,
+OUTILS ACTUELS,,
+Système de gestion,"Registre papier des demandes au greffe du tribunal. Certains tribunaux tiennent un fichier Excel en complément."
+Registre de nationalité,"Registre papier classé chronologiquement, conservé au greffe. Pas de base de données informatisée centralisée pour les certificats de nationalité."
+Notification,"Aucune notification automatique. L'agent appelle parfois le citoyen par téléphone si le numéro a été communiqué."
+Archivage,Archives papier au greffe du tribunal. Pas de numérisation systématique des certificats délivrés.
+,,
+STATISTIQUES,,
+Demandes par jour,"Environ 25 à 30 (Lomé, DACS et tribunal) / 5 à 10 par tribunal régional"
+Demandes par mois,Environ 800 à 1 000 sur l'ensemble du territoire
+Demandes par an,Environ 8 000 à 10 000 duplicatas
+Taux de dossiers incomplets ou rejetés au dépôt,"Environ 20 % (déclaration de perte non originale, acte de naissance manquant ou non certifié)"
+Délai moyen de délivrance,5 à 10 jours ouvrables (standard) ; jusqu'à 3 semaines en période de pointe
+Nombre d'agents impliqués,"4 à 6 agents par tribunal (greffiers + magistrat) ; environ 40 agents au total sur le territoire"
+Périodes de forte activité,"Septembre–octobre (rentrée universitaire, concours de la fonction publique) et janvier–mars (constitution de dossiers administratifs en début d'année)"
+,,
+DOCUMENT DÉLIVRÉ,,
+Nature du document,"Duplicata du certificat de nationalité togolaise : document A4 à en-tête du tribunal, portant les mentions du certificat original (nom, prénoms, date et lieu de naissance, filiation, mode d'acquisition de la nationalité), avec la mention « DUPLICATA », signé par le magistrat habilité et revêtu du cachet du tribunal."
+Durée de validité,"Illimitée (le certificat de nationalité ne périme pas, mais certaines administrations exigent un certificat datant de moins de 3 mois)."
+,,
+DIFFICULTÉS ET AXES D'AMÉLIORATION,,
+Principales difficultés,"• Trois déplacements physiques nécessaires (police pour déclaration de perte, greffe pour dépôt, greffe pour retrait)
+• Registre de nationalité non informatisé : vérification lente et risque d'erreurs
+• Délai variable selon la disponibilité du magistrat signataire
+• Aucune notification automatique au citoyen
+• Taux élevé de dossiers incomplets au premier passage (20 %)
+• Paiement uniquement en espèces au greffe"
+Ce qui pourrait être digitalisé,"• Soumission du formulaire et des pièces justificatives en ligne via un portail citoyen
+• Upload de la déclaration de perte scannée (avec vérification de l'original au retrait)
+• Paiement des frais en ligne (Flooz, TMoney, carte bancaire)
+• Notification automatique par SMS et email à chaque étape (dossier reçu, en cours d'instruction, duplicata prêt à retirer)
+• Suivi en ligne du statut de la demande via numéro de récépissé
+• À terme : consultation informatisée du registre central de nationalité par le greffier"
+Ce qui reste physique obligatoirement,"• Le retrait du duplicata original (document signé et cacheté par le magistrat)
+• La vérification de la déclaration de perte originale au moment du retrait"
+Vision future selon les agents,"Le citoyen devrait pouvoir soumettre sa demande en ligne avec les pièces scannées, payer les frais via mobile money, et être notifié par SMS quand le duplicata est prêt. Il se déplacerait une seule fois pour le retrait, en présentant la déclaration de perte originale et sa pièce d'identité. La digitalisation du registre central de nationalité permettrait de vérifier l'existence du certificat original en quelques secondes au lieu de plusieurs heures de recherche manuelle."

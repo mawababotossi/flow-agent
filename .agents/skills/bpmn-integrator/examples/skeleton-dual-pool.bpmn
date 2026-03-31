@@ -131,6 +131,7 @@
     <!-- [PAIEMENT] Décommenter si service payant :
     <bpmn:receiveTask id="Recv_P_PayOrder" name="Recevoir ordre de paiement"
       camunda:modelerTemplate="tg.gouv.gnspd.receiveTask"
+      camunda:type="external"
       messageRef="MSG_SERVICE_PAY_ORDER"
       camunda:topic="flow-receive-task">
       <bpmn:extensionElements>...</bpmn:extensionElements>
@@ -153,6 +154,7 @@
 
     <bpmn:receiveTask id="Recv_P_PayConfirm" name="Recevoir confirmation paiement"
       camunda:modelerTemplate="tg.gouv.gnspd.receiveTask"
+      camunda:type="external"
       messageRef="MSG_SERVICE_PAY_CONFIRM"
       camunda:topic="flow-receive-task">
       <bpmn:extensionElements>...</bpmn:extensionElements>
@@ -164,6 +166,7 @@
     <!-- P2 : ReceiveTask multi-entrante — point de convergence unique -->
     <bpmn:receiveTask id="Recv_P_Return" name="Attendre réponse XFlow"
       camunda:modelerTemplate="tg.gouv.gnspd.receiveTask"
+      camunda:type="external"
       messageRef="MSG_SERVICE_RETURN"
       camunda:topic="flow-receive-task">
       <bpmn:extensionElements>
@@ -326,6 +329,7 @@
     <!-- Point de re-entrée après resoumission (P6) -->
     <bpmn:receiveTask id="Recv_X_Resub" name="Attendre resoumission"
       camunda:modelerTemplate="tg.gouv.gnspd.receiveTask"
+      camunda:type="external"
       messageRef="MSG_SERVICE_RESUB"
       camunda:topic="flow-receive-task">
       <bpmn:extensionElements>
@@ -344,15 +348,16 @@
       <bpmn:outgoing>TODO_SF_RecvResub_BackToVerification</bpmn:outgoing><!-- P6 : retour vérification -->
     </bpmn:receiveTask>
 
-    <!-- P7 : EndEvent succès principal -->
+    <!-- P7 : EndEvent succès principal — gnspdTaskStatus DOIT être "Completed" -->
     <bpmn:endEvent id="End_X_Success" name="Dossier traité avec succès"
       camunda:modelerTemplate="tg.gouv.gnspd.endEvent"
+      camunda:type="external"
       camunda:topic="flow-end-event">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskLabel">Dossier traité</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
           <camunda:inputParameter name="gnspdTaskOrder" />
           <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
           <camunda:inputParameter name="gnspdCostVariable" />
@@ -363,8 +368,23 @@
       <bpmn:incoming>TODO_SF_Send_EndSuccess</bpmn:incoming>
     </bpmn:endEvent>
 
-    <!-- P7 : EndEvent rejet -->
-    <bpmn:endEvent id="End_X_Reject" name="Dossier rejeté">
+    <!-- P7 : EndEvent rejet — gnspdTaskStatus DOIT être "Completed" -->
+    <bpmn:endEvent id="End_X_Reject" name="Dossier rejeté"
+      camunda:modelerTemplate="tg.gouv.gnspd.endEvent"
+      camunda:type="external"
+      camunda:topic="flow-end-event">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel">Dossier rejeté</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>TODO_SF_SendReject_EndReject</bpmn:incoming>
     </bpmn:endEvent>
 

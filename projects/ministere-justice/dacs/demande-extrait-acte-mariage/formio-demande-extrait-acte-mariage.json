@@ -1,0 +1,411 @@
+{
+  "title": "Demande d'extrait d'acte de mariage",
+  "name": "demandeExtraitActeMariage",
+  "path": "demande-extrait-acte-mariage",
+  "type": "form",
+  "display": "wizard",
+  "i18n": {
+    "en": {
+      "Présentation": "Presentation",
+      "Informations des époux": "Spouses information",
+      "Informations sur le mariage": "Marriage details",
+      "Options & Pièces à fournir": "Options & Documents",
+      "Récapitulatif et soumission": "Summary & Submission"
+    }
+  },
+  "config": {
+    "development": {
+      "apiBaseUrl": "https://api.dacs.dev.gouv.tg/api/v1",
+      "appName": "Développement",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    },
+    "sandbox": {
+      "apiBaseUrl": "https://api.dacs.sandbox.gouv.tg/api/v1",
+      "appName": "Sandbox",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    },
+    "preproduction": {
+      "apiBaseUrl": "https://api.dacs.preprod.gouv.tg/api/v1",
+      "appName": "Pré-production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    },
+    "production": {
+      "apiBaseUrl": "https://api.dacs.gouv.tg/api/v1",
+      "appName": "Production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    }
+  },
+  "components": [
+    {
+      "title": "Présentation",
+      "label": "Présentation",
+      "type": "panel",
+      "key": "stepIntro",
+      "components": [
+        {
+          "type": "htmlelement",
+          "tag": "div",
+          "content": "<div class='container'><div class='row'><div class='col-md-8'><h2>L'extrait d'acte de mariage</h2><p>L'extrait d'acte de mariage est un document officiel attestant de l'union légale entre deux personnes. Il est indispensable pour de nombreuses démarches administratives.</p></div><div class='col-md-4'><h4>Délais</h4><p>24h à 48h ouvrées</p></div></div></div>",
+          "key": "introContent"
+        }
+      ]
+    },
+    {
+      "title": "Informations des époux",
+      "label": "Informations des époux",
+      "type": "panel",
+      "key": "stepIdentite",
+      "components": [
+        {
+          "type": "textfield",
+          "key": "nomDemandeur",
+          "label": "Nom du demandeur",
+          "input": true,
+          "defaultValue": "{{ config.users.lastName }}",
+          "validateOn": "blur",
+          "validate": {
+            "required": true
+          },
+          "logic": [
+            {
+              "name": "verrouillageEID",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = !!(data.nomDemandeur && String(data.nomDemandeur).trim().length > 0);"
+              },
+              "actions": [
+                {
+                  "name": "desactiverChamp",
+                  "type": "property",
+                  "property": {
+                    "label": "Disabled",
+                    "value": "disabled",
+                    "type": "boolean"
+                  },
+                  "state": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "textfield",
+          "key": "prenomDemandeur",
+          "label": "Prénoms du demandeur",
+          "input": true,
+          "defaultValue": "{{ config.users.firstName }}",
+          "validateOn": "blur",
+          "validate": {
+            "required": true
+          },
+          "logic": [
+            {
+              "name": "verrouillageEID",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = !!(data.prenomDemandeur && String(data.prenomDemandeur).trim().length > 0);"
+              },
+              "actions": [
+                {
+                  "name": "desactiverChamp",
+                  "type": "property",
+                  "property": {
+                    "label": "Disabled",
+                    "value": "disabled",
+                    "type": "boolean"
+                  },
+                  "state": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "phoneNumber",
+          "key": "telephone",
+          "label": "Téléphone",
+          "input": true,
+          "defaultValue": "{{ config.users.phone }}",
+          "validateOn": "blur",
+          "validate": {
+            "required": true
+          }
+        },
+        {
+          "type": "select",
+          "key": "qualiteDemandeur",
+          "label": "Qualité du demandeur",
+          "input": true,
+          "dataSrc": "values",
+          "data": {
+            "values": [
+              {
+                "label": "Époux",
+                "value": "epoux"
+              },
+              {
+                "label": "Épouse",
+                "value": "epouse"
+              },
+              {
+                "label": "Descendant",
+                "value": "descendant"
+              }
+            ]
+          },
+          "validateOn": "blur",
+          "validate": {
+            "required": true
+          }
+        },
+        {
+          "type": "textfield",
+          "key": "nomConjoint",
+          "label": "Nom du conjoint",
+          "input": true,
+          "validateOn": "blur",
+          "validate": {
+            "required": true
+          }
+        },
+        {
+          "type": "textfield",
+          "key": "prenomConjoint",
+          "label": "Prénoms du conjoint",
+          "input": true,
+          "validateOn": "blur",
+          "validate": {
+            "required": true,
+            "maxLength": 100
+          }
+        }
+      ]
+    },
+    {
+      "title": "Informations sur le mariage",
+      "label": "Informations sur le mariage",
+      "type": "panel",
+      "key": "stepMariage",
+      "components": [
+        {
+          "type": "datetime",
+          "key": "dateMariage",
+          "label": "Date de célébration",
+          "input": true,
+          "enableTime": false,
+          "validateOn": "blur",
+          "validate": {
+            "required": true
+          }
+        },
+        {
+          "type": "select",
+          "key": "communeMariage",
+          "label": "Commune du mariage",
+          "input": true,
+          "dataSrc": "url",
+          "data": {
+            "url": "{{ config.apiBaseUrl }}/communes"
+          },
+          "valueProperty": "code",
+          "template": "<span>{{ item.libelle }}</span>",
+          "validateOn": "blur",
+          "validate": {
+            "required": true
+          }
+        },
+        {
+          "type": "select",
+          "key": "centreEtatCivil",
+          "label": "Mairie ou centre d'état civil",
+          "input": true,
+          "dataSrc": "url",
+          "data": {
+            "url": "{{ config.apiBaseUrl }}/centres-etat-civil?commune={{data.communeMariage}}"
+          },
+          "valueProperty": "code",
+          "template": "<span>{{ item.libelle }}</span>",
+          "validateOn": "blur",
+          "validate": {
+            "required": true
+          }
+        },
+        {
+          "type": "textfield",
+          "key": "numeroActe",
+          "label": "Numéro d'acte de mariage (si connu)",
+          "input": true,
+          "validateOn": "blur"
+        }
+      ]
+    },
+    {
+      "title": "Options & Pièces à fournir",
+      "label": "Options & Pièces à fournir",
+      "type": "panel",
+      "key": "stepOptions",
+      "components": [
+        {
+          "type": "radio",
+          "key": "typeDocument",
+          "label": "Nature du document",
+          "input": true,
+          "inline": false,
+          "values": [
+            {
+              "label": "Extrait simple (Gratuit)",
+              "value": "extrait_simple"
+            },
+            {
+              "label": "Copie intégrale (2000 FCFA)",
+              "value": "copie_integrale"
+            }
+          ],
+          "validateOn": "blur",
+          "validate": {
+            "required": true
+          }
+        },
+        {
+          "type": "radio",
+          "key": "modeRetrait",
+          "label": "Mode de retrait",
+          "input": true,
+          "inline": false,
+          "values": [
+            {
+              "label": "Retrait au guichet",
+              "value": "guichet"
+            },
+            {
+              "label": "Envoi par La Poste (Frais de livraison applicables)",
+              "value": "poste"
+            }
+          ],
+          "validateOn": "blur",
+          "validate": {
+            "required": true
+          }
+        },
+        {
+          "type": "textfield",
+          "key": "adresseExpedition",
+          "label": "Adresse postale complète",
+          "input": true,
+          "validateOn": "blur",
+          "validate": {
+            "required": true,
+            "maxLength": 150
+          },
+          "customConditional": "show = (data.modeRetrait === 'poste');"
+        },
+        {
+          "type": "file",
+          "key": "pieceIdentite",
+          "label": "Pièce d'identité (PDF, JPG, PNG < 2 Mo)",
+          "input": true,
+          "storage": "base64",
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "fileMaxSize": "2MB",
+          "validateOn": "blur",
+          "validate": {
+            "required": true
+          }
+        },
+        {
+          "type": "file",
+          "key": "livretFamille",
+          "label": "Copie du livret de famille (facultatif)",
+          "input": true,
+          "storage": "base64",
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "fileMaxSize": "2MB"
+        },
+        {
+          "type": "textfield",
+          "key": "montantTotal",
+          "label": "Montant estimé (FCFA)",
+          "input": true,
+          "disabled": true,
+          "calculateValue": "value = (data.typeDocument === 'copie_integrale' ? 2000 : 0) + (data.modeRetrait === 'poste' ? 1500 : 0);"
+        }
+      ]
+    },
+    {
+      "title": "Récapitulatif et soumission",
+      "label": "Récapitulatif et soumission",
+      "type": "panel",
+      "key": "stepRecapitulatif",
+      "components": [
+        {
+          "type": "htmlelement",
+          "key": "htmlRecapitulatifFinal",
+          "tag": "div",
+          "content": "<div class='recapitulatif-intelligent'>Récapitulatif généré dynamiquement</div>",
+          "logic": []
+        },
+        {
+          "type": "checkbox",
+          "key": "luEtApprouve",
+          "label": "Je déclare et certifie sur l'honneur l'exactitude des informations fournies.",
+          "input": true,
+          "validateOn": "blur",
+          "validate": {
+            "required": true
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "name": "calculate-costs",
+      "method": [
+        "create"
+      ],
+      "handler": [
+        {
+          "method": "before",
+          "name": "Calculate Costs"
+        }
+      ],
+      "settings": {
+        "serviceId": "SRV-DACS-2026-001",
+        "pricingMode": "dynamic",
+        "quantityField": "montantTotal",
+        "applyTax": false
+      },
+      "enabled": true
+    },
+    {
+      "name": "publishToRabbitMQ",
+      "type": "rabbitmq",
+      "topic": "bpmn.commands",
+      "payload": "{{ submission.data }}"
+    }
+  ]
+}

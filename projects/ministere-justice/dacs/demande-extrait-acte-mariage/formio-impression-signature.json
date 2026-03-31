@@ -1,0 +1,111 @@
+{
+  "title": "Impression et Signature Officielle",
+  "name": "impressionSignature",
+  "path": "impression-signature",
+  "type": "form",
+  "display": "form",
+  "i18n": {
+    "en": {
+      "Action": "Action"
+    }
+  },
+  "config": {
+    "development": {
+      "apiBaseUrl": "https://api.dacs.dev.gouv.tg/api/v1",
+      "appName": "Développement",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    },
+    "sandbox": {
+      "apiBaseUrl": "https://api.dacs.sandbox.gouv.tg/api/v1",
+      "appName": "Sandbox",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    },
+    "preproduction": {
+      "apiBaseUrl": "https://api.dacs.preprod.gouv.tg/api/v1",
+      "appName": "Pré-production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    },
+    "production": {
+      "apiBaseUrl": "https://api.dacs.gouv.tg/api/v1",
+      "appName": "Production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    }
+  },
+  "components": [
+    {
+      "type": "htmlelement",
+      "tag": "h3",
+      "content": "Certification et Signature",
+      "key": "titleH3"
+    },
+    {
+      "type": "htmlelement",
+      "tag": "div",
+      "content": "<p>Veuillez imprimer l'extrait d'acte de mariage certifié conforme, y apposer votre signature manuscrite et le sceau officiel, puis le rendre disponible au retrait.</p>",
+      "key": "instructionHtm"
+    },
+    {
+      "type": "textfield",
+      "key": "prenomDemandeur",
+      "label": "Prénoms du demandeur",
+      "input": true,
+      "disabled": true
+    },
+    {
+      "type": "textfield",
+      "key": "nomDemandeur",
+      "label": "Nom du demandeur",
+      "input": true,
+      "disabled": true
+    },
+    {
+      "type": "textfield",
+      "key": "typeDocument",
+      "label": "Type de document demandé",
+      "input": true,
+      "disabled": true
+    },
+    {
+      "type": "textfield",
+      "key": "modeRetrait",
+      "label": "Mode de retrait",
+      "input": true,
+      "disabled": true
+    },
+    {
+      "type": "checkbox",
+      "key": "actionImprimeEtSigne",
+      "label": "Je confirme avoir imprimé, signé et scellé ce document. Il est prêt à être remis ou expédié.",
+      "input": true,
+      "validateOn": "blur",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "actions": []
+}

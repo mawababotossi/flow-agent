@@ -1,0 +1,59 @@
+{
+  "title": "Correction - Autorisation d'ouverture",
+  "name": "correctionAutorisationOuvertureEcole",
+  "path": "correction-autorisation-ouverture-ecole",
+  "type": "form",
+  "display": "wizard",
+  "components": [
+    {
+      "type": "panel",
+      "title": "Motif de la correction",
+      "key": "stepMotif",
+      "components": [
+        {
+          "type": "htmlelement",
+          "tag": "div",
+          "content": "<h2>Votre dossier nécessite une correction</h2><p>L'instructeur de la DEP a examiné votre demande. Veuillez corriger les éléments listés ci-dessous pour poursuivre.</p>",
+          "key": "avisausager"
+        },
+        {
+          "type": "textarea",
+          "key": "motif_correction",
+          "label": "Motif de la correction demandée par l'agent",
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "type": "panel",
+      "title": "Mise à jour des pièces",
+      "key": "stepChamps",
+      "components": [
+        {
+          "type": "file",
+          "key": "pjCorrection",
+          "label": "Nouvelles pièces / Documents corrigés (Le cas échéant)",
+          "storage": "base64",
+          "fileMaxSize": "5MB",
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "multiple": true,
+          "description": "Si le motif concerne une pièce à remplacer, veuillez la charger ici."
+        },
+        {
+          "type": "textarea",
+          "key": "reponse_usager",
+          "label": "Commentaire de réponse à l'agent",
+          "validate": { "required": true }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "name": "publishToRabbitMQ",
+      "type": "rabbitmq",
+      "topic": "submissions.topic",
+      "payload": "{{ submission.data }}"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "title": "Instruction - Autorisation d'ouverture",
+  "name": "instructionAutorisationOuvertureEcole",
+  "path": "instruction-autorisation-ouverture-ecole",
+  "type": "form",
+  "display": "form",
+  "components": [
+    {
+      "type": "panel",
+      "title": "Dossier Promoteur",
+      "key": "panelDemande",
+      "components": [
+        {
+          "type": "textfield",
+          "key": "nomEtablissement",
+          "label": "Nom de l'établissement",
+          "disabled": true
+        },
+        {
+          "type": "textfield",
+          "key": "typePromoteur",
+          "label": "Type de promoteur",
+          "disabled": true
+        },
+        {
+          "type": "textfield",
+          "key": "niveauEnseignement",
+          "label": "Niveaux d'enseignement",
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "type": "panel",
+      "title": "Examen des Pièces",
+      "key": "panelExamen",
+      "components": [
+        {
+          "type": "htmlelement",
+          "tag": "div",
+          "content": "<p><i>L'agent instructeur doit vérifier que toutes les pièces obligatoires sont conformes.</i></p>",
+          "key": "noticeInstruction"
+        },
+        {
+          "type": "select",
+          "key": "decision_instruction",
+          "label": "Décision de l'instruction",
+          "widget": "choicesjs",
+          "dataSrc": "values",
+          "data": {
+            "values": [
+              { "label": "Dossier Conforme (Passer à l'inspection)", "value": "accepte" },
+              { "label": "À Corriger (Renvoyer au promoteur)", "value": "correction" },
+              { "label": "Rejeté (Irrecevable)", "value": "rejete" }
+            ]
+          },
+          "validate": { "required": true }
+        },
+        {
+          "type": "textarea",
+          "key": "motif_correction",
+          "label": "Motif de la correction ou du rejet",
+          "customConditional": "show = (data.decision_instruction === 'correction' || data.decision_instruction === 'rejete');",
+          "validate": { "required": true }
+        }
+      ]
+    }
+  ]
+}

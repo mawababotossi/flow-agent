@@ -1,0 +1,77 @@
+{
+  "display": "form",
+  "components": [
+    {
+      "label": "Informations Personnelles",
+      "type": "panel",
+      "key": "infosPerso",
+      "components": [
+        {
+          "label": "Nom de famille",
+          "type": "textfield",
+          "key": "nom",
+          "validate": { "required": true }
+        },
+        {
+          "label": "Prénoms",
+          "type": "textfield",
+          "key": "prenom",
+          "validate": { "required": true }
+        },
+        {
+          "label": "Numéro de téléphone (Odoo)",
+          "type": "textfield",
+          "key": "telephone",
+          "validate": { "required": true, "pattern": "^(\\+228|00228)?[0-9]{8}$" },
+          "description": "Ce numéro sera utilisé pour vérifier votre inscription au service des transports."
+        }
+      ]
+    },
+    {
+      "label": "Type de Permis",
+      "type": "select",
+      "key": "categoriePermis",
+      "data": {
+        "values": [
+          { "label": "A - Motocyclettes", "value": "A" },
+          { "label": "B - Véhicules légers", "value": "B" },
+          { "label": "C - Poids lourds", "value": "C" },
+          { "label": "D - Transport en commun", "value": "D" }
+        ]
+      },
+      "validate": { "required": true }
+    },
+    {
+      "label": "Pièces Jointes",
+      "type": "panel",
+      "key": "piecesJointes",
+      "components": [
+        {
+          "label": "Photo d'identité",
+          "type": "file",
+          "key": "photoIdentite",
+          "validate": { "required": true }
+        },
+        {
+          "label": "Certificat de naissance",
+          "type": "file",
+          "key": "certificatNaissance",
+          "validate": { "required": true }
+        },
+        {
+          "label": "Certificat médical",
+          "type": "file",
+          "key": "certificatMedical",
+          "validate": { "required": true }
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "label": "Soumettre la demande",
+      "key": "submit",
+      "disableOnInvalid": true,
+      "input": true
+    }
+  ]
+}

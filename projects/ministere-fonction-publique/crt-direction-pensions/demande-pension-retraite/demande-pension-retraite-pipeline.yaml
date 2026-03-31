@@ -1,51 +1,106 @@
 pipeline:
   - step: 1
-    name: "Soumission de la demande"
-    actor: "Citoyen"
+    name: "Soumission du dossier en ligne"
+    actor: "Agent de la Fonction Publique (citoyen)"
     system: "XPortal"
-    action: "Remplissage du formulaire et upload des pièces"
-    inputs: ["Données e-ID", "Dernier bulletin de salaire", "RIB"]
-    output: "Dossier créé (ID_Dossier)"
+    type: "humain"
+    sla: "illimité"
+    action: "Le fonctionnaire remplit le formulaire de demande de liquidation de pension via le portail. Son identité est pré-remplie via e-ID. Il uploade toutes les pièces justificatives numérisées (acte de mise à la retraite, arrêté de nomination, pièce d'identité, acte de naissance, livret de mariage, actes de naissance enfants, dernier bulletin de salaire, RIB/CCP). Une liste de contrôle interactive l'aide à ne rien oublier avant soumission."
+    inputs:
+      - "Formulaire de demande (identité pré-remplie via e-ID)"
+      - "Acte de mise à la retraite signé par le Ministre (upload PDF)"
+      - "Arrêté de nomination dans la Fonction Publique (upload PDF)"
+      - "Copie CNI en cours de validité (upload)"
+      - "Acte de naissance (upload)"
+      - "Livret de mariage (upload, si applicable)"
+      - "Actes de naissance des enfants à charge (upload, si applicable)"
+      - "Dernier bulletin de salaire (upload)"
+      - "Relevé des états de services DRH (upload ou transmission électronique)"
+      - "Certificat médical d'aptitude (upload, si retraite pour invalidité)"
+      - "RIB ou numéro de compte CCP (upload)"
+    output: "Dossier soumis, numéro de suivi attribué automatiquement, accusé de réception par email/SMS"
 
-  - step: 2
-    name: "Vérification des données de carrière"
-    actor: "Système"
-    system: "XFlow / ANTILOPE"
-    action: "Récupération automatique des états de servies et calcul"
-    inputs: ["ID_Dossier", "Matricule"]
-    output: "Fiche de calcul générée"
-
-  - step: 3
-    name: "Instruction et Validation Liquidateur"
-    actor: "Liquidateur CRT"
-    system: "XFlow"
-    action: "Vérification de la conformité du dossier et du calcul"
-    inputs: ["Fiche de calcul", "Pièces jointes"]
-    output: "Dossier validé ou Demande de correction"
-
-  - step: 3a
-    name: "Boucle de correction"
-    actor: "Citoyen"
+  - step: 1a
+    name: "Boucle de correction dossier incomplet — RETOUR CITOYEN"
+    actor: "Agent de la Fonction Publique (citoyen)"
     system: "XPortal"
-    action: "Modification des données ou pièces erronées"
-    inputs: ["Motif de correction"]
-    output: "Dossier resoumis"
+    type: "humain"
+    sla: "15 jours"
     retry:
       max: 3
       timer: "P15D"
+    action: "Si le dossier est jugé incomplet ou nécessite une correction de pièces, le citoyen reçoit une notification SMS/email avec le motif détaillé. Il accède à son dossier existant sur le portail et corrige ou complète les pièces manquantes sans recréer un nouveau dossier."
+    inputs:
+      - "Motif de correction transmis par l'agent CRT"
+      - "Pièces corrigées ou manquantes (upload)"
+    output: "Dossier resoumis avec pièces corrigées"
+
+  - step: 2
+    name: "Réception et contrôle de complétude"
+    actor: "Système"
+    system: "XFlow"
+    type: "système"
+    sla: "immédiat"
+    action: "Enregistrement automatique du dossier en base. Contrôle automatique de complétude (présence de toutes les pièces obligatoires, formats valides). Attribution d'un numéro de dossier officiel. Notification de réception envoyée au demandeur."
+    inputs:
+      - "Dossier soumis depuis XPortal"
+    output: "Dossier enregistré avec numéro de référence. Notification de réception envoyée au demandeur."
+
+  - step: 3
+    name: "Instruction du dossier — Vérification des droits et calcul de pension"
+    actor: "Liquidateur CRT (Direction des Pensions)"
+    system: "XFlow"
+    type: "humain"
+    sla: "10 jours ouvrables"
+    action: "Le liquidateur instruit le dossier via le tableau de bord back-office. Il vérifie les droits à pension (ancienneté >= 15 ans, catégorie, âge légal), contrôle la cohérence des pièces, et procède au calcul du montant de pension. Si une pièce est manquante ou incohérente, il renvoie le dossier au citoyen avec motif (boucle 1a)."
+    inputs:
+      - "Dossier complet (pièces uploadées)"
+      - "Historique de carrière (saisie ou dossiers physiques)"
+    output: "Rapport d'instruction : droits vérifiés, montant de pension calculé. Décision : Conforme / À corriger / Rejeté."
 
   - step: 4
-    name: "Validation Finale et Signature"
-    actor: "DG CRT"
+    name: "Contre-vérification du calcul"
+    actor: "Contrôleur CRT"
     system: "XFlow"
-    action: "Approbation finale de la liquidation"
-    inputs: ["Dossier validé"]
-    output: "Titre de pension généré"
+    type: "humain"
+    sla: "5 jours ouvrables"
+    action: "Le contrôleur procède à la contre-vérification du calcul de pension et des données du dossier avant production du titre. Il valide ou renvoie en correction interne au liquidateur."
+    inputs:
+      - "Rapport d'instruction du liquidateur"
+      - "Montant de pension calculé"
+    output: "Dossier validé pour production du titre de pension."
 
   - step: 5
-    name: "Notification et Mise à disposition"
+    name: "Signature du titre de pension — PHYSIQUE/HYBRIDE"
+    actor: "Directeur Général CRT"
+    system: "XFlow + Physique"
+    type: "physique"
+    sla: "3 jours ouvrables"
+    action: "Le DG CRT reçoit la liste des dossiers prêts à signer via son tableau de bord. Il signe physiquement (ou via signature électronique qualifiée si habilitée) les titres de pension. Le titre signé est numérisé et versé dans le dossier numérique."
+    inputs:
+      - "Projet de titre de pension généré automatiquement"
+      - "Dossier validé par le contrôleur"
+    output: "Titre de pension signé, versé au dossier numérique."
+
+  - step: 6
+    name: "Génération PDF et notification de mise à disposition"
     actor: "Système"
-    system: "XPortal / SMS"
-    action: "Envoi du titre de pension et notification"
-    inputs: ["Titre de pension PDF"]
-    output: "Citoyen notifié"
+    system: "XFlow"
+    type: "système"
+    sla: "immédiat"
+    action: "Génération automatique du titre de pension en PDF normé. Notification SMS et email au fonctionnaire pour l'informer que son titre est disponible sur le portail. Mise à jour du fichier des pensionnés actifs. Transmission au service comptable pour ordonnancement du premier versement."
+    inputs:
+      - "Titre de pension signé"
+      - "Données du pensionné (RIB/CCP)"
+    output: "Titre de pension PDF disponible sur le portail citoyen. SMS/Email de notification. Premier versement programmé."
+
+  - step: 7
+    name: "Contrôle d'existence annuel — HYBRIDE"
+    actor: "Pensionné (citoyen)"
+    system: "XPortal / Présence physique (bureau régional)"
+    type: "physique"
+    sla: "annuel"
+    action: "Chaque année, le pensionné atteste de son existence via une vérification biométrique sur l'application mobile (empreinte digitale) ou en se présentant à un bureau régional CRT. Un rappel automatique est envoyé 30 jours avant l'échéance. En cas de non-renouvellement dans les délais, la pension est suspendue automatiquement en attente de confirmation."
+    inputs:
+      - "Authentification biométrique ou présence physique"
+    output: "Attestation d'existence enregistrée. Continuation du versement de la pension."

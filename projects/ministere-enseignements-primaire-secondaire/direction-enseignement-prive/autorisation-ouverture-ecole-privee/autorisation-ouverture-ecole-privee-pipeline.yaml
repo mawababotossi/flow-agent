@@ -1,0 +1,61 @@
+pipeline:
+  - step: 1
+    name: "Soumission de la demande"
+    actor: "Citoyen (Promoteur)"
+    system: "XPortal"
+    action: "Remplissage du formulaire et upload des justificatifs (identité, locaux, pédagogie, finances)"
+    inputs: [ "Identité du promoteur", "Dossier de l'établissement", "Documents financiers" ]
+    output: "Demande enregistrée"
+
+  - step: 2
+    name: "Paiement des frais administratifs unifiés (Dossier + Inspection)"
+    actor: "Citoyen (Promoteur)"
+    system: "Plateforme de Paiement e-Gov"
+    action: "Paiement en ligne de 40 000 FCFA (25 000 FCFA dossier + 15 000 FCFA inspection)"
+    inputs: [ "Moyen de paiement mobile ou carte" ]
+    output: "Paiement validé"
+
+  - step: 3
+    name: "Examen préliminaire du dossier"
+    actor: "Agent instructeur DEP"
+    system: "XFlow"
+    action: "Vérification de la complétude et de la conformité des pièces"
+    inputs: [ "Dossier complet numérique" ]
+    output: "Dossier conforme / Demande de correction / Rejet"
+
+  - step: 3a
+    name: "Boucle de correction"
+    actor: "Citoyen (Promoteur)"
+    system: "XPortal"
+    type: "humain"
+    sla: "72h"
+    retry:
+      max: 2
+      timer: "P15D"
+    action: "Correction des pièces non conformes signalées par l'agent"
+    inputs: [ "Pièces corrigées" ]
+    output: "Dossier mis à jour"
+
+  - step: 4
+    name: "Visite d'inspection sur site — PHYSIQUE"
+    actor: "Inspecteur de visite"
+    system: "XFlow"
+    action: "Descente sur le terrain, inspection physique des locaux et upload du PV numérisé"
+    inputs: [ "Grille d'inspection (sur tablette/papier)" ]
+    output: "Avis d'inspection (Favorable / Défavorable)"
+
+  - step: 5
+    name: "Délibération et Décision"
+    actor: "Directeur de l'Enseignement Privé (ou Commission technique)"
+    system: "XFlow"
+    action: "Examen du PV d'inspection et validation finale de l'autorisation"
+    inputs: [ "PV d'inspection numérique" ]
+    output: "Autorisation signée numériquement / Rejet motivé"
+
+  - step: 6
+    name: "Retrait de l'autorisation — PHYSIQUE"
+    actor: "Agent d'accueil DEP"
+    system: "XFlow"
+    action: "Remise physique de l'arrêté au promoteur convoqué par SMS et clôture du dossier"
+    inputs: [ "Arrêté physique signé" ]
+    output: "Autorisation remise en main propre"

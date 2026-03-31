@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1qnx3d3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.44.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.17.0">
+  <bpmn:message id="MSG_CONSEIL_DNCCP_RETURN" name="MSG_CONSEIL_DNCCP_RETURN" />
+  <bpmn:message id="MSG_CONSEIL_DNCCP_SUBMIT" name="MSG_CONSEIL_DNCCP_SUBMIT" />
+  <bpmn:message id="MSG_CONSEIL_DNCCP_RESUB" name="MSG_CONSEIL_DNCCP_RESUB" />
   <bpmn:collaboration id="Collaboration_1sa8syn">
     <bpmn:participant id="Participant_0re4blc" name="xportal" processRef="Process_16xfaqc" />
     <bpmn:participant id="Participant_153zd9e" name="xflow" processRef="Process_0tbnwk1" />
@@ -114,7 +117,7 @@
     <bpmn:sequenceFlow id="Flow_0e163z7" name="oui" sourceRef="Gateway_0v8qw9j" targetRef="Activity_1qjkqgh">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_0c6kmsq.result.message.conforme == 'oui'</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:receiveTask id="Activity_0c6kmsq" name="retour de l&#39;étude de conformité" camunda:modelerTemplate="tg.gouv.gnspd.receiveTask" messageRef="Message_105arlh" camunda:type="external" camunda:topic="flow-receive-task">
+    <bpmn:receiveTask id="Activity_0c6kmsq" name="retour de l&#39;étude de conformité" camunda:modelerTemplate="tg.gouv.gnspd.receiveTask" messageRef="MSG_CONSEIL_DNCCP_SUBMIT" camunda:type="external" camunda:topic="flow-receive-task">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
@@ -131,7 +134,19 @@
       <bpmn:incoming>Flow_0f8fqqy</bpmn:incoming>
       <bpmn:outgoing>Flow_1qeh18b</bpmn:outgoing>
     </bpmn:receiveTask>
-    <bpmn:receiveTask id="Activity_1qjkqgh" name="Recevoir le retour ?" messageRef="Message_04ak6fu">
+    <bpmn:receiveTask id="Activity_1qjkqgh" name="Recevoir le retour ?" camunda:modelerTemplate="tg.gouv.gnspd.receiveTask" messageRef="MSG_CONSEIL_DNCCP_RETURN" camunda:type="external" camunda:topic="flow-receive-task">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel" />
+          <camunda:inputParameter name="gnspdTaskStatus">Pending</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0e163z7</bpmn:incoming>
       <bpmn:outgoing>Flow_043xwzo</bpmn:outgoing>
     </bpmn:receiveTask>
@@ -177,7 +192,7 @@
           <camunda:inputParameter name="gnspdCostTotal" />
           <camunda:inputParameter name="gnspdCostUnitaire" />
           <camunda:inputParameter name="gnspdMessageDestination">peer-xflow-local-gforce</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdMessageRef">Message_1e72hn3</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_CONSEIL_DNCCP_RESUB</camunda:inputParameter>
           <camunda:inputParameter name="gnspdMessage">$this.data.Activity_1tl4kyl.parameters</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
@@ -186,9 +201,19 @@
     </bpmn:sendTask>
     <bpmn:sequenceFlow id="Flow_0f8fqqy" sourceRef="Activity_08y6k14" targetRef="Activity_0c6kmsq" />
     <bpmn:endEvent id="Event_1k2kc7a" name="Fin clôture">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_04656pi</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:endEvent id="Event_1q6ecer" name="Fin succès">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_1mrz9dc</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:exclusiveGateway id="Gateway_008tbhy" name="Avis émis ?">
@@ -221,7 +246,7 @@
       <bpmn:outgoing>Flow_1mrz9dc</bpmn:outgoing>
     </bpmn:userTask>
   </bpmn:process>
-  <bpmn:process id="Process_0tbnwk1" isExecutable="false">
+  <bpmn:process id="Process_0tbnwk1" isExecutable="true">
     <bpmn:startEvent id="Event_11woeyh" name="Recevoir la procédure DNCCP" camunda:modelerTemplate="tg.gouv.gnspd.startEvent" camunda:type="external" camunda:topic="flow-start">
       <bpmn:extensionElements>
         <camunda:inputOutput>
@@ -446,7 +471,7 @@ this.data.Activity_0wcatbe.result.reformulationCount &gt; 2</bpmn:conditionExpre
           <camunda:inputParameter name="gnspdCostTotal" />
           <camunda:inputParameter name="gnspdCostUnitaire" />
           <camunda:inputParameter name="gnspdCostVariable" />
-          <camunda:inputParameter name="gnspdMessageRef">Message_105arlh</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_CONSEIL_DNCCP_SUBMIT</camunda:inputParameter>
           <camunda:inputParameter name="gnspdMessage">${
  "check_result": this.data.Activity_1h26s1h.result?.submissionData?.conforme === "non" ? "oui" : "non"
 }</camunda:inputParameter>
@@ -456,7 +481,7 @@ this.data.Activity_0wcatbe.result.reformulationCount &gt; 2</bpmn:conditionExpre
       <bpmn:incoming>Flow_0f4ndys</bpmn:incoming>
       <bpmn:outgoing>Flow_1hstqnl</bpmn:outgoing>
     </bpmn:sendTask>
-    <bpmn:receiveTask id="Activity_12lq1v1" name="Recevoir les données de la resoumission" camunda:modelerTemplate="tg.gouv.gnspd.receiveTask" messageRef="Message_1e72hn3" camunda:type="external" camunda:topic="flow-receive-task">
+    <bpmn:receiveTask id="Activity_12lq1v1" name="Recevoir les données de la resoumission" camunda:modelerTemplate="tg.gouv.gnspd.receiveTask" messageRef="MSG_CONSEIL_DNCCP_RESUB" camunda:type="external" camunda:topic="flow-receive-task">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
@@ -551,7 +576,7 @@ this.data.Activity_0wcatbe.result.reformulationCount &gt; 2</bpmn:conditionExpre
           <camunda:inputParameter name="gnspdCostVariable" />
           <camunda:inputParameter name="gnspdCostTotal" />
           <camunda:inputParameter name="gnspdCostUnitaire" />
-          <camunda:inputParameter name="gnspdMessageRef">Message_04ak6fu</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_CONSEIL_DNCCP_RETURN</camunda:inputParameter>
           <camunda:inputParameter name="gnspdMessageDestination">ch-portail-local-gforce</camunda:inputParameter>
           <camunda:inputParameter name="gnspdMessage">${
 "avis":this.data.Activity_0wcatbe.result ?? null,
@@ -562,7 +587,19 @@ this.data.Activity_0wcatbe.result.reformulationCount &gt; 2</bpmn:conditionExpre
       <bpmn:incoming>Flow_1p5q0dr</bpmn:incoming>
       <bpmn:outgoing>Flow_07iwnil</bpmn:outgoing>
     </bpmn:sendTask>
-    <bpmn:endEvent id="Event_0acpg8z" name="Fin succès">
+    <bpmn:endEvent id="Event_0acpg8z" name="Fin succès" camunda:modelerTemplate="tg.gouv.gnspd.endEvent" camunda:type="external" camunda:topic="flow-end-event">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel">Avis transmis</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_07iwnil</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sendTask id="Activity_157hdnf" name="Notifier la clôture sans suite" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
@@ -579,7 +616,7 @@ this.data.Activity_0wcatbe.result.reformulationCount &gt; 2</bpmn:conditionExpre
           <camunda:inputParameter name="gnspdCostTotal" />
           <camunda:inputParameter name="gnspdCostUnitaire" />
           <camunda:inputParameter name="gnspdMessageDestination">ch-portail-local-gforce</camunda:inputParameter>
-          <camunda:inputParameter name="gnspdMessageRef">Message_04ak6fu</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_CONSEIL_DNCCP_RETURN</camunda:inputParameter>
           <camunda:inputParameter name="gnspdMessage">${
   "avis": this.data.Activity_0wcatbe.result ?? null,
   "check_result": this.data.Activity_0wcatbe.result?.submissionData?.decision === "non" ? "oui" : "non"
@@ -589,7 +626,19 @@ this.data.Activity_0wcatbe.result.reformulationCount &gt; 2</bpmn:conditionExpre
       <bpmn:incoming>Flow_18yrybg</bpmn:incoming>
       <bpmn:outgoing>Flow_0gotzog</bpmn:outgoing>
     </bpmn:sendTask>
-    <bpmn:endEvent id="Event_0j38k8b" name="Fin clôture">
+    <bpmn:endEvent id="Event_0j38k8b" name="Fin clôture" camunda:modelerTemplate="tg.gouv.gnspd.endEvent" camunda:type="external" camunda:topic="flow-end-event">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel">Clôture sans suite</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder" />
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable" />
+          <camunda:inputParameter name="gnspdCostTotal" />
+          <camunda:inputParameter name="gnspdCostUnitaire" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0gotzog</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0ve2zwf" sourceRef="Activity_1jlo478" targetRef="Activity_0wcatbe" />
@@ -635,9 +684,6 @@ this.data.Activity_0wcatbe.result.reformulationCount &gt; 2</bpmn:conditionExpre
       <bpmn:script>this.data.reformulationCount = 0</bpmn:script>
     </bpmn:scriptTask>
   </bpmn:process>
-  <bpmn:message id="Message_04ak6fu" name="Message_04ak6fu" />
-  <bpmn:message id="Message_105arlh" name="Message_105arlh" />
-  <bpmn:message id="Message_1e72hn3" name="Message_1e72hn3" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1sa8syn">
       <bpmndi:BPMNShape id="Participant_0re4blc_di" bpmnElement="Participant_0re4blc" isHorizontal="true">

@@ -1,0 +1,17 @@
+{
+  "display": "form",
+  "components": [
+    {
+      "label": "Résumé de la demande",
+      "type": "htmlelement",
+      "tag": "div",
+      "content": "<p>Frais d'établissement du permis de conduire : <strong>20.000 FCFA</strong></p>"
+    },
+    {
+      "label": "Payer les frais",
+      "type": "button",
+      "key": "submit",
+      "input": true
+    }
+  ]
+}

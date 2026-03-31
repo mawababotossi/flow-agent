@@ -1,0 +1,149 @@
+{
+  "title": "Correction de la demande d'extrait d'acte de mariage",
+  "name": "correctionDemandeExtraitActeMariage",
+  "path": "correction-demande-extrait-acte-mariage",
+  "type": "form",
+  "display": "wizard",
+  "i18n": {
+    "en": {
+      "Correction": "Correction"
+    }
+  },
+  "config": {
+    "development": {
+      "apiBaseUrl": "https://api.dacs.dev.gouv.tg/api/v1",
+      "appName": "Développement",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    },
+    "sandbox": {
+      "apiBaseUrl": "https://api.dacs.sandbox.gouv.tg/api/v1",
+      "appName": "Sandbox",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    },
+    "preproduction": {
+      "apiBaseUrl": "https://api.dacs.preprod.gouv.tg/api/v1",
+      "appName": "Pré-production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    },
+    "production": {
+      "apiBaseUrl": "https://api.dacs.gouv.tg/api/v1",
+      "appName": "Production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    }
+  },
+  "components": [
+    {
+      "title": "Correction",
+      "label": "Correction",
+      "type": "panel",
+      "key": "stepCorrection",
+      "components": [
+        {
+          "type": "hidden",
+          "key": "motifAgent",
+          "label": "Motif de rejet/correction",
+          "input": true
+        },
+        {
+          "type": "hidden",
+          "key": "numeroDossier",
+          "label": "Numéro de dossier",
+          "input": true
+        },
+        {
+          "type": "hidden",
+          "key": "nbCorrections",
+          "label": "Nombre de corrections",
+          "input": true
+        },
+        {
+          "type": "htmlelement",
+          "tag": "div",
+          "content": "\n            <div class=\"alert alert-warning\">\n              <h4>Action requise sur votre dossier n° {{ data.numeroDossier }}</h4>\n              <p>Votre dossier nécessite une correction pour le motif suivant :</p>\n              <br><strong>{{ data.motifAgent }}</strong>\n              <br><br><i>Attention : Il vous reste {{ 3 - (data.nbCorrections || 0) }} tentative(s) avant le rejet définitif.</i>\n            </div>\n          ",
+          "key": "htmlMotif"
+        },
+        {
+          "type": "file",
+          "key": "pieceIdentite",
+          "label": "Nouvelle pièce d'identité (si demandée)",
+          "input": true,
+          "storage": "base64",
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "fileMaxSize": "2MB"
+        },
+        {
+          "type": "file",
+          "key": "livretFamille",
+          "label": "Nouvelle copie du livret de famille (si demandée)",
+          "input": true,
+          "storage": "base64",
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "fileMaxSize": "2MB"
+        },
+        {
+          "type": "textfield",
+          "key": "commentaireUsager",
+          "label": "Commentaire (Optionnel)",
+          "input": true
+        }
+      ]
+    },
+    {
+      "title": "Récapitulatif",
+      "label": "Récapitulatif",
+      "type": "panel",
+      "key": "stepRecapitulatif",
+      "components": [
+        {
+          "type": "htmlelement",
+          "key": "htmlRecapitulatifFinal",
+          "tag": "div",
+          "content": "<div class='recapitulatif-intelligent'>Récapitulatif</div>",
+          "logic": []
+        },
+        {
+          "type": "checkbox",
+          "key": "luEtApprouve",
+          "label": "Je déclare et certifie sur l'honneur l'exactitude de ces corrections.",
+          "input": true,
+          "validateOn": "blur",
+          "validate": {
+            "required": true
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "name": "publishToRabbitMQ",
+      "type": "rabbitmq",
+      "topic": "bpmn.commands",
+      "payload": "{{ submission.data }}"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "title": "Inspection - Autorisation d'ouverture",
+  "name": "inspectionAutorisationOuvertureEcole",
+  "path": "inspection-autorisation-ouverture-ecole",
+  "type": "form",
+  "display": "form",
+  "components": [
+    {
+      "type": "panel",
+      "title": "Rapport d'Inspection",
+      "key": "panelInspection",
+      "components": [
+        {
+          "type": "htmlelement",
+          "tag": "div",
+          "content": "<p>Veuillez charger la grille d'évaluation signée et émettre un avis suite à l'inspection physique des locaux.</p>",
+          "key": "noticeInspection"
+        },
+        {
+          "type": "file",
+          "key": "pjGrilleInspection",
+          "label": "Grille de notation et PV d'inspection signés (obligatoire)",
+          "storage": "base64",
+          "fileMaxSize": "5MB",
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "validate": { "required": true }
+        },
+        {
+          "type": "textarea",
+          "key": "commentaires_inspection",
+          "label": "Observations sur site",
+          "validate": { "required": true }
+        },
+        {
+          "type": "select",
+          "key": "avis_inspection",
+          "label": "Avis de l'inspecteur",
+          "widget": "choicesjs",
+          "dataSrc": "values",
+          "data": {
+            "values": [
+              { "label": "Avis Favorable", "value": "favorable" },
+              { "label": "Avis Défavorable", "value": "defavorable" }
+            ]
+          },
+          "validate": { "required": true }
+        }
+      ]
+    }
+  ]
+}

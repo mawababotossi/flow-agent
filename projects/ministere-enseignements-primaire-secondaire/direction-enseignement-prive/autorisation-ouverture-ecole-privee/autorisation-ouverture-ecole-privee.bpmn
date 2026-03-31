@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.22.0">
+  <bpmn:collaboration id="Collaboration_1_Ecole">
+    <bpmn:participant id="Participant_XPortal_Ecole" name="XPortal (Espace Citoyen : Promoteur)" processRef="Process_XPortal_Ecole" />
+    <bpmn:participant id="Participant_XFlow_Ecole" name="XFlow (Moteur Workflow GNSPD)" processRef="Process_XFlow_Ecole" />
+    <bpmn:messageFlow id="Flow_MSG_START" sourceRef="Activity_P_Soumission" targetRef="StartEvent_XFlow" />
+    <bpmn:messageFlow id="Flow_MSG_PAY_REQ" sourceRef="Activity_X_DemandePaiement" targetRef="Activity_P_RedirectionPaiement" />
+    <bpmn:messageFlow id="Flow_MSG_PAY_CONF" sourceRef="Activity_P_RedirectionPaiement" targetRef="Activity_X_AttentePaiement" />
+    <bpmn:messageFlow id="Flow_MSG_RETURN_COR" sourceRef="Activity_X_AvisCorrection" targetRef="Gateway_P_Action" />
+    <bpmn:messageFlow id="Flow_MSG_RETURN_REJ" sourceRef="Activity_X_AvisRejet" targetRef="Gateway_P_Action" />
+    <bpmn:messageFlow id="Flow_MSG_RETURN_ACC" sourceRef="Activity_X_Remise" targetRef="Gateway_P_Action" />
+    <bpmn:messageFlow id="Flow_MSG_RESUB" sourceRef="Activity_P_Correction" targetRef="Activity_X_RecCo" />
+  </bpmn:collaboration>
+
+  <bpmn:process id="Process_XPortal_Ecole" name="Processus XPortal - Ecole" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_P" name="Soumission Dossier Formulaire">
+      <bpmn:outgoing>Flow_P1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Activity_P_Soumission" name="Renseigner formulaire et validation">
+      <bpmn:incoming>Flow_P1</bpmn:incoming>
+      <bpmn:outgoing>Flow_P2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_P_RedirectionPaiement" name="Paiement 40.000 FCFA E-Gov">
+      <bpmn:incoming>Flow_P2</bpmn:incoming>
+      <bpmn:outgoing>Flow_P3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:receiveTask id="Gateway_P_Action" name="Réception Statut (action)">
+      <bpmn:incoming>Flow_P3</bpmn:incoming>
+      <bpmn:incoming>Flow_P_Loop</bpmn:incoming>
+      <bpmn:outgoing>Flow_P4</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:exclusiveGateway id="Gateway_ActionPath" name="Type d'action ?">
+      <bpmn:incoming>Flow_P4</bpmn:incoming>
+      <bpmn:outgoing>Flow_P_REJ</bpmn:outgoing>
+      <bpmn:outgoing>Flow_P_COR</bpmn:outgoing>
+      <bpmn:outgoing>Flow_P_ACC</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Activity_P_Correction" name="Compléter les pièces">
+      <bpmn:incoming>Flow_P_COR</bpmn:incoming>
+      <bpmn:outgoing>Flow_P_Loop</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_P_Refus" name="Prendre connaissance du refus">
+      <bpmn:incoming>Flow_P_REJ</bpmn:incoming>
+      <bpmn:outgoing>Flow_P_EndREJ</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_P_Retrait" name="Convocation pour retrait physique">
+      <bpmn:incoming>Flow_P_ACC</bpmn:incoming>
+      <bpmn:outgoing>Flow_P_EndACC</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="EndEvent_PR" name="Dossier Rejeté">
+      <bpmn:incoming>Flow_P_EndREJ</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="EndEvent_PA" name="Dossier Favorable">
+      <bpmn:incoming>Flow_P_EndACC</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_P1" sourceRef="StartEvent_P" targetRef="Activity_P_Soumission" />
+    <bpmn:sequenceFlow id="Flow_P2" sourceRef="Activity_P_Soumission" targetRef="Activity_P_RedirectionPaiement" />
+    <bpmn:sequenceFlow id="Flow_P3" sourceRef="Activity_P_RedirectionPaiement" targetRef="Gateway_P_Action" />
+    <bpmn:sequenceFlow id="Flow_P4" sourceRef="Gateway_P_Action" targetRef="Gateway_ActionPath" />
+    <bpmn:sequenceFlow id="Flow_P_Loop" sourceRef="Activity_P_Correction" targetRef="Gateway_P_Action" />
+    <bpmn:sequenceFlow id="Flow_P_REJ" name="rejete" sourceRef="Gateway_ActionPath" targetRef="Activity_P_Refus" />
+    <bpmn:sequenceFlow id="Flow_P_COR" name="correction" sourceRef="Gateway_ActionPath" targetRef="Activity_P_Correction" />
+    <bpmn:sequenceFlow id="Flow_P_ACC" name="accepte" sourceRef="Gateway_ActionPath" targetRef="Activity_P_Retrait" />
+    <bpmn:sequenceFlow id="Flow_P_EndACC" sourceRef="Activity_P_Retrait" targetRef="EndEvent_PA" />
+    <bpmn:sequenceFlow id="Flow_P_EndREJ" sourceRef="Activity_P_Refus" targetRef="EndEvent_PR" />
+  </bpmn:process>
+
+  <bpmn:process id="Process_XFlow_Ecole" name="Procédure Autorisation Ecole Privée" isExecutable="true" camunda:versionTag="1.0">
+    <bpmn:startEvent id="StartEvent_XFlow" name="Dossier Reçu" camunda:asyncBefore="true">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1" messageRef="Message_START_ECOLE" />
+    </bpmn:startEvent>
+    
+    <bpmn:sendTask id="Activity_X_DemandePaiement" name="Demander Paiement" camunda:type="external" camunda:topic="flow-send-message">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="messageType">MSG_ECOLE_PAY_REQ</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:sendTask>
+    
+    <bpmn:receiveTask id="Activity_X_AttentePaiement" name="Attente Paiement" messageRef="Message_PAY_CONF_ECOLE">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+    </bpmn:receiveTask>
+    
+    <bpmn:exclusiveGateway id="Gateway_JoinInst" name="Gateway">
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+      <bpmn:incoming>Flow_AfterCor</bpmn:incoming>
+      <bpmn:outgoing>Flow_4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:userTask id="Activity_X_Instruction" name="Instruction DEP" camunda:formKey="instructionAutorisationOuvertureEcole">
+      <bpmn:incoming>Flow_4</bpmn:incoming>
+      <bpmn:outgoing>Flow_5</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <bpmn:exclusiveGateway id="Gateway_InstResult" name="Conforme ?">
+      <bpmn:incoming>Flow_5</bpmn:incoming>
+      <bpmn:outgoing>Flow_GoInsp</bpmn:outgoing>
+      <bpmn:outgoing>Flow_GoCor</bpmn:outgoing>
+      <bpmn:outgoing>Flow_GoRej1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    
+    <!-- Branche Correction -->
+    <bpmn:sendTask id="Activity_X_AvisCorrection" name="Notification Correction" camunda:type="external" camunda:topic="flow-send-message">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="action">correction</camunda:inputParameter>
+          <camunda:inputParameter name="messageType">MSG_ECOLE_RETURN</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_GoCor</bpmn:incoming>
+      <bpmn:outgoing>Flow_CorWait</bpmn:outgoing>
+    </bpmn:sendTask>
+    
+    <bpmn:receiveTask id="Activity_X_RecCo" name="Attente Correction" messageRef="Message_COR_RESUB">
+      <bpmn:incoming>Flow_CorWait</bpmn:incoming>
+      <bpmn:outgoing>Flow_AfterCor</bpmn:outgoing>
+    </bpmn:receiveTask>
+    
+    <bpmn:boundaryEvent id="Timer_Correction" name="15 jours" attachedToRef="Activity_X_RecCo">
+      <bpmn:outgoing>Flow_TimerRej</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P15D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+
+    <!-- Branche Inspection -->
+    <bpmn:userTask id="Activity_X_Inspection" name="Visite d'Inspection" camunda:formKey="inspectionAutorisationOuvertureEcole">
+      <bpmn:incoming>Flow_GoInsp</bpmn:incoming>
+      <bpmn:outgoing>Flow_6</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <!-- Délibération -->
+    <bpmn:userTask id="Activity_X_Deliberation" name="Délibération" camunda:formKey="deliberationAutorisationOuvertureEcole">
+      <bpmn:incoming>Flow_6</bpmn:incoming>
+      <bpmn:outgoing>Flow_7</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <bpmn:exclusiveGateway id="Gateway_Delib" name="Favorable ?">
+      <bpmn:incoming>Flow_7</bpmn:incoming>
+      <bpmn:outgoing>Flow_GoSign</bpmn:outgoing>
+      <bpmn:outgoing>Flow_GoRej2</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    
+    <!-- Signature Physique -->
+    <bpmn:userTask id="Activity_X_Signature" name="Signature Physique">
+      <bpmn:incoming>Flow_GoSign</bpmn:incoming>
+      <bpmn:outgoing>Flow_8</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <bpmn:sendTask id="Activity_X_NotifierRetrait" name="Notifier Citoyen Retrait" camunda:type="external" camunda:topic="flow-notify">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="template">SMS_CONVOCATION</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_8</bpmn:incoming>
+      <bpmn:outgoing>Flow_9</bpmn:outgoing>
+    </bpmn:sendTask>
+    
+    <!-- Remise Physique (clôture POSITIVE) -->
+    <bpmn:userTask id="Activity_X_Remise" name="Confirmer Remise Physique">
+      <bpmn:incoming>Flow_9</bpmn:incoming>
+      <bpmn:outgoing>Flow_10</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <bpmn:sendTask id="Activity_X_CloseSucces" name="Message Accepte" camunda:type="external" camunda:topic="flow-send-message">
+       <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="action">accepte</camunda:inputParameter>
+          <camunda:inputParameter name="messageType">MSG_ECOLE_RETURN</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_10</bpmn:incoming>
+      <bpmn:outgoing>Flow_11</bpmn:outgoing>
+    </bpmn:sendTask>
+    
+    <bpmn:endEvent id="EndEvent_X_Succes" name="Dossier Favorable">
+      <bpmn:incoming>Flow_11</bpmn:incoming>
+    </bpmn:endEvent>
+    
+    <!-- Tronc commun REJET -->
+    <bpmn:exclusiveGateway id="Gateway_JoinRej">
+      <bpmn:incoming>Flow_GoRej1</bpmn:incoming>
+      <bpmn:incoming>Flow_GoRej2</bpmn:incoming>
+      <bpmn:incoming>Flow_TimerRej</bpmn:incoming>
+      <bpmn:outgoing>Flow_12</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    
+    <bpmn:sendTask id="Activity_X_AvisRejet" name="Avis de Rejet" camunda:type="external" camunda:topic="flow-send-message">
+       <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="action">rejete</camunda:inputParameter>
+          <camunda:inputParameter name="messageType">MSG_ECOLE_RETURN</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_12</bpmn:incoming>
+      <bpmn:outgoing>Flow_13</bpmn:outgoing>
+    </bpmn:sendTask>
+    
+    <bpmn:endEvent id="EndEvent_X_Rejet" name="Dossier Rejeté">
+      <bpmn:incoming>Flow_13</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <!-- Sequence Flows -->
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_XFlow" targetRef="Activity_X_DemandePaiement" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Activity_X_DemandePaiement" targetRef="Activity_X_AttentePaiement" />
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Activity_X_AttentePaiement" targetRef="Gateway_JoinInst" />
+    <bpmn:sequenceFlow id="Flow_4" sourceRef="Gateway_JoinInst" targetRef="Activity_X_Instruction" />
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="Activity_X_Instruction" targetRef="Gateway_InstResult" />
+    <bpmn:sequenceFlow id="Flow_GoInsp" name="accepte" sourceRef="Gateway_InstResult" targetRef="Activity_X_Inspection">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decision_instruction == 'accepte'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_GoCor" name="correction" sourceRef="Gateway_InstResult" targetRef="Activity_X_AvisCorrection">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decision_instruction == 'correction'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_GoRej1" name="rejete" sourceRef="Gateway_InstResult" targetRef="Gateway_JoinRej">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decision_instruction == 'rejete'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_CorWait" sourceRef="Activity_X_AvisCorrection" targetRef="Activity_X_RecCo" />
+    <bpmn:sequenceFlow id="Flow_AfterCor" sourceRef="Activity_X_RecCo" targetRef="Gateway_JoinInst" />
+    <bpmn:sequenceFlow id="Flow_TimerRej" sourceRef="Timer_Correction" targetRef="Gateway_JoinRej" />
+    
+    <bpmn:sequenceFlow id="Flow_6" sourceRef="Activity_X_Inspection" targetRef="Activity_X_Deliberation" />
+    <bpmn:sequenceFlow id="Flow_7" sourceRef="Activity_X_Deliberation" targetRef="Gateway_Delib" />
+    <bpmn:sequenceFlow id="Flow_GoSign" name="accepte" sourceRef="Gateway_Delib" targetRef="Activity_X_Signature">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decision_direction == 'accepte'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_GoRej2" name="rejete" sourceRef="Gateway_Delib" targetRef="Gateway_JoinRej">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decision_direction == 'rejete'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_8" sourceRef="Activity_X_Signature" targetRef="Activity_X_NotifierRetrait" />
+    <bpmn:sequenceFlow id="Flow_9" sourceRef="Activity_X_NotifierRetrait" targetRef="Activity_X_Remise" />
+    <bpmn:sequenceFlow id="Flow_10" sourceRef="Activity_X_Remise" targetRef="Activity_X_CloseSucces" />
+    <bpmn:sequenceFlow id="Flow_11" sourceRef="Activity_X_CloseSucces" targetRef="EndEvent_X_Succes" />
+    <bpmn:sequenceFlow id="Flow_12" sourceRef="Gateway_JoinRej" targetRef="Activity_X_AvisRejet" />
+    <bpmn:sequenceFlow id="Flow_13" sourceRef="Activity_X_AvisRejet" targetRef="EndEvent_X_Rejet" />
+    
+  </bpmn:process>
+  
+  <bpmn:message id="Message_START_ECOLE" name="MSG_ECOLE_START" />
+  <bpmn:message id="Message_PAY_CONF_ECOLE" name="MSG_ECOLE_PAY_CONFIRM" />
+  <bpmn:message id="Message_COR_RESUB" name="MSG_ECOLE_RESUB" />
+</bpmn:definitions>

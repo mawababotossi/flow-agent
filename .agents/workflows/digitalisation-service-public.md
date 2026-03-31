@@ -368,7 +368,7 @@ Produire un document Markdown structuré **en suivant impérativement le templat
 
 > **RÈGLE MANDATOIRE (STOP AVANT DE CONTINUER) ✋** :
 > Avant de rédiger le SRS, l'agent **DOIT OBLIGATOIREMENT** :
-> 1. Lire (outil `view_file`) le template officiel `exemples/templates/srs-template.md`. Ce template contient la structure exacte à respecter, les directives IA intégrées (`<!-- IA: ... -->`), et les conventions de nommage. Le SRS produit doit suivre la structure à 9 sections du template. Toute section non applicable doit être conservée avec la mention « Non applicable pour ce service ».
+> 1. Lire (outil `Read`) le template officiel `exemples/templates/srs-template.md`. Ce template contient la structure exacte à respecter, les directives IA intégrées (`<!-- IA: ... -->`), et les conventions de nommage. Le SRS produit doit suivre la structure à 9 sections du template. Toute section non applicable doit être conservée avec la mention « Non applicable pour ce service ».
 > 2. **Chercher et consulter les exemples** de SRS déjà validés situés dans le dossier `exemples/` (ex: `exemples/*/srs-*.md`) pour maîtriser le niveau d'exigence rédactionnel, la granularité des tableaux et les formulations standards.
 >
 > **RÈGLE** : Le SRS est produit AVANT le formulaire JSON et le BPMN. Il sert de référence technique pour guider la construction des livrables techniques. On spécifie avant de coder.
@@ -446,14 +446,14 @@ Produire un document Markdown structuré **en suivant impérativement le templat
 Produire le schéma JSON du formulaire. Sauvegarder dans `projects/[ministere]/[direction]/[service]/formio-[nom-service].json`.
 
 > **CONFORMITÉ P-STUDIO ABSOLUE REQUISE**
-> Vous devez impérativement respecter les règles de `Guide_Integration_Formulaires_PStudio_v1.md`, du `guide-integration-formulaires.md` (qui contient le code source du Récapitulatif Intelligent) et du `guide-validation-formio.md` (référentiel complet des mécanismes de validation Form.io).
+> Vous devez impérativement respecter les règles de `Guide_Integration_Formulaires_PStudio_v1.md` (qui contient le code source du Récapitulatif Intelligent en §11) et du `guide-validation-formio.md` (référentiel complet des mécanismes de validation Form.io).
 > **De plus, vous DEVEZ obligatoirement chercher et consulter les exemples de formulaires JSON** situés dans le dossier `exemples/` (ex: `exemples/*/formio-*.json`) afin de calquer leur niveau de finition (grilles, classes CSS, gestion avancée des erreurs, i18n).
 
 - **STRUCTURE RACINE (CRITIQUE)** : Le fichier JSON **DOIT IMPÉRATIVEMENT** avoir à sa racine toutes les métadonnées (telles que `title`, `name`, `type`, `display`, `i18n`, `config`, `components`...) ainsi qu'un tableau `"actions": [ ... ]` (pour les appels externes). **AUCUN** wrapper `"content": {}` ni `"settings": {}` ne doit être utilisé.
 - **ACTIONS RABBITMQ** : Le tableau `"actions"` à la racine doit contenir la configuration de publication vers RabbitMQ de P-Studio pour transmettre la soumission au moteur BPMN. Le topic canonique est `"submissions.topic"` (Routing Key) avec la queue `"workflows-engine.main.queue"`.
 - **PREMIER PANEL (INTRO) - DESIGN PREMIUM** : Le premier panel **DOIT** avoir `key: "stepIntro"`. Il **DOIT OBLIGATOIREMENT** être conçu comme une "Landing Page" Premium en utilisant le système de grille (`columns`) et des composants HTML/CSS riches (Info Pills, Sidebar, Étapes, Avertissement). Ne répondez jamais avec un texte simple. Utilisez comme référence complète : `exemples/templates/template-premium-stepintro.json`. **Ne PAS ajouter de bouton Submit** : P-Studio gère nativement le bouton d'amorce "Commencer" dans l'en-tête natif.
 - **CONFIG & I18N** : Les blocs `config` (avec ses 4 environnements) et `i18n` (avec le dict `"en"`) **DOIVENT** être déclarés à la racine du JSON.
-- **RÉCAPITULATIF** : Le dernier panel **DOIT** inclure le composant "Récapitulatif Intelligent" (`htmlelement` avec son parseur JS, copié depuis `guide-integration-formulaires.md` §3.2) suivi de la case à cocher de consentement (exclue via `excludeKeys`). **Ne PAS ajouter de bouton Submit** : P-Studio gère nativement le bouton "Soumettre" sur le dernier panel du wizard.
+- **RÉCAPITULATIF** : Le dernier panel **DOIT** inclure le composant "Récapitulatif Intelligent" (`htmlelement` avec son parseur JS, copié depuis `Guide_Integration_Formulaires_PStudio_v1.md` §11) suivi de la case à cocher de consentement (exclue via `excludeKeys`). **Ne PAS ajouter de bouton Submit** : P-Studio gère nativement le bouton "Soumettre" sur le dernier panel du wizard.
 - **PRÉ-REMPLISSAGE DYNAMIQUE (LOGIC)** : Les champs liés à l'utilisateur doivent utiliser `"defaultValue": "{{ config.users.XXX }}"`. **INTERDICTION ABSOLUE** de mettre l'attribut statique `"disabled": true`. L'agent IA **DOIT** injecter un bloc `logic` Form.io pour verrouiller le champ (Action `property`, `disabled = true`) UNIQUEMENT si sa valeur n'est pas vide. Le trigger JavaScript doit être **robuste** et gérer les cas limites (chaîne vide, espaces, null) :
   ```javascript
   // Trigger robuste pour verrouillage e-ID
@@ -540,7 +540,7 @@ Produire le schéma JSON du formulaire. Sauvegarder dans `projects/[ministere]/[
         "title": "Récapitulatif et soumission",
         "key": "stepRecapitulatif",
         "components": [
-           { /* Insérez ici l'Object JSON htmlelement du Récapitulatif Intelligent depuis guide-integration-formulaires.md §3.2 */ },
+           { /* Insérez ici l'Object JSON htmlelement du Récapitulatif Intelligent depuis Guide_Integration_Formulaires_PStudio_v1.md §11 */ },
            { "type": "checkbox", "label": "Je certifie sur l'honneur...", "key": "luEtApprouve", "validate": {"required": true} }
         ]
       }
@@ -670,19 +670,23 @@ Chaque `userTask` identifiée dans le SRS (section 3.2, Lanes PORTAL et XFLOW) q
 
 <!-- reads_before:
   - .agents/skills/bpmn-integrator/SKILL.md            # Skill BPMN complet (templates GNSPD, patterns, anti-patterns)
+  - .agents/skills/bpmn-integrator/PATTERNS.md         # Snippets XML annotés — patterns P1-P8 + checklist
   - documentation/bpmn-gnspd-documentation.md          # Documentation technique GNSPD
   - documentation/guide-agent-ia-modelisateur.md       # Guide opérationnel modélisation BPMN
-  - exemples/*/bpmn-*.bpmn                             # Exemples BPMN validés (glob)
+  - exemples/*/bpmn-*.bpmn                             # Exemples BPMN validés (glob : cfa, passeport, energie)
+  - .agents/skills/bpmn-integrator/examples/skeleton-dual-pool.bpmn  # Squelette de départ obligatoire
 -->
 
 Produire le fichier BPMN 2.0 compatible Camunda Platform 7 (GNSPD). Sauvegarder dans `projects/[ministere]/[direction]/[service]/bpmn-[nom-service].bpmn`.
+
+> **Point de départ obligatoire** : Partir du squelette `.agents/skills/bpmn-integrator/examples/skeleton-dual-pool.bpmn` — ne jamais générer de zéro.
 
 ### Règles de génération (Normes Camunda 7 / GNSPD Framework)
 
 > **RÈGLE MANDATOIRE (STOP AVANT DE CONTINUER) ✋** :
 > Avant de générer le fichier XML, l'agent **DOIT IMPÉRATIVEMENT** :
-> 1. Lire le skill d'intégration BPMN dédié (`skills/bpmn-integrator/SKILL.md`) ainsi que la documentation de référence (`bpmn-gnspd-documentation.md`) et le guide opérationnel (`guide-agent-ia-modelisateur.md`).
-> 2. **Chercher et consulter les exemples de processus BPMN** situés dans le dossier `exemples/` (ex: `exemples/*/bpmn-*.bpmn`) afin de s'imprégner de l'orchestration des tâches, des règles de modélisation ATD et du niveau de qualité attendu.
+> 1. Lire le skill d'intégration BPMN dédié (`.agents/skills/bpmn-integrator/SKILL.md`), le fichier de patterns (`.agents/skills/bpmn-integrator/PATTERNS.md`), la documentation de référence (`documentation/bpmn-gnspd-documentation.md`) et le guide opérationnel (`documentation/guide-agent-ia-modelisateur.md`).
+> 2. **Chercher et consulter les exemples de processus BPMN** dans `exemples/` (ex: `exemples/*/bpmn-*.bpmn`) et dans `.agents/skills/bpmn-integrator/examples/` pour les patterns experts.
 >
 > Ces documents contiennent toutes les règles critiques : architecture XPortal/XFlow à deux pools exécutables, catalogue complet des templates GNSPD avec leurs paramètres exacts, patterns de communication Kafka, grammaire `this.data`, configuration KMS multi-environnement, et anti-patterns interdits. Le non-respect de ces règles entraînera un échec en production.
 
@@ -770,7 +774,7 @@ SendNotification(tricanal)                    ← accusé de réception
 │ SendTask(MSG_PAY_ORDER → XPortal)         ← ordonne le paiement │
 │     ↓                                                           │
 │ IntermediateCatchEvent(MSG_PAY_CALLBACK)  ← callback e-Gov      │
-│     executionListener: payment_key = true                        │
+│     executionListener: payment_key = (paymentStatus == 'paid')   │
 │     ↓                                                           │
 │ SendTask(MSG_PAY_CONFIRM → XPortal)       ← confirme paiement   │
 └─────────────────────────────────────────────────────────────────┘
@@ -799,7 +803,7 @@ Le paiement est **orchestré par XFlow**, jamais par XPortal seul. Le flux est :
 1. **XPortal** envoie le dossier à **XFlow** dès la soumission (avant le paiement).
 2. **XFlow** crée la demande dans le système tiers (restBuilder), puis envoie un message à XPortal demandant au citoyen de payer (`sendMessage` → XPortal `receiveTask`).
 3. **XPortal** affiche la `userTask(tarification)` au citoyen, qui est redirigé vers la plateforme e-Gov externe.
-4. La plateforme e-Gov envoie un **callback à XFlow** (via `intermediateCatchEvent` avec `payment_key = true`).
+4. La plateforme e-Gov envoie un **callback à XFlow** (via `intermediateCatchEvent` avec évaluation conditionnelle : `payment_key = (paymentStatus == 'paid')` — jamais inconditionnel).
 5. **XFlow** traite les infos de paiement (restBuilder PUT vers le système tiers), puis envoie une confirmation à XPortal (`sendMessage` → XPortal `receiveTask`).
 6. **XPortal** débloque le citoyen et continue le flux.
 
@@ -967,9 +971,14 @@ Avant de livrer, vérifier chaque livrable :
 **Templates GNSPD et paramètres**
 - [ ] Toutes les tâches interactives déclarent un `camunda:modelerTemplate` GNSPD (`tg.gouv.gnspd.userTask`, `tg.gouv.gnspd.sendMessage`, `tg.gouv.gnspd.receiveTask`, `tg.gouv.gnspd.sendNotification`, `tg.gouv.gnspd.odoo`, `tg.gouv.gnspd.restBuilder`, `tg.gouv.gnspd.endEvent`).
 - [ ] **TOUTES** les tâches techniques (User, Service, Send, Receive) utilisent `camunda:type="external"` avec un `camunda:topic` valide (`flow-start`, `flow-send-message`, `flow-receive-task`, `flow-user-task`, `flow-notify`, `flow-odoo`, `flow-rest-builder`, `flow-end-event`). **Exception : `bpmn:boundaryEvent` timer — PAS de `camunda:type` ni `camunda:topic` sur l'élément boundary lui-même.**
-- [ ] Le pool XFlow a `isExecutable="true"` sur le **participant** et `isExecutable="false"` sur le **process**. Le pool XPortal a `isExecutable="true"` sur les deux.
-- [ ] Chaque tâche avec un `camunda:modelerTemplate` contient les **8 paramètres standards** : `gnspdTaskIsVisible`, `gnspdTaskLabel`, `gnspdTaskStatus` (ex: `Pending`, `PendingPortal`), `gnspdTaskOrder`, `gnspdTaskKind`, `gnspdCostVariable`, `gnspdCostTotal`, `gnspdCostUnitaire`. **Exception : `tg.gouv.gnspd.stepNotification` n'utilise PAS ces 8 champs** — seulement `gnspdStatus`, `gnspdIsPortal`, `gnspdStepOrder` (voir section SKILL.md §P).
-- [ ] Les tâches de notification (`flow-notify`) ont **au moins un canal active** (`gnspdNotifySendEmail`, `gnspdNotifySendSMS` ou `gnspdNotifySendInApp` à `true`).
+- [ ] Les **deux** pools (XPortal ET XFlow) ont `isExecutable="true"` sur leurs `<bpmn:process>` respectifs — ⛔ `isExecutable="false"` sur Process_Xflow empêche le déploiement Camunda.
+- [ ] Chaque tâche avec un `camunda:modelerTemplate` contient les **8 paramètres standards** : `gnspdTaskIsVisible`, `gnspdTaskLabel`, `gnspdTaskStatus` (ex: `Pending`, `PendingPortal`), `gnspdTaskOrder`, `gnspdTaskKind`, `gnspdCostVariable`, `gnspdCostTotal`, `gnspdCostUnitaire`. **Exceptions** : `stepNotification` utilise seulement `gnspdStatus` + `gnspdIsPortal` + `gnspdStepOrder` ; `receiveTask` n'a pas les 8 champs.
+- [ ] Les tâches de notification (`flow-notify`) ont **au moins un canal actif** (`gnspdNotifySendEmail`, `gnspdNotifySendSMS` ou `gnspdNotifyInApp` à `true`).
+- [ ] Si un canal de notification est activé, son template **DOIT** être renseigné (jamais vide) : `gnspdNotifyInApp=true` → `gnspdNotifyTemplateInApp=TODO_TPL_INAPP_xxx` ; idem `gnspdNotifySendEmail=true` → `gnspdNotifyTemplateEmail`, `gnspdNotifySendSMS=true` → `gnspdNotifyTemplateSMS`.
+- [ ] Toute `userTask` avec `gnspdTaskKind=backoffice` a `camunda:formKey="ULID_FORM_[NOM]"` — ⛔ sans cela XFlow ne peut pas router vers le formulaire Form.io correspondant.
+- [ ] `EndEvent` avec template `tg.gouv.gnspd.endEvent` : `gnspdTaskStatus="Completed"` — ⛔ jamais `"Success"` (valide pour `gnspdStatus` stepNotification, INVALIDE pour `gnspdTaskStatus`).
+- [ ] Toute `bpmn:receiveTask` a `camunda:type="external"` — ⛔ sinon le validateur signale "Implementation Type vide".
+- [ ] Toute `bpmn:userTask` a `camunda:type="external"` — ⛔ même erreur validateur "Implementation Type vide".
 
 **Tâches citoyen XPortal (userTask, pas flowPortail)**
 - [ ] Les tâches citoyen côté XPortal utilisent `tg.gouv.gnspd.userTask` (`bpmn:userTask`) avec `camunda:formKey="[ULID]"` et `gnspdHandlerType` — et **non** `tg.gouv.gnspd.flowPortail` (pattern legacy).
@@ -981,6 +990,13 @@ Avant de livrer, vérifier chaque livrable :
 - [ ] Le startEvent **XFlow** embarque la configuration KMS des 4 environnements (`development`, `sandbox`, `preproduction`, `production`) avec les blocs JSON des systèmes tiers (ODOO, GED, API…).
 - [ ] Les secrets sont référencés via la syntaxe KMS `{dbkms:[SERVICE]_[COMPOSANT]}`, jamais en clair.
 - [ ] Les URLs de connexion Odoo/API sont lues depuis `this.data.Event_X_Start.parameters.configuration.SYSTEME.CLE`, jamais codées en dur.
+- [ ] Si une **chaîne documentaire** est présente (generateTemplate → certSign), le startEvent XFlow DOIT déclarer `ECERT` et `PORTAL` dans les 4 environnements : `"ECERT": {"SECRET_USERNAME": "{dbkms:ECERT_USER}", "SECRET_PASSWORD": "{dbkms:ECERT_PASS}"}`, `"PORTAL": {"BASE_URL": "https://portail.[env].gouv.tg"}`.
+
+**Chaîne documentaire (generateTemplate → generateUrlQrcode → pdfImage → certSign)**
+- [ ] `generateTemplate` : `gnspdTempData` (champs du document) + `gnspdPrintOptions` (`{'format':'A4'}`) + `gnspdGroups` + `gnspdRoles` OBLIGATOIRES.
+- [ ] `generateUrlQrcode` : `gnspdUrl` construit depuis `PORTAL.BASE_URL` — syntaxe `$(...)` canonique.
+- [ ] `pdfImage` : `gnspdClickedX` + `gnspdClickedY` + `gnspdCurrentPage` + `gnspdFile` OBLIGATOIRES (en plus de `gnspdPdfFile` et `gnspdImage`). `gnspdPdfFile` et `gnspdFile` reçoivent le même document source.
+- [ ] `certSign` : `gnspdId` (SECRET_USERNAME) + `gnspdKey` (SECRET_PASSWORD) + `gnspdData` + `gnspdIsFormat` + `gnspdUseNewMethod` + `gnspdDefaultValue` + `gnspdIgnoreList` OBLIGATOIRES.
 
 **Gateways et conditions**
 - [ ] Les événements de messages (`Start`/`Catch`) référencent l'`id` d'un `<bpmn:message>` global existant.
@@ -992,7 +1008,7 @@ Avant de livrer, vérifier chaque livrable :
 **Paiement (pattern demande-passeport obligatoire)**
 
 - [ ] Le paiement est orchestré par **XFlow** (pattern `demande-passeport.bpmn`) — XPortal ne gère jamais le callback de paiement directement.
-- [ ] **XFlow** : un `intermediateCatchEvent` (messageEventDefinition) attend le callback de la plateforme e-Gov et positionne `payment_key = true` via un executionListener.
+- [ ] **XFlow** : un `intermediateCatchEvent` (messageEventDefinition) attend le callback de la plateforme e-Gov et positionne `payment_key` via un executionListener **conditionnel** : `this.data.payment_key = (this.data.Event_X_PayCallback.result.paymentStatus == 'paid')` — ⛔ JAMAIS `= true` inconditionnel (rend la branche PayKO morte).
 - [ ] **XFlow** : un `restBuilder` (PUT) envoie les informations de paiement au système tiers après réception du callback.
 - [ ] **XFlow** : un `sendMessage` envoie la confirmation de paiement à XPortal (`receiveTask` côté XPortal).
 - [ ] **XPortal** : une `userTask` avec `gnspdHandlerType="tarification"` affiche l'écran de paiement au citoyen.
@@ -1037,6 +1053,15 @@ Avant de livrer, vérifier chaque livrable :
 | Compteur de boucle : condition lit `this.data.TASK.result.reformulationCount` | Variable non trouvée ou toujours 0 | Lire la variable globale directement : `this.data.reformulationCount` (modifiée par le scriptTask, pas par la tâche) |
 | `bpmn:receiveTask` sans `camunda:modelerTemplate` | Le worker GNSPD ne prend pas la tâche | Toujours ajouter `camunda:modelerTemplate="tg.gouv.gnspd.receiveTask"` + `camunda:type="external"` + `camunda:topic="flow-receive-task"` |
 | Destinations Kafka inversées (ch-portail-* pour XPortal→XFlow) | Les messages ne sont jamais reçus | XPortal→XFlow : `peer-xflow-*` ; XFlow→XPortal : `ch-portail-*` — ne jamais inverser |
+| `bpmn:receiveTask` sans `camunda:type="external"` | Validateur : "Implementation Type vide" | Toujours ajouter `camunda:type="external"` sur les receiveTask |
+| `gnspdTaskStatus="Success"` sur EndEvent | Valeur invalide — `Success` est pour `gnspdStatus` (stepNotification) | Utiliser `gnspdTaskStatus="Completed"` sur les EndEvent |
+| `userTask` backoffice sans `camunda:formKey` | XFlow ne peut pas router vers le formulaire Form.io | Ajouter `camunda:formKey="ULID_FORM_[NOM]"` sur toute userTask avec `gnspdTaskKind=backoffice` |
+| Chaîne documentaire sans `ECERT`/`PORTAL` dans `Event_X_Start` | `certSign` ne trouve pas les credentials, `generateUrlQrcode` produit une URL invalide | Déclarer `ECERT` et `PORTAL` dans les 4 environnements du startEvent XFlow |
+| `generateTemplate` sans `gnspdTempData` | Champ obligatoire manquant — validateur bloque | Ajouter `gnspdTempData` + `gnspdPrintOptions` + `gnspdGroups` + `gnspdRoles` |
+| `pdfImage` sans `gnspdClickedX/Y` | Position du QR code inconnue — validateur bloque | Ajouter `gnspdClickedX`, `gnspdClickedY`, `gnspdCurrentPage`, `gnspdFile` |
+| `bpmn:userTask` sans `camunda:type="external"` | Validateur : "Implementation Type vide" | Toujours ajouter `camunda:type="external"` sur les userTask |
+| `sendNotification` avec template vide quand canal activé | Validateur : "Le champ Template In-App est obligatoire" | Si `gnspdNotifyInApp=true` → `gnspdNotifyTemplateInApp=TODO_TPL_INAPP_xxx` (idem Email/SMS) |
+| `payment_key = true` inconditionnel dans executionListener | Branche PayKO morte — le paiement est toujours considéré réussi | Évaluer conditionnellement : `this.data.payment_key = (this.data.Event_X_PayCallback.result.paymentStatus == 'paid')` |
 
 ---
 
@@ -1051,7 +1076,9 @@ Avant de livrer, vérifier chaque livrable :
 | `formio-[nom-service].json` | Schéma Form.io du formulaire principal |
 | `formio-correction-[nom-service].json` | Formulaire de correction (si boucle de correction) |
 | `formio-paiement-[nom-service].json` | Formulaire de paiement (si service payant) |
+| `formio-instruction-[nom-service].json` | Formulaire d'instruction agent (si userTask backoffice) |
 | `bpmn-[nom-service].bpmn` | Processus BPMN 2.0 Camunda Platform 7 (GNSPD) |
+| `STATUS.md` | Suivi d'avancement du projet (étapes et gates) |
 | `[nom-service]-tests.md` | Plan de tests complet |
 | `[nom-service]-manuel.md` | Manuel utilisateur (citoyen/agent) |
 | `[nom-service]-pv-recette.md` | PV de recette (si applicable) |

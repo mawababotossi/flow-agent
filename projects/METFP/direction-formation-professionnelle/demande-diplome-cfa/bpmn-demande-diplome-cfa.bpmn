@@ -1,0 +1,1131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_DiplomeCFA" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.42.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.17.0">
+  <bpmn:message id="MSG_DIPLOMECFA_START" name="MSG_DIPLOMECFA_START" />
+  <bpmn:message id="MSG_DIPLOMECFA_PAY_ORDER" name="MSG_DIPLOMECFA_PAY_ORDER" />
+  <bpmn:message id="MSG_DIPLOMECFA_PAY_CALLBACK" name="MSG_DIPLOMECFA_PAY_CALLBACK" />
+  <bpmn:message id="MSG_DIPLOMECFA_PAY_CONFIRM" name="MSG_DIPLOMECFA_PAY_CONFIRM" />
+  <bpmn:message id="MSG_DIPLOMECFA_RETURN" name="MSG_DIPLOMECFA_RETURN" />
+  <bpmn:message id="MSG_DIPLOMECFA_RESUB" name="MSG_DIPLOMECFA_RESUB" />
+  <bpmn:collaboration id="Collaboration_DiplomeCFA">
+    <bpmn:participant id="Participant_Portal" name="XPORTAL" processRef="Process_Portal" />
+    <bpmn:participant id="Participant_Xflow" name="XFLOW" processRef="Process_Xflow" camunda:versionTag="1.0" camunda:historyTimeToLive="180" />
+    <bpmn:messageFlow id="MF_Start" sourceRef="Send_P_Start" targetRef="Event_X_Start" />
+    <bpmn:messageFlow id="MF_PayOrder" sourceRef="Send_X_PayOrder" targetRef="Recv_P_PayOrder" />
+    <bpmn:messageFlow id="MF_PayConfirm" sourceRef="Send_X_PayConfirm" targetRef="Recv_P_PayConfirm" />
+    <bpmn:messageFlow id="MF_Return" sourceRef="Send_X_Return" targetRef="Recv_P_Return" />
+    <bpmn:messageFlow id="MF_ReturnReject" sourceRef="Send_X_ReturnReject" targetRef="Recv_P_Return" />
+    <bpmn:messageFlow id="MF_ReturnCorr" sourceRef="Send_X_Correction" targetRef="Recv_P_Return" />
+    <bpmn:messageFlow id="MF_Resub" sourceRef="Send_P_Resub" targetRef="Recv_X_Resub" />
+    <bpmn:messageFlow id="MF_PayFail" sourceRef="Send_X_PayFailNotify" targetRef="Recv_P_PayConfirm" />
+  </bpmn:collaboration>
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- POOL XPORTAL — Côté Citoyen                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <bpmn:process id="Process_Portal" isExecutable="true" camunda:versionTag="1">
+    <bpmn:startEvent id="Event_P_Start" name="Soumission demande diplôme CFA" camunda:modelerTemplate="tg.gouv.gnspd.startEvent" camunda:formKey="ULID_FORM_DEMANDE_DIPLOME_CFA" camunda:type="external" camunda:topic="flow-start">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdStepName">Début</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdExecution">PORTAIL</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="development">{}</camunda:inputParameter>
+          <camunda:inputParameter name="sandbox">{}</camunda:inputParameter>
+          <camunda:inputParameter name="preproduction">{}</camunda:inputParameter>
+          <camunda:inputParameter name="production">{}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SF_P_Start_Send</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sendTask id="Send_P_Start" name="Envoi au back-office" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_DIPLOMECFA_START</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTargetElementType">bpmn:StartEvent</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageDestination">peer-xflow-local-gforce</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessage">$this.data.Event_P_Start.parameters</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_P_Start_Send</bpmn:incoming>
+      <bpmn:outgoing>SF_P_Send_GwDup</bpmn:outgoing>
+    </bpmn:sendTask>
+    <!-- P1 : Gateway duplicata miroir XPortal -->
+    <bpmn:exclusiveGateway id="Gw_P_Dup" name="Duplicata ?">
+      <bpmn:incoming>SF_P_Send_GwDup</bpmn:incoming>
+      <bpmn:outgoing>SF_P_Dup_Oui</bpmn:outgoing>
+      <bpmn:outgoing>SF_P_Dup_Non</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <!-- Branche paiement (duplicata uniquement) -->
+    <bpmn:receiveTask id="Recv_P_PayOrder" name="Recevoir ordre de paiement" camunda:modelerTemplate="tg.gouv.gnspd.receiveTask" messageRef="MSG_DIPLOMECFA_PAY_ORDER" camunda:type="external" camunda:topic="flow-receive-task">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_P_Dup_Oui</bpmn:incoming>
+      <bpmn:outgoing>SF_P_PayOrder_TaskPay</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:userTask id="Task_P_Payment" name="Procéder au paiement" camunda:modelerTemplate="tg.gouv.gnspd.userTask" camunda:formKey="ULID_FORM_PAIEMENT_DIPLOME_CFA" camunda:type="external" camunda:topic="flow-user-task">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskDescription"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdHandlerType">tarification</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSubmissionFormkey"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdFormSetting"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSubmissionData"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdAttachments"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel">Paiement duplicata</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">PendingPayment</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder">1</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostTotal"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostUnitaire"></camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_P_PayOrder_TaskPay</bpmn:incoming>
+      <bpmn:outgoing>SF_P_TaskPay_RecvConfirm</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:receiveTask id="Recv_P_PayConfirm" name="Confirmation paiement reçue" camunda:modelerTemplate="tg.gouv.gnspd.receiveTask" messageRef="MSG_DIPLOMECFA_PAY_CONFIRM" camunda:type="external" camunda:topic="flow-receive-task">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_P_TaskPay_RecvConfirm</bpmn:incoming>
+      <bpmn:outgoing>SF_P_PayConfirm_RecvReturn</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <!-- P2 : ReceiveTask multi-entrante (convergence sans ExclusiveGateway) -->
+    <bpmn:receiveTask id="Recv_P_Return" name="Attendre réponse XFlow" camunda:modelerTemplate="tg.gouv.gnspd.receiveTask" messageRef="MSG_DIPLOMECFA_RETURN" camunda:type="external" camunda:topic="flow-receive-task">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_P_Dup_Non</bpmn:incoming>
+      <bpmn:incoming>SF_P_PayConfirm_RecvReturn</bpmn:incoming>
+      <bpmn:incoming>SF_P_SendResub_RecvReturn</bpmn:incoming>
+      <bpmn:outgoing>SF_P_RecvReturn_GwAction</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:exclusiveGateway id="Gw_P_Action" name="Action XFlow ?">
+      <bpmn:incoming>SF_P_RecvReturn_GwAction</bpmn:incoming>
+      <bpmn:outgoing>SF_P_Action_Correction</bpmn:outgoing>
+      <bpmn:outgoing>SF_P_Action_Accepte</bpmn:outgoing>
+      <bpmn:outgoing>SF_P_Action_Rejete</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <!-- Correction citoyen : publish_submission + gnspdSubmissionData conditionnel -->
+    <bpmn:userTask id="Task_P_Correction" name="Corriger le dossier" camunda:modelerTemplate="tg.gouv.gnspd.userTask" camunda:formKey="ULID_FORM_CORRECTION_DIPLOME_CFA" camunda:type="external" camunda:topic="flow-user-task">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskDescription"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdHandlerType">publish_submission</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSubmissionData">$(this.data.Task_P_Correction &amp;&amp; this.data.Task_P_Correction.result ? this.data.Task_P_Correction.result : this.data.Event_P_Start.parameters.submissionData.data)</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSubmissionFormkey"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdFormSetting"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdAttachments"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel">Corriger mon dossier</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">PendingPortal</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder">2</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostTotal"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostUnitaire"></camunda:inputParameter>
+        </camunda:inputOutput>
+        <camunda:taskListener class="" event="create" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_P_Action_Correction</bpmn:incoming>
+      <bpmn:outgoing>SF_P_Correction_SendResub</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="BoundaryTimer_P_Correction" name="Délai 5 jours" cancelActivity="true" attachedToRef="Task_P_Correction">
+      <bpmn:outgoing>SF_P_BoundaryTimer_EndRejet</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerDef_P_Correction">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P5D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sendTask id="Send_P_Resub" name="Soumettre correction XFlow" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_DIPLOMECFA_RESUB</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTargetElementType">bpmn:ReceiveTask</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageDestination">peer-xflow-local-gforce</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessage">$this.data.Task_P_Correction.result</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_P_Correction_SendResub</bpmn:incoming>
+      <bpmn:outgoing>SF_P_SendResub_RecvReturn</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="End_P_Accepte" name="Diplôme disponible" camunda:modelerTemplate="tg.gouv.gnspd.endEvent" camunda:type="external" camunda:topic="flow-end-event">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_P_Action_Accepte</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="End_P_Rejete" name="Demande rejetée" camunda:modelerTemplate="tg.gouv.gnspd.endEvent" camunda:type="external" camunda:topic="flow-end-event">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_P_Action_Rejete</bpmn:incoming>
+      <bpmn:incoming>SF_P_BoundaryTimer_EndRejet</bpmn:incoming>
+    </bpmn:endEvent>
+    <!-- SequenceFlows XPortal -->
+    <bpmn:sequenceFlow id="SF_P_Start_Send" sourceRef="Event_P_Start" targetRef="Send_P_Start" />
+    <bpmn:sequenceFlow id="SF_P_Send_GwDup" sourceRef="Send_P_Start" targetRef="Gw_P_Dup" />
+    <bpmn:sequenceFlow id="SF_P_Dup_Oui" name="Duplicata" sourceRef="Gw_P_Dup" targetRef="Recv_P_PayOrder">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Event_P_Start.parameters.submissionData.duplicata == 'Oui'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_P_Dup_Non" name="Original" sourceRef="Gw_P_Dup" targetRef="Recv_P_Return">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Event_P_Start.parameters.submissionData.duplicata == 'Non'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_P_PayOrder_TaskPay" sourceRef="Recv_P_PayOrder" targetRef="Task_P_Payment" />
+    <bpmn:sequenceFlow id="SF_P_TaskPay_RecvConfirm" sourceRef="Task_P_Payment" targetRef="Recv_P_PayConfirm" />
+    <bpmn:sequenceFlow id="SF_P_PayConfirm_RecvReturn" sourceRef="Recv_P_PayConfirm" targetRef="Recv_P_Return" />
+    <bpmn:sequenceFlow id="SF_P_RecvReturn_GwAction" sourceRef="Recv_P_Return" targetRef="Gw_P_Action" />
+    <bpmn:sequenceFlow id="SF_P_Action_Correction" name="Correction" sourceRef="Gw_P_Action" targetRef="Task_P_Correction">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Recv_P_Return.result.data.action == "correction"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_P_Action_Accepte" name="Accepté" sourceRef="Gw_P_Action" targetRef="End_P_Accepte">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Recv_P_Return.result.data.action == "accepte"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_P_Action_Rejete" name="Rejeté" sourceRef="Gw_P_Action" targetRef="End_P_Rejete">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Recv_P_Return.result.data.action == "rejete"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_P_Correction_SendResub" sourceRef="Task_P_Correction" targetRef="Send_P_Resub" />
+    <bpmn:sequenceFlow id="SF_P_SendResub_RecvReturn" sourceRef="Send_P_Resub" targetRef="Recv_P_Return" />
+    <bpmn:sequenceFlow id="SF_P_BoundaryTimer_EndRejet" sourceRef="BoundaryTimer_P_Correction" targetRef="End_P_Rejete" />
+  </bpmn:process>
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- POOL XFLOW — Côté Back-Office                                  -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <bpmn:process id="Process_Xflow" isExecutable="true" camunda:versionTag="1.0" camunda:historyTimeToLive="180">
+    <bpmn:startEvent id="Event_X_Start" name="Réception demande diplôme CFA" camunda:modelerTemplate="tg.gouv.gnspd.startEvent" camunda:type="external" camunda:topic="flow-start">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdExecution">PORTAIL</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+          <camunda:inputParameter name="development">{"ODOO": {"BASEURL": "https://decc-odoo.sandbox.gouv.tg", "PORT": "83", "DB": "@{cfa}", "SECRET_USERNAME": "{dbkms:CFA_ODOO_USERNAME}", "SECRET_PASSWORD": "{dbkms:CFA_ODOO_PASSWORD}"}, "ECERT": {"SECRET_USERNAME": "{dbkms:ECERT_USER}", "SECRET_PASSWORD": "{dbkms:ECERT_PASS}"}, "PORTAL": {"BASE_URL": "https://portail.sandbox.gouv.tg"}}</camunda:inputParameter>
+          <camunda:inputParameter name="sandbox">{"ODOO": {"BASEURL": "https://decc-odoo.sandbox.gouv.tg", "PORT": "83", "DB": "@{cfa}", "SECRET_USERNAME": "{dbkms:CFA_ODOO_USERNAME}", "SECRET_PASSWORD": "{dbkms:CFA_ODOO_PASSWORD}"}, "ECERT": {"SECRET_USERNAME": "{dbkms:ECERT_USER}", "SECRET_PASSWORD": "{dbkms:ECERT_PASS}"}, "PORTAL": {"BASE_URL": "https://portail.sandbox.gouv.tg"}}</camunda:inputParameter>
+          <camunda:inputParameter name="preproduction">{"ODOO": {"BASEURL": "https://decc-odoo.preprod.gouv.tg", "PORT": "83", "DB": "@{cfa}", "SECRET_USERNAME": "{dbkms:CFA_ODOO_USERNAME}", "SECRET_PASSWORD": "{dbkms:CFA_ODOO_PASSWORD}"}, "ECERT": {"SECRET_USERNAME": "{dbkms:ECERT_USER}", "SECRET_PASSWORD": "{dbkms:ECERT_PASS}"}, "PORTAL": {"BASE_URL": "https://portail.preprod.gouv.tg"}}</camunda:inputParameter>
+          <camunda:inputParameter name="production">{"ODOO": {"BASEURL": "https://decc-odoo.gouv.tg", "PORT": "83", "DB": "@{cfa}", "SECRET_USERNAME": "{dbkms:CFA_ODOO_USERNAME}", "SECRET_PASSWORD": "{dbkms:CFA_ODOO_PASSWORD}"}, "ECERT": {"SECRET_USERNAME": "{dbkms:ECERT_USER}", "SECRET_PASSWORD": "{dbkms:ECERT_PASS}"}, "PORTAL": {"BASE_URL": "https://portail.gouv.tg"}}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SF_X_Start_StepNotif</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="MSG_DIPLOMECFA_START" />
+    </bpmn:startEvent>
+    <!-- StepNotification : Soumis -->
+    <bpmn:serviceTask id="StepNotif_X_Submitted" name="Étape : Soumis" camunda:modelerTemplate="tg.gouv.gnspd.stepNotification" camunda:type="external" camunda:topic="flow-step-notification">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdStatus">Submited</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdIsPortal">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdStepOrder">1</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_Start_StepNotif</bpmn:incoming>
+      <bpmn:outgoing>SF_X_StepNotif_NotifAR</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <!-- P3 : Notification accusé de réception -->
+    <bpmn:serviceTask id="Notif_X_AR" name="Notifier accusé de réception" camunda:type="external" camunda:topic="flow-notify">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdNotifyInApp">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifySendEmail">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifySendSMS">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyEmail">$this.data.Event_X_Start.parameters.submissionData.eMail</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyPhone">$this.data.Event_X_Start.parameters.submissionData.numeroTelephone</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_StepNotif_NotifAR</bpmn:incoming>
+      <bpmn:outgoing>SF_X_NotifAR_GwDup</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <!-- P1 : Gateway duplicata miroir XFlow -->
+    <bpmn:exclusiveGateway id="Gw_X_Dup" name="Duplicata ?">
+      <bpmn:incoming>SF_X_NotifAR_GwDup</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Dup_Oui</bpmn:outgoing>
+      <bpmn:outgoing>SF_X_Dup_Non</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <!-- ── Branche paiement duplicata (§10) ── -->
+    <bpmn:sendTask id="Send_X_PayOrder" name="Ordonner paiement XPortal" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_DIPLOMECFA_PAY_ORDER</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTargetElementType">bpmn:ReceiveTask</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageDestination">ch-portail-local-gforce</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessage">${"action": "paiement_requis", "montant": this.data.Event_X_Start.parameters.paymentAmount}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_Dup_Oui</bpmn:incoming>
+      <bpmn:outgoing>SF_X_PayOrder_Callback</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:intermediateCatchEvent id="Event_X_PayCallback" name="Callback paiement e-Gov">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="javascript">this.data.payment_key = true</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_PayOrder_Callback</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Callback_GwPay</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MsgDef_PayCallback" messageRef="MSG_DIPLOMECFA_PAY_CALLBACK" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:exclusiveGateway id="Gw_X_PayOK" name="Paiement OK ?">
+      <bpmn:incoming>SF_X_Callback_GwPay</bpmn:incoming>
+      <bpmn:outgoing>SF_X_PayOK_SendConfirm</bpmn:outgoing>
+      <bpmn:outgoing>SF_X_PayKO_Reject</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="Send_X_PayConfirm" name="Confirmer paiement XPortal" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_DIPLOMECFA_PAY_CONFIRM</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTargetElementType">bpmn:ReceiveTask</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageDestination">ch-portail-local-gforce</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessage">${"action": "paiement_confirme", "reference": this.data.xref}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_PayOK_SendConfirm</bpmn:incoming>
+      <bpmn:outgoing>SF_X_PayConfirm_Odoo</bpmn:outgoing>
+    </bpmn:sendTask>
+    <!-- ── SendTask paiement KO : débloquer XPortal avant rejet ── -->
+    <bpmn:sendTask id="Send_X_PayFailNotify" name="Notifier échec paiement XPortal" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_DIPLOMECFA_PAY_CONFIRM</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTargetElementType">bpmn:ReceiveTask</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageDestination">ch-portail-local-gforce</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessage">${"action": "paiement_echoue", "reference": this.data.xref}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_PayKO_Reject</bpmn:incoming>
+      <bpmn:outgoing>SF_X_PayFail_Reject</bpmn:outgoing>
+    </bpmn:sendTask>
+    <!-- ── Vérification Odoo (P5 : multi-entrante P2) ── -->
+    <bpmn:serviceTask id="Activity_X_OdooSearch" name="Vérifier candidat Odoo" camunda:modelerTemplate="tg.gouv.gnspd.odoo" camunda:type="external" camunda:topic="flow-odoo">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdMethod">search_read</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdModel">exam.inscription</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdDb">$this.data.Event_X_Start.parameters.configuration.ODOO.DB</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdUrl">$this.data.Event_X_Start.parameters.configuration.ODOO.BASEURL</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdPort">$this.data.Event_X_Start.parameters.configuration.ODOO.PORT</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdUsername">$this.data.Event_X_Start.parameters.configuration.ODOO.SECRET_USERNAME</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdPassword">$this.data.Event_X_Start.parameters.configuration.ODOO.SECRET_PASSWORD</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSystemData">${"applicant": this.data.applicant, "recordUid": this.data.recordUid}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_PayConfirm_Odoo</bpmn:incoming>
+      <bpmn:incoming>SF_X_Dup_Non</bpmn:incoming>
+      <bpmn:incoming>SF_X_Counter_Odoo</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Odoo_GwOdoo</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gw_X_OdooOK" name="Inscrit et reçu ?">
+      <bpmn:incoming>SF_X_Odoo_GwOdoo</bpmn:incoming>
+      <bpmn:outgoing>SF_X_OdooOK_StepNotif</bpmn:outgoing>
+      <bpmn:outgoing>SF_X_OdooKO_Reject</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <!-- StepNotification : PendingBackOffice (AVANT l'agent — pattern §7) -->
+    <bpmn:serviceTask id="StepNotif_X_Processing" name="Étape : Instruction" camunda:modelerTemplate="tg.gouv.gnspd.stepNotification" camunda:type="external" camunda:topic="flow-step-notification">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdStatus">PendingBackOffice</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdIsPortal">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdStepOrder">2</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_OdooOK_StepNotif</bpmn:incoming>
+      <bpmn:outgoing>SF_X_StepNotif_Agent</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <!-- Instruction agent CFA (backoffice, formKey obligatoire) -->
+    <bpmn:userTask id="Activity_X_Agent" name="Instruire le dossier" camunda:modelerTemplate="tg.gouv.gnspd.userTask" camunda:formKey="ULID_FORM_INSTRUCTION_DIPLOME_CFA" camunda:type="external" camunda:topic="flow-user-task">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskDescription"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdHandlerType">publish_submission</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSubmissionFormkey"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdFormSetting"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSubmissionData">$this.data.Event_X_Start.parameters.submissionData</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdAttachments"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskLabel">Instruire le dossier</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskStatus">PendingBackOffice</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskOrder">3</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">backoffice</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCandidateCompanies"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostVariable"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostTotal"></camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCostUnitaire"></camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_StepNotif_Agent</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Agent_GwDecision</bpmn:outgoing>
+    </bpmn:userTask>
+    <!-- P11 : Boundary timer non-interrompant + EndEvent -->
+    <bpmn:boundaryEvent id="BoundaryTimer_X_Agent" name="SLA 72h" cancelActivity="false" attachedToRef="Activity_X_Agent">
+      <bpmn:outgoing>SF_X_Timer_Escalade</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerDef_X_Agent">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT72H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:serviceTask id="Notif_X_Escalade" name="Notifier escalade SLA" camunda:type="external" camunda:topic="flow-notify">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdNotifySendEmail">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_Timer_Escalade</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Escalade_End</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End_X_Escalade" name="Fin escalade SLA">
+      <bpmn:incoming>SF_X_Escalade_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <!-- Gateway décision agent : 3 sorties (P7) -->
+    <bpmn:exclusiveGateway id="Gw_X_Decision" name="Décision agent ?">
+      <bpmn:incoming>SF_X_Agent_GwDecision</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Decision_Approve</bpmn:outgoing>
+      <bpmn:outgoing>SF_X_Decision_Correction</bpmn:outgoing>
+      <bpmn:outgoing>SF_X_Decision_Reject</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <!-- ── Branche CONFORME : chaîne documentaire (§9) ── -->
+    <bpmn:serviceTask id="Doc_X_Generate" name="Générer le diplôme" camunda:modelerTemplate="tg.gouv.gnspd.generateTemplate" camunda:type="external" camunda:topic="flow-generate-template">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTemplate">ULID_TEMPLATE_DIPLOME_CFA</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdGeneratedName">${"diplome-cfa-" + this.data.xref + ".pdf"}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTempData">${
+  "numero": this.data.xref,
+  "nom": this.data.Event_X_Start.parameters.submissionData.nom,
+  "prenoms": this.data.Event_X_Start.parameters.submissionData.prenoms,
+  "dateNaissance": this.data.Event_X_Start.parameters.submissionData.dateNaissance,
+  "lieuNaissance": this.data.Event_X_Start.parameters.submissionData.lieuNaissance,
+  "specialite": this.data.Event_X_Start.parameters.submissionData.specialite,
+  "session": this.data.Event_X_Start.parameters.submissionData.session,
+  "centreExamen": this.data.Event_X_Start.parameters.submissionData.centreExamen
+}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdPrintOptions">{'format':'A4'}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdGroups" />
+          <camunda:inputParameter name="gnspdRoles" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_Decision_Approve</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Generate_Qrcode</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Doc_X_Qrcode" name="Générer QR code" camunda:modelerTemplate="tg.gouv.gnspd.generateUrlQrcode" camunda:type="external" camunda:topic="flow-generate-url-qrcode">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdUrl">$(this.data.Event_X_Start.parameters.configuration.PORTAL.BASE_URL + '/verify/' + this.data.xref)</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_Generate_Qrcode</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Qrcode_PdfImage</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Doc_X_PdfImage" name="Apposer QR sur PDF" camunda:modelerTemplate="tg.gouv.gnspd.pdfImage" camunda:type="external" camunda:topic="flow-pdf-image">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdPdfFile">$this.data.Doc_X_Generate.result</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdClickedX">450</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdClickedY">680</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdCurrentPage">1</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdFile">$this.data.Doc_X_Generate.result</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdImage">$this.data.Doc_X_Qrcode.result</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_Qrcode_PdfImage</bpmn:incoming>
+      <bpmn:outgoing>SF_X_PdfImage_Sign</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Doc_X_Sign" name="Signer le diplôme (E-Cert)" camunda:modelerTemplate="tg.gouv.gnspd.certSign" camunda:type="external" camunda:topic="flow-cert-sign">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdId">$this.data.Event_X_Start.parameters.configuration.ECERT.SECRET_USERNAME</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdKey">$this.data.Event_X_Start.parameters.configuration.ECERT.SECRET_PASSWORD</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdIsFormat">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdData">${
+  "nom": this.data.Event_X_Start.parameters.submissionData.nom,
+  "prenoms": this.data.Event_X_Start.parameters.submissionData.prenoms,
+  "reference": this.data.xref,
+  "dateDelivrance": new Date().toISOString()
+}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdUseNewMethod">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdDefaultValue" />
+          <camunda:inputParameter name="gnspdIgnoreList" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_PdfImage_Sign</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Sign_OdooCreate</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <!-- Enregistrement dans Odoo -->
+    <bpmn:serviceTask id="Activity_X_OdooCreate" name="Enregistrer dans Odoo" camunda:modelerTemplate="tg.gouv.gnspd.odoo" camunda:type="external" camunda:topic="flow-odoo">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdMethod">create</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdModel">exam.demande</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdDb">$this.data.Event_X_Start.parameters.configuration.ODOO.DB</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdUrl">$this.data.Event_X_Start.parameters.configuration.ODOO.BASEURL</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdPort">$this.data.Event_X_Start.parameters.configuration.ODOO.PORT</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdUsername">$this.data.Event_X_Start.parameters.configuration.ODOO.SECRET_USERNAME</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdPassword">$this.data.Event_X_Start.parameters.configuration.ODOO.SECRET_PASSWORD</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdSystemData">${"applicant": this.data.applicant, "recordUid": this.data.recordUid}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_Sign_OdooCreate</bpmn:incoming>
+      <bpmn:outgoing>SF_X_OdooCreate_StepNotif</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <!-- StepNotification : Success -->
+    <bpmn:serviceTask id="StepNotif_X_Success" name="Étape : Succès" camunda:modelerTemplate="tg.gouv.gnspd.stepNotification" camunda:type="external" camunda:topic="flow-step-notification">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdStatus">Success</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdIsPortal">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdStepOrder">3</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_OdooCreate_StepNotif</bpmn:incoming>
+      <bpmn:outgoing>SF_X_StepNotif_NotifAccept</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <!-- P3 : notify AVANT send -->
+    <bpmn:serviceTask id="Notif_X_Accept" name="Notifier diplôme disponible" camunda:type="external" camunda:topic="flow-notify">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdNotifyInApp">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifySendEmail">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifySendSMS">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_StepNotif_NotifAccept</bpmn:incoming>
+      <bpmn:outgoing>SF_X_NotifAccept_Send</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sendTask id="Send_X_Return" name="Envoyer acceptation XPortal" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_DIPLOMECFA_RETURN</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTargetElementType">bpmn:ReceiveTask</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageDestination">ch-portail-local-gforce</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessage">${"action": "accepte", "reference": this.data.xref}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_NotifAccept_Send</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Send_EndSuccess</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="End_X_Success" name="Diplôme délivré" camunda:modelerTemplate="tg.gouv.gnspd.endEvent" camunda:type="external" camunda:topic="flow-end-event">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_Send_EndSuccess</bpmn:incoming>
+    </bpmn:endEvent>
+    <!-- ── Branche CORRECTION (§8) ── -->
+    <bpmn:serviceTask id="Notif_X_Correction" name="Notifier correction requise" camunda:type="external" camunda:topic="flow-notify">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdNotifyInApp">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifySendEmail">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifySendSMS">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifyContentEmail">${"record_id": this.data.xref, "reason": this.data.Activity_X_Agent.result.submissionData.motif ?? ""}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_Decision_Correction</bpmn:incoming>
+      <bpmn:outgoing>SF_X_NotifCorr_Send</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sendTask id="Send_X_Correction" name="Envoyer ordre correction XPortal" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_DIPLOMECFA_RETURN</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTargetElementType">bpmn:ReceiveTask</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageDestination">ch-portail-local-gforce</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessage">${"action": "correction", "motif": this.data.Activity_X_Agent.result.submissionData.motif ?? null, "reference": this.data.xref}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_NotifCorr_Send</bpmn:incoming>
+      <bpmn:outgoing>SF_X_SendCorr_RecvResub</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:receiveTask id="Recv_X_Resub" name="Attendre resoumission" camunda:modelerTemplate="tg.gouv.gnspd.receiveTask" messageRef="MSG_DIPLOMECFA_RESUB" camunda:type="external" camunda:topic="flow-receive-task">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+        </camunda:inputOutput>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="javascript">this.data.nbCorrections = (this.data.nbCorrections || 0) + 1</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_SendCorr_RecvResub</bpmn:incoming>
+      <bpmn:outgoing>SF_X_RecvResub_GwCounter</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <!-- Boundary timer sur receiveTask resoumission : délai 5 jours -->
+    <bpmn:boundaryEvent id="BoundaryTimer_X_Resub" name="Délai 5 jours" cancelActivity="true" attachedToRef="Recv_X_Resub">
+      <bpmn:outgoing>SF_X_TimerResub_Reject</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerDef_X_Resub">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P5D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <!-- Gateway compteur anti-boucle infinie (RG-010 : max 3) -->
+    <bpmn:exclusiveGateway id="Gw_X_Counter" name="Nb corrections ?">
+      <bpmn:incoming>SF_X_RecvResub_GwCounter</bpmn:incoming>
+      <bpmn:outgoing>SF_X_Counter_Odoo</bpmn:outgoing>
+      <bpmn:outgoing>SF_X_Counter_MaxReject</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <!-- ── P4 : Nœud de rejet DRY (tous chemins convergent) ── -->
+    <bpmn:serviceTask id="Notif_X_Reject" name="Notifier rejet dossier" camunda:type="external" camunda:topic="flow-notify">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdNotifyInApp">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifySendEmail">true</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdNotifySendSMS">true</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_PayFail_Reject</bpmn:incoming>
+      <bpmn:incoming>SF_X_OdooKO_Reject</bpmn:incoming>
+      <bpmn:incoming>SF_X_Decision_Reject</bpmn:incoming>
+      <bpmn:incoming>SF_X_Counter_MaxReject</bpmn:incoming>
+      <bpmn:incoming>SF_X_TimerResub_Reject</bpmn:incoming>
+      <bpmn:outgoing>SF_X_NotifReject_Send</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sendTask id="Send_X_ReturnReject" name="Envoyer rejet XPortal" camunda:modelerTemplate="tg.gouv.gnspd.sendMessage" camunda:type="external" camunda:topic="flow-send-message">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdKafkaTopic">bpmn.commands</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageRef">MSG_DIPLOMECFA_RETURN</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTargetElementType">bpmn:ReceiveTask</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessageDestination">ch-portail-local-gforce</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdMessage">${"action": "rejete", "motif": this.data.Activity_X_Agent.result.submissionData.motif ?? null}</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskIsVisible">false</camunda:inputParameter>
+          <camunda:inputParameter name="gnspdTaskKind">citizen</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_NotifReject_Send</bpmn:incoming>
+      <bpmn:outgoing>SF_X_SendReject_End</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="End_X_Reject" name="Demande rejetée" camunda:modelerTemplate="tg.gouv.gnspd.endEvent" camunda:type="external" camunda:topic="flow-end-event">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="gnspdTaskStatus">Completed</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_X_SendReject_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <!-- ═══ SequenceFlows XFlow ═══ -->
+    <bpmn:sequenceFlow id="SF_X_Start_StepNotif" sourceRef="Event_X_Start" targetRef="StepNotif_X_Submitted" />
+    <bpmn:sequenceFlow id="SF_X_StepNotif_NotifAR" sourceRef="StepNotif_X_Submitted" targetRef="Notif_X_AR" />
+    <bpmn:sequenceFlow id="SF_X_NotifAR_GwDup" sourceRef="Notif_X_AR" targetRef="Gw_X_Dup" />
+    <bpmn:sequenceFlow id="SF_X_Dup_Oui" name="Duplicata" sourceRef="Gw_X_Dup" targetRef="Send_X_PayOrder">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Event_X_Start.parameters.submissionData.duplicata == 'Oui'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_X_Dup_Non" name="Original" sourceRef="Gw_X_Dup" targetRef="Activity_X_OdooSearch">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Event_X_Start.parameters.submissionData.duplicata == 'Non'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_X_PayOrder_Callback" sourceRef="Send_X_PayOrder" targetRef="Event_X_PayCallback" />
+    <bpmn:sequenceFlow id="SF_X_Callback_GwPay" sourceRef="Event_X_PayCallback" targetRef="Gw_X_PayOK" />
+    <bpmn:sequenceFlow id="SF_X_PayOK_SendConfirm" name="Oui" sourceRef="Gw_X_PayOK" targetRef="Send_X_PayConfirm">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.payment_key == true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_X_PayKO_Reject" name="Non" sourceRef="Gw_X_PayOK" targetRef="Send_X_PayFailNotify">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.payment_key != true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_X_PayFail_Reject" sourceRef="Send_X_PayFailNotify" targetRef="Notif_X_Reject" />
+    <bpmn:sequenceFlow id="SF_X_PayConfirm_Odoo" sourceRef="Send_X_PayConfirm" targetRef="Activity_X_OdooSearch" />
+    <bpmn:sequenceFlow id="SF_X_Odoo_GwOdoo" sourceRef="Activity_X_OdooSearch" targetRef="Gw_X_OdooOK" />
+    <bpmn:sequenceFlow id="SF_X_OdooOK_StepNotif" name="Oui" sourceRef="Gw_X_OdooOK" targetRef="StepNotif_X_Processing">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_X_OdooSearch.result.id != null</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_X_OdooKO_Reject" name="Non" sourceRef="Gw_X_OdooOK" targetRef="Notif_X_Reject">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_X_OdooSearch.result.id == null</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_X_StepNotif_Agent" sourceRef="StepNotif_X_Processing" targetRef="Activity_X_Agent" />
+    <bpmn:sequenceFlow id="SF_X_Agent_GwDecision" sourceRef="Activity_X_Agent" targetRef="Gw_X_Decision" />
+    <bpmn:sequenceFlow id="SF_X_Timer_Escalade" sourceRef="BoundaryTimer_X_Agent" targetRef="Notif_X_Escalade" />
+    <bpmn:sequenceFlow id="SF_X_Escalade_End" sourceRef="Notif_X_Escalade" targetRef="End_X_Escalade" />
+    <bpmn:sequenceFlow id="SF_X_Decision_Approve" name="Conforme" sourceRef="Gw_X_Decision" targetRef="Doc_X_Generate">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_X_Agent.result.submissionData.decision == 'oui'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_X_Decision_Correction" name="Correction" sourceRef="Gw_X_Decision" targetRef="Notif_X_Correction">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_X_Agent.result.submissionData.decision == 'correction'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_X_Decision_Reject" name="Rejet" sourceRef="Gw_X_Decision" targetRef="Notif_X_Reject">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.Activity_X_Agent.result.submissionData.decision == 'non'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_X_Generate_Qrcode" sourceRef="Doc_X_Generate" targetRef="Doc_X_Qrcode" />
+    <bpmn:sequenceFlow id="SF_X_Qrcode_PdfImage" sourceRef="Doc_X_Qrcode" targetRef="Doc_X_PdfImage" />
+    <bpmn:sequenceFlow id="SF_X_PdfImage_Sign" sourceRef="Doc_X_PdfImage" targetRef="Doc_X_Sign" />
+    <bpmn:sequenceFlow id="SF_X_Sign_OdooCreate" sourceRef="Doc_X_Sign" targetRef="Activity_X_OdooCreate" />
+    <bpmn:sequenceFlow id="SF_X_OdooCreate_StepNotif" sourceRef="Activity_X_OdooCreate" targetRef="StepNotif_X_Success" />
+    <bpmn:sequenceFlow id="SF_X_StepNotif_NotifAccept" sourceRef="StepNotif_X_Success" targetRef="Notif_X_Accept" />
+    <bpmn:sequenceFlow id="SF_X_NotifAccept_Send" sourceRef="Notif_X_Accept" targetRef="Send_X_Return" />
+    <bpmn:sequenceFlow id="SF_X_Send_EndSuccess" sourceRef="Send_X_Return" targetRef="End_X_Success" />
+    <bpmn:sequenceFlow id="SF_X_NotifCorr_Send" sourceRef="Notif_X_Correction" targetRef="Send_X_Correction" />
+    <bpmn:sequenceFlow id="SF_X_SendCorr_RecvResub" sourceRef="Send_X_Correction" targetRef="Recv_X_Resub" />
+    <bpmn:sequenceFlow id="SF_X_RecvResub_GwCounter" sourceRef="Recv_X_Resub" targetRef="Gw_X_Counter" />
+    <bpmn:sequenceFlow id="SF_X_Counter_Odoo" name="&lt; 3" sourceRef="Gw_X_Counter" targetRef="Activity_X_OdooSearch">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.nbCorrections &lt; 3</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_X_Counter_MaxReject" name="≥ 3" sourceRef="Gw_X_Counter" targetRef="Notif_X_Reject">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="javascript">this.data.nbCorrections &gt;= 3</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_X_TimerResub_Reject" sourceRef="BoundaryTimer_X_Resub" targetRef="Notif_X_Reject" />
+    <bpmn:sequenceFlow id="SF_X_NotifReject_Send" sourceRef="Notif_X_Reject" targetRef="Send_X_ReturnReject" />
+    <bpmn:sequenceFlow id="SF_X_SendReject_End" sourceRef="Send_X_ReturnReject" targetRef="End_X_Reject" />
+  </bpmn:process>
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- DIAGRAMME                                                       -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_DiplomeCFA">
+      <!-- Pools -->
+      <bpmndi:BPMNShape id="Participant_Portal_di" bpmnElement="Participant_Portal" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="2800" height="360" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_Xflow_di" bpmnElement="Participant_Xflow" isHorizontal="true">
+        <dc:Bounds x="160" y="540" width="2800" height="700" />
+      </bpmndi:BPMNShape>
+      <!-- ═══ XPortal Shapes ═══ -->
+      <bpmndi:BPMNShape id="Event_P_Start_di" bpmnElement="Event_P_Start">
+        <dc:Bounds x="232" y="232" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Send_P_Start_di" bpmnElement="Send_P_Start">
+        <dc:Bounds x="330" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gw_P_Dup_di" bpmnElement="Gw_P_Dup" isMarkerVisible="true">
+        <dc:Bounds x="490" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Recv_P_PayOrder_di" bpmnElement="Recv_P_PayOrder">
+        <dc:Bounds x="600" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_P_Payment_di" bpmnElement="Task_P_Payment">
+        <dc:Bounds x="760" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Recv_P_PayConfirm_di" bpmnElement="Recv_P_PayConfirm">
+        <dc:Bounds x="920" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Recv_P_Return_di" bpmnElement="Recv_P_Return">
+        <dc:Bounds x="1090" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gw_P_Action_di" bpmnElement="Gw_P_Action" isMarkerVisible="true">
+        <dc:Bounds x="1250" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_P_Correction_di" bpmnElement="Task_P_Correction">
+        <dc:Bounds x="1370" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryTimer_P_Correction_di" bpmnElement="BoundaryTimer_P_Correction">
+        <dc:Bounds x="1432" y="382" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Send_P_Resub_di" bpmnElement="Send_P_Resub">
+        <dc:Bounds x="1530" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_P_Accepte_di" bpmnElement="End_P_Accepte">
+        <dc:Bounds x="1370" y="132" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_P_Rejete_di" bpmnElement="End_P_Rejete">
+        <dc:Bounds x="1700" y="352" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <!-- ═══ XPortal Edges ═══ -->
+      <bpmndi:BPMNEdge id="SF_P_Start_Send_di" bpmnElement="SF_P_Start_Send">
+        <di:waypoint x="268" y="250" />
+        <di:waypoint x="330" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P_Send_GwDup_di" bpmnElement="SF_P_Send_GwDup">
+        <di:waypoint x="430" y="250" />
+        <di:waypoint x="490" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P_Dup_Oui_di" bpmnElement="SF_P_Dup_Oui">
+        <di:waypoint x="515" y="275" />
+        <di:waypoint x="515" y="360" />
+        <di:waypoint x="600" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P_Dup_Non_di" bpmnElement="SF_P_Dup_Non">
+        <di:waypoint x="540" y="250" />
+        <di:waypoint x="1090" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P_PayOrder_TaskPay_di" bpmnElement="SF_P_PayOrder_TaskPay">
+        <di:waypoint x="700" y="360" />
+        <di:waypoint x="760" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P_TaskPay_RecvConfirm_di" bpmnElement="SF_P_TaskPay_RecvConfirm">
+        <di:waypoint x="860" y="360" />
+        <di:waypoint x="920" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P_PayConfirm_RecvReturn_di" bpmnElement="SF_P_PayConfirm_RecvReturn">
+        <di:waypoint x="1020" y="360" />
+        <di:waypoint x="1140" y="360" />
+        <di:waypoint x="1140" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P_RecvReturn_GwAction_di" bpmnElement="SF_P_RecvReturn_GwAction">
+        <di:waypoint x="1190" y="250" />
+        <di:waypoint x="1250" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P_Action_Correction_di" bpmnElement="SF_P_Action_Correction">
+        <di:waypoint x="1275" y="275" />
+        <di:waypoint x="1275" y="360" />
+        <di:waypoint x="1370" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P_Action_Accepte_di" bpmnElement="SF_P_Action_Accepte">
+        <di:waypoint x="1275" y="225" />
+        <di:waypoint x="1275" y="150" />
+        <di:waypoint x="1370" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P_Action_Rejete_di" bpmnElement="SF_P_Action_Rejete">
+        <di:waypoint x="1300" y="250" />
+        <di:waypoint x="1718" y="250" />
+        <di:waypoint x="1718" y="352" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P_Correction_SendResub_di" bpmnElement="SF_P_Correction_SendResub">
+        <di:waypoint x="1470" y="360" />
+        <di:waypoint x="1530" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P_SendResub_RecvReturn_di" bpmnElement="SF_P_SendResub_RecvReturn">
+        <di:waypoint x="1630" y="360" />
+        <di:waypoint x="1660" y="360" />
+        <di:waypoint x="1660" y="200" />
+        <di:waypoint x="1140" y="200" />
+        <di:waypoint x="1140" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P_BoundaryTimer_EndRejet_di" bpmnElement="SF_P_BoundaryTimer_EndRejet">
+        <di:waypoint x="1450" y="418" />
+        <di:waypoint x="1450" y="430" />
+        <di:waypoint x="1718" y="430" />
+        <di:waypoint x="1718" y="388" />
+      </bpmndi:BPMNEdge>
+      <!-- ═══ XFlow Shapes ═══ -->
+      <bpmndi:BPMNShape id="Event_X_Start_di" bpmnElement="Event_X_Start">
+        <dc:Bounds x="232" y="712" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StepNotif_X_Submitted_di" bpmnElement="StepNotif_X_Submitted">
+        <dc:Bounds x="330" y="690" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Notif_X_AR_di" bpmnElement="Notif_X_AR">
+        <dc:Bounds x="490" y="690" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gw_X_Dup_di" bpmnElement="Gw_X_Dup" isMarkerVisible="true">
+        <dc:Bounds x="650" y="705" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Send_X_PayOrder_di" bpmnElement="Send_X_PayOrder">
+        <dc:Bounds x="760" y="810" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_X_PayCallback_di" bpmnElement="Event_X_PayCallback">
+        <dc:Bounds x="920" y="842" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gw_X_PayOK_di" bpmnElement="Gw_X_PayOK" isMarkerVisible="true">
+        <dc:Bounds x="1010" y="835" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Send_X_PayConfirm_di" bpmnElement="Send_X_PayConfirm">
+        <dc:Bounds x="1120" y="810" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Send_X_PayFailNotify_di" bpmnElement="Send_X_PayFailNotify">
+        <dc:Bounds x="1120" y="960" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_X_OdooSearch_di" bpmnElement="Activity_X_OdooSearch">
+        <dc:Bounds x="1290" y="690" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gw_X_OdooOK_di" bpmnElement="Gw_X_OdooOK" isMarkerVisible="true">
+        <dc:Bounds x="1450" y="705" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StepNotif_X_Processing_di" bpmnElement="StepNotif_X_Processing">
+        <dc:Bounds x="1560" y="690" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_X_Agent_di" bpmnElement="Activity_X_Agent">
+        <dc:Bounds x="1720" y="690" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryTimer_X_Agent_di" bpmnElement="BoundaryTimer_X_Agent">
+        <dc:Bounds x="1770" y="752" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Notif_X_Escalade_di" bpmnElement="Notif_X_Escalade">
+        <dc:Bounds x="1800" y="590" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_X_Escalade_di" bpmnElement="End_X_Escalade">
+        <dc:Bounds x="1962" y="612" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gw_X_Decision_di" bpmnElement="Gw_X_Decision" isMarkerVisible="true">
+        <dc:Bounds x="1880" y="705" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <!-- Conforme branch (y=590 → U-turn y=470) -->
+      <bpmndi:BPMNShape id="Doc_X_Generate_di" bpmnElement="Doc_X_Generate">
+        <dc:Bounds x="2040" y="590" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Doc_X_Qrcode_di" bpmnElement="Doc_X_Qrcode">
+        <dc:Bounds x="2200" y="590" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Doc_X_PdfImage_di" bpmnElement="Doc_X_PdfImage">
+        <dc:Bounds x="2360" y="590" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Doc_X_Sign_di" bpmnElement="Doc_X_Sign">
+        <dc:Bounds x="2520" y="590" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_X_OdooCreate_di" bpmnElement="Activity_X_OdooCreate">
+        <dc:Bounds x="2520" y="470" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StepNotif_X_Success_di" bpmnElement="StepNotif_X_Success">
+        <dc:Bounds x="2360" y="470" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Notif_X_Accept_di" bpmnElement="Notif_X_Accept">
+        <dc:Bounds x="2200" y="470" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Send_X_Return_di" bpmnElement="Send_X_Return">
+        <dc:Bounds x="2040" y="470" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_X_Success_di" bpmnElement="End_X_Success">
+        <dc:Bounds x="1932" y="492" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <!-- Correction branch (y=850) -->
+      <bpmndi:BPMNShape id="Notif_X_Correction_di" bpmnElement="Notif_X_Correction">
+        <dc:Bounds x="2000" y="810" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Send_X_Correction_di" bpmnElement="Send_X_Correction">
+        <dc:Bounds x="2160" y="810" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Recv_X_Resub_di" bpmnElement="Recv_X_Resub">
+        <dc:Bounds x="2320" y="810" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryTimer_X_Resub_di" bpmnElement="BoundaryTimer_X_Resub">
+        <dc:Bounds x="2382" y="872" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gw_X_Counter_di" bpmnElement="Gw_X_Counter" isMarkerVisible="true">
+        <dc:Bounds x="2480" y="825" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <!-- Reject DRY (y=960) -->
+      <bpmndi:BPMNShape id="Notif_X_Reject_di" bpmnElement="Notif_X_Reject">
+        <dc:Bounds x="2000" y="960" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Send_X_ReturnReject_di" bpmnElement="Send_X_ReturnReject">
+        <dc:Bounds x="2160" y="960" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_X_Reject_di" bpmnElement="End_X_Reject">
+        <dc:Bounds x="2322" y="982" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <!-- ═══ XFlow Edges ═══ -->
+      <bpmndi:BPMNEdge id="SF_X_Start_StepNotif_di" bpmnElement="SF_X_Start_StepNotif">
+        <di:waypoint x="268" y="730" />
+        <di:waypoint x="330" y="730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_StepNotif_NotifAR_di" bpmnElement="SF_X_StepNotif_NotifAR">
+        <di:waypoint x="430" y="730" />
+        <di:waypoint x="490" y="730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_NotifAR_GwDup_di" bpmnElement="SF_X_NotifAR_GwDup">
+        <di:waypoint x="590" y="730" />
+        <di:waypoint x="650" y="730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Dup_Oui_di" bpmnElement="SF_X_Dup_Oui">
+        <di:waypoint x="675" y="755" />
+        <di:waypoint x="675" y="850" />
+        <di:waypoint x="760" y="850" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Dup_Non_di" bpmnElement="SF_X_Dup_Non">
+        <di:waypoint x="700" y="730" />
+        <di:waypoint x="1290" y="730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_PayOrder_Callback_di" bpmnElement="SF_X_PayOrder_Callback">
+        <di:waypoint x="860" y="860" />
+        <di:waypoint x="920" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Callback_GwPay_di" bpmnElement="SF_X_Callback_GwPay">
+        <di:waypoint x="956" y="860" />
+        <di:waypoint x="1010" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_PayOK_SendConfirm_di" bpmnElement="SF_X_PayOK_SendConfirm">
+        <di:waypoint x="1060" y="860" />
+        <di:waypoint x="1120" y="850" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_PayKO_Reject_di" bpmnElement="SF_X_PayKO_Reject">
+        <di:waypoint x="1035" y="885" />
+        <di:waypoint x="1035" y="1000" />
+        <di:waypoint x="1120" y="1000" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_PayFail_Reject_di" bpmnElement="SF_X_PayFail_Reject">
+        <di:waypoint x="1220" y="1000" />
+        <di:waypoint x="2000" y="1000" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_PayConfirm_Odoo_di" bpmnElement="SF_X_PayConfirm_Odoo">
+        <di:waypoint x="1220" y="850" />
+        <di:waypoint x="1340" y="850" />
+        <di:waypoint x="1340" y="770" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Odoo_GwOdoo_di" bpmnElement="SF_X_Odoo_GwOdoo">
+        <di:waypoint x="1390" y="730" />
+        <di:waypoint x="1450" y="730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_OdooOK_StepNotif_di" bpmnElement="SF_X_OdooOK_StepNotif">
+        <di:waypoint x="1500" y="730" />
+        <di:waypoint x="1560" y="730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_OdooKO_Reject_di" bpmnElement="SF_X_OdooKO_Reject">
+        <di:waypoint x="1475" y="755" />
+        <di:waypoint x="1475" y="1000" />
+        <di:waypoint x="2000" y="1000" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_StepNotif_Agent_di" bpmnElement="SF_X_StepNotif_Agent">
+        <di:waypoint x="1660" y="730" />
+        <di:waypoint x="1720" y="730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Agent_GwDecision_di" bpmnElement="SF_X_Agent_GwDecision">
+        <di:waypoint x="1820" y="730" />
+        <di:waypoint x="1880" y="730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Timer_Escalade_di" bpmnElement="SF_X_Timer_Escalade">
+        <di:waypoint x="1788" y="752" />
+        <di:waypoint x="1788" y="630" />
+        <di:waypoint x="1800" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Escalade_End_di" bpmnElement="SF_X_Escalade_End">
+        <di:waypoint x="1900" y="630" />
+        <di:waypoint x="1962" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Decision_Approve_di" bpmnElement="SF_X_Decision_Approve">
+        <di:waypoint x="1905" y="705" />
+        <di:waypoint x="1905" y="630" />
+        <di:waypoint x="2040" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Decision_Correction_di" bpmnElement="SF_X_Decision_Correction">
+        <di:waypoint x="1905" y="755" />
+        <di:waypoint x="1905" y="850" />
+        <di:waypoint x="2000" y="850" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Decision_Reject_di" bpmnElement="SF_X_Decision_Reject">
+        <di:waypoint x="1930" y="730" />
+        <di:waypoint x="2050" y="730" />
+        <di:waypoint x="2050" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Generate_Qrcode_di" bpmnElement="SF_X_Generate_Qrcode">
+        <di:waypoint x="2140" y="630" />
+        <di:waypoint x="2200" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Qrcode_PdfImage_di" bpmnElement="SF_X_Qrcode_PdfImage">
+        <di:waypoint x="2300" y="630" />
+        <di:waypoint x="2360" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_PdfImage_Sign_di" bpmnElement="SF_X_PdfImage_Sign">
+        <di:waypoint x="2460" y="630" />
+        <di:waypoint x="2520" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Sign_OdooCreate_di" bpmnElement="SF_X_Sign_OdooCreate">
+        <di:waypoint x="2570" y="590" />
+        <di:waypoint x="2570" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_OdooCreate_StepNotif_di" bpmnElement="SF_X_OdooCreate_StepNotif">
+        <di:waypoint x="2520" y="510" />
+        <di:waypoint x="2460" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_StepNotif_NotifAccept_di" bpmnElement="SF_X_StepNotif_NotifAccept">
+        <di:waypoint x="2360" y="510" />
+        <di:waypoint x="2300" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_NotifAccept_Send_di" bpmnElement="SF_X_NotifAccept_Send">
+        <di:waypoint x="2200" y="510" />
+        <di:waypoint x="2140" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Send_EndSuccess_di" bpmnElement="SF_X_Send_EndSuccess">
+        <di:waypoint x="2040" y="510" />
+        <di:waypoint x="1968" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_NotifCorr_Send_di" bpmnElement="SF_X_NotifCorr_Send">
+        <di:waypoint x="2100" y="850" />
+        <di:waypoint x="2160" y="850" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_SendCorr_RecvResub_di" bpmnElement="SF_X_SendCorr_RecvResub">
+        <di:waypoint x="2260" y="850" />
+        <di:waypoint x="2320" y="850" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_RecvResub_GwCounter_di" bpmnElement="SF_X_RecvResub_GwCounter">
+        <di:waypoint x="2420" y="850" />
+        <di:waypoint x="2480" y="850" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Counter_Odoo_di" bpmnElement="SF_X_Counter_Odoo">
+        <di:waypoint x="2505" y="825" />
+        <di:waypoint x="2505" y="730" />
+        <di:waypoint x="1390" y="730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_Counter_MaxReject_di" bpmnElement="SF_X_Counter_MaxReject">
+        <di:waypoint x="2505" y="875" />
+        <di:waypoint x="2505" y="1000" />
+        <di:waypoint x="2100" y="1000" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_TimerResub_Reject_di" bpmnElement="SF_X_TimerResub_Reject">
+        <di:waypoint x="2400" y="908" />
+        <di:waypoint x="2400" y="1000" />
+        <di:waypoint x="2100" y="1000" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_NotifReject_Send_di" bpmnElement="SF_X_NotifReject_Send">
+        <di:waypoint x="2100" y="1000" />
+        <di:waypoint x="2160" y="1000" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_X_SendReject_End_di" bpmnElement="SF_X_SendReject_End">
+        <di:waypoint x="2260" y="1000" />
+        <di:waypoint x="2322" y="1000" />
+      </bpmndi:BPMNEdge>
+      <!-- ═══ MessageFlows inter-pools ═══ -->
+      <bpmndi:BPMNEdge id="MF_Start_di" bpmnElement="MF_Start">
+        <di:waypoint x="380" y="290" />
+        <di:waypoint x="380" y="500" />
+        <di:waypoint x="250" y="500" />
+        <di:waypoint x="250" y="712" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_PayOrder_di" bpmnElement="MF_PayOrder">
+        <di:waypoint x="810" y="810" />
+        <di:waypoint x="810" y="580" />
+        <di:waypoint x="650" y="580" />
+        <di:waypoint x="650" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_PayConfirm_di" bpmnElement="MF_PayConfirm">
+        <di:waypoint x="1170" y="810" />
+        <di:waypoint x="1170" y="580" />
+        <di:waypoint x="970" y="580" />
+        <di:waypoint x="970" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_Return_di" bpmnElement="MF_Return">
+        <di:waypoint x="2090" y="470" />
+        <di:waypoint x="2090" y="440" />
+        <di:waypoint x="1140" y="440" />
+        <di:waypoint x="1140" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_ReturnReject_di" bpmnElement="MF_ReturnReject">
+        <di:waypoint x="2210" y="960" />
+        <di:waypoint x="2210" y="900" />
+        <di:waypoint x="1141" y="900" />
+        <di:waypoint x="1141" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_ReturnCorr_di" bpmnElement="MF_ReturnCorr">
+        <di:waypoint x="2210" y="810" />
+        <di:waypoint x="2210" y="780" />
+        <di:waypoint x="1142" y="780" />
+        <di:waypoint x="1142" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_PayFail_di" bpmnElement="MF_PayFail">
+        <di:waypoint x="1170" y="960" />
+        <di:waypoint x="1170" y="580" />
+        <di:waypoint x="970" y="580" />
+        <di:waypoint x="970" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_Resub_di" bpmnElement="MF_Resub">
+        <di:waypoint x="1580" y="400" />
+        <di:waypoint x="1580" y="500" />
+        <di:waypoint x="2370" y="500" />
+        <di:waypoint x="2370" y="810" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

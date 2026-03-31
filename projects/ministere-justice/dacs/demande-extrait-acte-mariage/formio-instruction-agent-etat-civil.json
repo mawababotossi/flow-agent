@@ -1,0 +1,161 @@
+{
+  "title": "Instruction de l'acte de mariage",
+  "name": "instructionAgentEtatCivil",
+  "path": "instruction-agent-etat-civil",
+  "type": "form",
+  "display": "form",
+  "i18n": {
+    "en": {
+      "Décision": "Decision"
+    }
+  },
+  "config": {
+    "development": {
+      "apiBaseUrl": "https://api.dacs.dev.gouv.tg/api/v1",
+      "appName": "Développement",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    },
+    "sandbox": {
+      "apiBaseUrl": "https://api.dacs.sandbox.gouv.tg/api/v1",
+      "appName": "Sandbox",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    },
+    "preproduction": {
+      "apiBaseUrl": "https://api.dacs.preprod.gouv.tg/api/v1",
+      "appName": "Pré-production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    },
+    "production": {
+      "apiBaseUrl": "https://api.dacs.gouv.tg/api/v1",
+      "appName": "Production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "fullName": "user.fullName",
+        "email": "user.email",
+        "phone": "user.phone"
+      }
+    }
+  },
+  "components": [
+    {
+      "type": "htmlelement",
+      "tag": "h3",
+      "content": "Recherche et instruction de l'acte de mariage",
+      "key": "titleH3"
+    },
+    {
+      "type": "textfield",
+      "key": "prenomDemandeur",
+      "label": "Prénoms du demandeur",
+      "input": true,
+      "disabled": true
+    },
+    {
+      "type": "textfield",
+      "key": "nomDemandeur",
+      "label": "Nom du demandeur",
+      "input": true,
+      "disabled": true
+    },
+    {
+      "type": "textfield",
+      "key": "prenomConjoint",
+      "label": "Prénoms du conjoint",
+      "input": true,
+      "disabled": true
+    },
+    {
+      "type": "textfield",
+      "key": "nomConjoint",
+      "label": "Nom du conjoint",
+      "input": true,
+      "disabled": true
+    },
+    {
+      "type": "datetime",
+      "key": "dateMariage",
+      "label": "Date de célébration",
+      "input": true,
+      "disabled": true,
+      "enableTime": false
+    },
+    {
+      "type": "file",
+      "key": "pieceIdentite",
+      "label": "Pièce d'identité",
+      "input": true,
+      "disabled": true,
+      "storage": "base64"
+    },
+    {
+      "type": "file",
+      "key": "livretFamille",
+      "label": "Livret de famille",
+      "input": true,
+      "disabled": true,
+      "storage": "base64"
+    },
+    {
+      "type": "htmlelement",
+      "tag": "hr",
+      "content": "",
+      "key": "separator1"
+    },
+    {
+      "type": "radio",
+      "key": "decision",
+      "label": "Décision de l'instruction",
+      "input": true,
+      "inline": false,
+      "values": [
+        {
+          "label": "Acte trouvé et conforme (OUI)",
+          "value": "oui"
+        },
+        {
+          "label": "Dossier incomplet / Erreur (CORRECTION)",
+          "value": "correction"
+        },
+        {
+          "label": "Acte introuvable / Faux (REJET)",
+          "value": "non"
+        }
+      ],
+      "validateOn": "blur",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "type": "textarea",
+      "key": "motif",
+      "label": "Motif exact (obligatoire pour correction ou rejet)",
+      "input": true,
+      "validateOn": "blur",
+      "validate": {
+        "required": true
+      },
+      "customConditional": "show = (data.decision === 'correction' || data.decision === 'non');"
+    }
+  ],
+  "actions": []
+}

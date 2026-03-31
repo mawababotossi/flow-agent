@@ -1,0 +1,72 @@
+pipeline:
+  - step: 1
+    name: "Soumission de la demande"
+    actor: "Citoyen"
+    system: "XPortal"
+    action: "Remplissage du formulaire de demande en ligne et upload des pièces jointes."
+    inputs: [ "Identité", "Certificat médical", "Attestation auto-école", "Photo" ]
+    output: "Dossier créé"
+
+  - step: 2
+    name: "Paiement des frais d'inscription"
+    actor: "Citoyen"
+    system: "Plateforme e-Gov"
+    action: "Redirection vers la plateforme de paiement sécurisée pour régler les frais d'examen."
+    inputs: [ "Référence dossier", "Montant (5000 FCFA)" ]
+    output: "Confirmation de paiement"
+
+  - step: 3
+    name: "Vérification et planification — TECHNIQUE"
+    actor: "Système"
+    system: "XFlow"
+    action: "Vérification automatique des pièces et intégration au registre des examens."
+    inputs: [ "Dossier", "Preuve de paiement" ]
+    output: "Dossier prêt pour instruction"
+
+  - step: 4
+    name: "Instruction et convocation"
+    actor: "Agent DTRF"
+    system: "XFlow"
+    action: "Vérification de la conformité du dossier et envoi de la convocation pour les épreuves."
+    inputs: [ "Dossier complet" ]
+    output: "Convocation envoyée (SMS/Email)"
+
+  - step: 5
+    name: "Épreuve théorique (Code) — PHYSIQUE"
+    actor: "Citoyen / Inspecteur"
+    system: "Système Local DTRF"
+    action: "Passage de l'examen théorique dans les centres DTRF."
+    inputs: [ "Convocation", "CNI" ]
+    output: "Résultat saisi dans le système"
+
+  - step: 6
+    name: "Épreuve pratique (Conduite) — PHYSIQUE"
+    actor: "Citoyen / Inspecteur"
+    system: "Système Local DTRF"
+    action: "Passage de l'examen pratique (circuit + route) après succès au code."
+    inputs: [ "Carnet d'examen" ]
+    output: "Relevé de notes numérique"
+
+  - step: 7
+    name: "Paiement des droits de délivrance"
+    actor: "Citoyen"
+    system: "Plateforme e-Gov"
+    action: "Paiement des frais de délivrance après succès aux examens pour lancer la production."
+    inputs: [ "Succès examens", "Montant (15000 FCFA)" ]
+    output: "Ordre de production généré"
+
+  - step: 8
+    name: "Production et signature"
+    actor: "Agent de production / Directeur"
+    system: "XFlow / Système dédié"
+    action: "Personnalisation du titre, impression et validation finale."
+    inputs: [ "Données biographiques", "Paiement" ]
+    output: "Permis disponible"
+
+  - step: 9
+    name: "Retrait du titre — PHYSIQUE"
+    actor: "Citoyen"
+    system: "Communauté"
+    action: "Retrait physique du permis au guichet choisi après notification de disponibilité."
+    inputs: [ "Notification", "CNI" ]
+    output: "Permis remis"

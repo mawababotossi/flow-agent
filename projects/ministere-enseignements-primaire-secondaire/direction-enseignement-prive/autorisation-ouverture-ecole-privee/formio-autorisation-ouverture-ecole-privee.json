@@ -1,0 +1,389 @@
+{
+  "title": "Demande d'autorisation d'ouverture d'établissement d'enseignement privé",
+  "name": "demandeAutorisationOuvertureEcolePrivee",
+  "path": "autorisation-ouverture-ecole-privee",
+  "type": "form",
+  "display": "wizard",
+  "i18n": {
+    "en": {
+      "Contexte de la demande": "Request context",
+      "Informations du promoteur": "Promoter details",
+      "Pièces à fournir": "Supporting documents",
+      "Récapitulatif et soumission": "Summary and submission",
+      "Suivant": "Next",
+      "Précédent": "Previous",
+      "Soumettre": "Submit",
+      "Personne Physique (Individuel)": "Individual",
+      "Congrégation / ONG": "NGO",
+      "Société": "Company"
+    }
+  },
+  "config": {
+    "development": {
+      "apiBaseUrl": "https://api.education.dev.gouv.tg",
+      "appName": "Développement",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "email": "user.email",
+        "phone": "user.phone",
+        "userId": "user.userId",
+        "identityNumber_fra": "user.identityNumber_fra"
+      }
+    },
+    "sandbox": {
+      "apiBaseUrl": "https://api.education.sandbox.gouv.tg",
+      "appName": "Sandbox",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "email": "user.email",
+        "phone": "user.phone",
+        "userId": "user.userId",
+        "identityNumber_fra": "user.identityNumber_fra"
+      }
+    },
+    "preproduction": {
+      "apiBaseUrl": "https://api.education.preprod.gouv.tg",
+      "appName": "Pré-production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "email": "user.email",
+        "phone": "user.phone",
+        "userId": "user.userId",
+        "identityNumber_fra": "user.identityNumber_fra"
+      }
+    },
+    "production": {
+      "apiBaseUrl": "https://api.education.gouv.tg",
+      "appName": "Production",
+      "users": {
+        "firstName": "user.firstName",
+        "lastName": "user.lastName",
+        "email": "user.email",
+        "phone": "user.phone",
+        "userId": "user.userId",
+        "identityNumber_fra": "user.identityNumber_fra"
+      }
+    }
+  },
+  "components": [
+    {
+      "type": "panel",
+      "title": "Contexte de la demande",
+      "key": "stepIntro",
+      "components": [
+        {
+          "tag": "style",
+          "content": "/* Sidebar css */ .sfc-card { position: sticky; top: 20px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; font-family: 'Segoe UI', Roboto, sans-serif; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); } .sfc-card h3 { font-size:18px;font-weight:700;color:#111827; } .sfc-box { background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px; } .sfc-sub { margin-bottom: 20px; }",
+          "key": "stylesCssSidebar",
+          "type": "htmlelement"
+        },
+        {
+          "type": "columns",
+          "key": "columnsIntro",
+          "columns": [
+            {
+              "width": 8,
+              "components": [
+                {
+                  "type": "htmlelement",
+                  "tag": "div",
+                  "content": "<h2>Demande d'autorisation d'ouverture d'école privée</h2><p>Cette démarche vous permet de solliciter l'ouverture d'un établissement d'enseignement privé auprès de la DEP.</p> <b>Conditions: </b><ul><li>Projet pédagogique validé</li><li>Locaux aux normes</li></ul> <b>Frais uniques: </b> 40 000 FCFA à régler en ligne.",
+                  "key": "introHtml"
+                },
+                {
+                  "type": "select",
+                  "key": "typePromoteur",
+                  "label": "Statut juridique du promoteur",
+                  "widget": "choicesjs",
+                  "dataSrc": "values",
+                  "data": {
+                    "values": [
+                      { "label": "Personne Physique (Individuel)", "value": "physique" },
+                      { "label": "Congrégation / ONG", "value": "ong" },
+                      { "label": "Société", "value": "societe" }
+                    ]
+                  },
+                  "validate": { "required": true }
+                },
+                {
+                  "type": "select",
+                  "key": "niveauEnseignement",
+                  "label": "Niveaux d'enseignement demandés",
+                  "multiple": true,
+                  "dataSrc": "values",
+                  "data": {
+                    "values": [
+                      { "label": "Préscolaire", "value": "prescolaire" },
+                      { "label": "Primaire", "value": "primaire" },
+                      { "label": "Collège", "value": "college" },
+                      { "label": "Lycée", "value": "lycee" }
+                    ]
+                  },
+                  "validate": { "required": true }
+                },
+                {
+                  "type": "textfield",
+                  "key": "nomEtablissement",
+                  "label": "Nom proposé de l'établissement",
+                  "validate": { "required": true }
+                },
+                {
+                  "type": "select",
+                  "key": "localisationRegion",
+                  "label": "Région d'implantation",
+                  "dataSrc": "url",
+                  "data": {
+                    "url": "{{ config.apiBaseUrl }}/references/regions",
+                    "headers": [{ "key": "Accept", "value": "application/json" }]
+                  },
+                  "valueProperty": "code",
+                  "template": "<span>{{ item.label }}</span>",
+                  "validate": { "required": true }
+                },
+                {
+                   "type": "select",
+                   "key": "localisationPrefecture",
+                   "label": "Préfecture",
+                   "dataSrc": "url",
+                   "data": {
+                     "url": "{{ config.apiBaseUrl }}/references/prefectures",
+                     "headers": [{ "key": "Accept", "value": "application/json" }]
+                   },
+                   "valueProperty": "code",
+                   "template": "<span>{{ item.label }}</span>",
+                   "validate": { "required": true }
+                },
+                {
+                   "type": "select",
+                   "key": "localisationCommune",
+                   "label": "Commune ou village",
+                   "dataSrc": "url",
+                   "data": {
+                     "url": "{{ config.apiBaseUrl }}/references/communes",
+                     "headers": [{ "key": "Accept", "value": "application/json" }]
+                   },
+                   "valueProperty": "code",
+                   "template": "<span>{{ item.label }}</span>",
+                   "validate": { "required": true }
+                },
+                {
+                  "type": "textarea",
+                  "key": "adresseEtablissement",
+                  "label": "Localisation exacte (Quartier, Repères)",
+                  "validate": { "required": true }
+                }
+              ]
+            },
+            {
+              "width": 4,
+              "components": [
+                {
+                  "type": "htmlelement",
+                  "tag": "div",
+                  "content": "<div class=\"sfc-card\" id=\"sidebar-fournisseur\"><h3>Ministère des Enseignements (MEPS)</h3><p class=\"sfc-sub\">Direction de l'Enseignement Privé (DEP)</p><div class=\"sfc-box\"><strong>Coût:</strong> 40 000 FCFA<br/><strong>Délai:</strong> 30 jours ouvrés</div></div>",
+                  "key": "sidebarMenu"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "panel",
+      "title": "Informations du promoteur",
+      "key": "stepPromoteur",
+      "components": [
+        {
+          "type": "textfield",
+          "key": "promNom",
+          "label": "Nom / Raison sociale",
+          "defaultValue": "{{ config.users.lastName }}",
+          "disabled": true,
+          "validate": { "required": true }
+        },
+        {
+          "type": "textfield",
+          "key": "promPrenom",
+          "label": "Prénoms",
+          "defaultValue": "{{ config.users.firstName }}",
+          "customConditional": "show = (data.typePromoteur === 'physique');",
+          "logic": [
+             {
+               "name": "Lock",
+               "trigger": { "type": "javascript", "javascript": "result = !!(data.promPrenom && String(data.promPrenom).trim().length > 0);" },
+               "actions": [{ "name": "Disable", "type": "property", "property": { "label": "Disabled", "value": "disabled", "type": "boolean" }, "state": true }]
+             }
+          ],
+          "validate": { "required": true }
+        },
+        {
+          "type": "email",
+          "key": "promEmail",
+          "label": "E-mail du contact principal",
+          "defaultValue": "{{ config.users.email }}",
+          "disabled": true,
+          "validate": { "required": true }
+        },
+        {
+          "type": "phoneNumber",
+          "key": "promTelephone",
+          "label": "Téléphone joignable E-Gov",
+          "defaultValue": "{{ config.users.phone }}",
+          "disabled": true,
+          "validate": { "required": true }
+        },
+        {
+          "type": "textfield",
+          "key": "promNumIdentite",
+          "label": "N° Pièce identité / NIN",
+          "defaultValue": "{{ config.users.identityNumber_fra }}",
+          "disabled": true,
+          "validate": { "required": true }
+        },
+        {
+          "type": "textfield",
+          "key": "promRccm",
+          "label": "Registre de Commerce et de Crédit Mobilier (RCCM)",
+          "customConditional": "show = (data.typePromoteur === 'societe');",
+          "validate": { "required": true }
+        }
+      ]
+    },
+    {
+      "type": "panel",
+      "title": "Pièces à fournir",
+      "key": "stepPieces",
+      "components": [
+        {
+          "type": "file",
+          "key": "pjDemandeManuscrite",
+          "label": "Demande signée adressée au Directeur",
+          "storage": "base64",
+          "fileMaxSize": "2MB",
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "validate": { "required": true }
+        },
+        {
+          "type": "file",
+          "key": "pjCasierJudiciaire",
+          "label": "Extrait du casier judiciaire vierge (-3 mois)",
+          "storage": "base64",
+          "fileMaxSize": "2MB",
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "customConditional": "show = (data.typePromoteur === 'physique');",
+          "validate": { "required": true }
+        },
+        {
+          "type": "file",
+          "key": "pjStatutsAsso",
+          "label": "Statuts ou Récépissé ONG / Société",
+          "storage": "base64",
+          "fileMaxSize": "2MB",
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "customConditional": "show = (data.typePromoteur === 'societe' || data.typePromoteur === 'ong');",
+          "validate": { "required": true }
+        },
+        {
+          "type": "file",
+          "key": "pjPlanSituation",
+          "label": "Plan de situation (signé technicien)",
+          "storage": "base64",
+          "fileMaxSize": "2MB",
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "validate": { "required": true }
+        },
+        {
+          "type": "file",
+          "key": "pjTitrePropriete",
+          "label": "Titre foncier ou bail commercial",
+          "storage": "base64",
+          "fileMaxSize": "2MB",
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "validate": { "required": true }
+        },
+        {
+          "type": "file",
+          "key": "pjAttestationSanitaire",
+          "label": "Attestation de conformité sanitaire",
+          "storage": "base64",
+          "fileMaxSize": "2MB",
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "validate": { "required": true }
+        },
+        {
+          "type": "file",
+          "key": "pjRapportMairie",
+          "label": "Rapport de la Mairie (Sécurité incendie)",
+          "storage": "base64",
+          "fileMaxSize": "2MB",
+          "filePattern": ".pdf,.jpg,.jpeg,.png",
+          "validate": { "required": true }
+        },
+        {
+          "type": "file",
+          "key": "pjProjetPedagogique",
+          "label": "Projet Pédagogique (Niveaux, effectifs, diplômes enseignants)",
+          "storage": "base64",
+          "fileMaxSize": "2MB",
+          "filePattern": ".pdf",
+          "validate": { "required": true }
+        },
+        {
+          "type": "file",
+          "key": "pjPreuveFinancement",
+          "label": "Preuves de capacité financière (Relevés ou attestation)",
+          "storage": "base64",
+          "fileMaxSize": "2MB",
+          "filePattern": ".pdf",
+          "validate": { "required": true }
+        }
+      ]
+    },
+    {
+      "type": "panel",
+      "title": "Récapitulatif et soumission",
+      "key": "stepRecapitulatif",
+      "components": [
+        {
+          "label": "HTML",
+          "tag": "div",
+          "attrs": [{ "attr": "id", "value": "recapDisplay" }],
+          "refreshOnChange": false,
+          "key": "htmlRecapitulatifFinal",
+          "logic": [
+            {
+              "name": "logiqueConstruction",
+              "trigger": { "type": "javascript", "javascript": "result = true;" },
+              "actions": [
+                {
+                  "name": "actionJS",
+                  "type": "customAction",
+                  "customAction": "const recapDiv = document.getElementById(\"recapDisplay\"); let list_of_datagrid = []; let data_stock = []; const exclude = [\"button\", \"file\", \"container\", \"panel\", \"datagrid\"]; const excludeKeys = [\"luEtApprouve\"]; const includesLabelForSelect = [\"libelle\", \"label\"]; let ourTable = \"<table class='table table-striped table-bordered'><tbody>\"; utils.eachComponent(form.components, (component, path) => { if(!exclude.includes(component.type) && !excludeKeys.includes(component.key) && component.key && data[component.key] !== undefined) { ourTable += \"<tr><th>\" + component.label + \"</th><td>\" + (data[component.key] !== null ? data[component.key] : \"\") + \"</td></tr>\"; } }, false); ourTable += \"</tbody></table>\"; recapDiv.innerHTML = ourTable;"
+                }
+              ]
+            }
+          ],
+          "type": "htmlelement"
+        },
+        {
+          "type": "checkbox",
+          "key": "luEtApprouve",
+          "label": "Je déclare et certifie sur l'honneur que les informations et justificatifs susmentionnés sont vrais sous peine de poursuites.",
+          "validate": { "required": true }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "name": "publishToRabbitMQ",
+      "type": "rabbitmq",
+      "topic": "submissions.topic",
+      "payload": "{{ submission.data }}"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "display": "form",
+  "components": [
+    {
+      "label": "Résultat Examen Code",
+      "type": "radio",
+      "key": "succes",
+      "values": [
+        { "label": "Succès (Admis)", "value": "oui" },
+        { "label": "Échec (Rejeté)", "value": "non" }
+      ],
+      "validate": { "required": true }
+    },
+    {
+      "label": "Note / Observations",
+      "type": "textfield",
+      "key": "observations"
+    },
+    {
+      "type": "button",
+      "label": "Enregistrer résultat",
+      "key": "submit",
+      "input": true
+    }
+  ]
+}

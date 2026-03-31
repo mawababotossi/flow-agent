@@ -1,0 +1,56 @@
+{
+  "title": "Délibération Finale - Autorisation d'ouverture",
+  "name": "deliberationAutorisationOuvertureEcole",
+  "path": "deliberation-autorisation-ouverture-ecole",
+  "type": "form",
+  "display": "form",
+  "components": [
+    {
+      "type": "panel",
+      "title": "Avis de l'Inspection (Rappel)",
+      "key": "panelRappelInspection",
+      "components": [
+        {
+          "type": "textfield",
+          "key": "avis_inspection",
+          "label": "Avis de l'inspecteur",
+          "disabled": true
+        },
+        {
+          "type": "textarea",
+          "key": "commentaires_inspection",
+          "label": "Observations de l'inspecteur",
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "type": "panel",
+      "title": "Délibération de la Direction",
+      "key": "panelDeliberation",
+      "components": [
+        {
+          "type": "select",
+          "key": "decision_direction",
+          "label": "Décision finale (Arrêté)",
+          "widget": "choicesjs",
+          "dataSrc": "values",
+          "data": {
+            "values": [
+              { "label": "Accorder l'autorisation (Avis Favorable)", "value": "accepte" },
+              { "label": "Rejet définitif (Avis Défavorable)", "value": "rejete" }
+            ]
+          },
+          "validate": { "required": true }
+        },
+        {
+          "type": "textarea",
+          "key": "motif_rejet",
+          "label": "Motif du rejet (si applicable)",
+          "customConditional": "show = (data.decision_direction === 'rejete');",
+          "validate": { "required": true }
+        }
+      ]
+    }
+  ]
+}
